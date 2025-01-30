@@ -16,6 +16,7 @@ import MailIcon from "@mui/icons-material/Mail";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import { Button, TextField } from "@mui/material";
+import CartPage from "../../pages/CartPage";
 
 export default function NavBar() {
   const [anchorEl, setAnchorEl] = React.useState(null);
@@ -119,12 +120,7 @@ export default function NavBar() {
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static">
         <Toolbar>
-          <Typography
-            variant="h6"
-            component="div"
-            fontWeight={"bold"}
-            sx={{ display: "block" }}
-          >
+          <Typography variant="h6" component="div" fontWeight={"bold"} sx={{ display: "block" }}>
             CELLMADE
           </Typography>
           <div style={{ display: "flex", width: "60%" }}>
@@ -168,15 +164,7 @@ export default function NavBar() {
           </Box>
           <Box sx={{ flexGrow: 1 }} />
           <Box sx={{ display: "flex" }}>
-            <IconButton
-              size="large"
-              aria-label="show 4 new mails"
-              color="inherit"
-            >
-              <Badge badgeContent={4} color="error">
-                <ShoppingCartIcon fontSize="large" />
-              </Badge>
-            </IconButton>
+            <CartPage/>
             <IconButton
               sx={{ marginLeft: "2rem" }}
               size="large"
