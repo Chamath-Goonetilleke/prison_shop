@@ -9,26 +9,26 @@ const CategorySlider = () => {
   const [showRightArrow, setShowRightArrow] = useState(true);
 
   const categories = [
-    { id: 1, name: "Plants", image: "/api/placeholder/100/100" },
-    { id: 2, name: "Perfumes", image: "/api/placeholder/100/100" },
-    { id: 3, name: "Gift Vouchers", image: "/api/placeholder/100/100" },
-    { id: 4, name: "Jewelry", image: "/api/placeholder/100/100" },
-    { id: 5, name: "Home & Living", image: "/api/placeholder/100/100" },
-    { id: 6, name: "Greeting Cards", image: "/api/placeholder/100/100" },
+    { id: 1, name: "Plants", image: "/bed.jpg" },
+    { id: 2, name: "Perfumes", image: "/bed.jpg" },
+    { id: 3, name: "Gift Vouchers", image: "/bed.jpg" },
+    { id: 4, name: "Jewelry", image: "/bed.jpg" },
+    { id: 5, name: "Home & Living", image: "/bed.jpg" },
+    { id: 6, name: "Greeting Cards", image: "/bed.jpg" },
     {
       id: 7,
       name: "Pirikara & Pooja Bhanda",
-      image: "/api/placeholder/100/100",
+      image: "/bed.jpg",
     },
-    { id: 8, name: "Flowers", image: "/api/placeholder/100/100" },
-    { id: 9, name: "Cakes and Bakes", image: "/api/placeholder/100/100" },
-    { id: 9, name: "Cakes and Bakes", image: "/api/placeholder/100/100" },
-    { id: 9, name: "Cakes and Bakes", image: "/api/placeholder/100/100" },
-    { id: 9, name: "Cakes and Bakes", image: "/api/placeholder/100/100" },
-    { id: 9, name: "Cakes and Bakes", image: "/api/placeholder/100/100" },
-    { id: 9, name: "Cakes and Bakes", image: "/api/placeholder/100/100" },
-    { id: 9, name: "Cakes and Bakes", image: "/api/placeholder/100/100" },
-    { id: 9, name: "Cakes and Bakes", image: "/api/placeholder/100/100" },
+    { id: 8, name: "Flowers", image: "/bed.jpg" },
+    { id: 9, name: "Cakes and Bakes", image: "/bed.jpg" },
+    { id: 9, name: "Cakes and Bakes", image: "/bed.jpg" },
+    { id: 9, name: "Cakes and Bakes", image: "/bed.jpg" },
+    { id: 9, name: "Cakes and Bakes", image: "/bed.jpg" },
+    { id: 9, name: "Cakes and Bakes", image: "/bed.jpg" },
+    { id: 9, name: "Cakes and Bakes", image: "/bed.jpg" },
+    { id: 9, name: "Cakes and Bakes", image: "/bed.jpg" },
+    { id: 9, name: "Cakes and Bakes", image: "/bed.jpg" },
   ];
 
   useEffect(() => {
@@ -89,7 +89,7 @@ const CategorySlider = () => {
   };
 
   return (
-    <Box sx={{ position: "relative", width: "100%", padding: "20px 0" }}>
+    <Box sx={{ position: "relative", width: "100%", padding: "30px" }}>
 
 
       <Box
