@@ -8,7 +8,6 @@ import {
   Paper,
   Popper,
   MenuList,
-  Typography,
 } from "@mui/material";
 import {
   KeyboardArrowDown,
@@ -16,13 +15,10 @@ import {
   GridView,
 } from "@mui/icons-material";
 
-const CategoryMenu = () => {
-  const [anchorEl, setAnchorEl] = useState(null);
-  const [subMenuAnchorEl, setSubMenuAnchorEl] = useState(null);
-  const [activeCategory, setActiveCategory] = useState("");
-
-  const categories = {
-    "කම්හල් (Workshops/Factories)": [
+const categories = [
+  {
+    category: "කම්හල් (Workshops/Factories)",
+    subCategory: [
       "කල්දේරම් / පිහි වර්ග (Kettles / Types of Knives)",
       "ඇළුමිනියම් හැඳි වර්ග (Aluminum Spoons)",
       "බාල්දි වර්ග (Buckets)",
@@ -37,7 +33,10 @@ const CategoryMenu = () => {
       "විවිධ විසිතුරු භාණ්ඩ (Various Ornaments/Decorations)",
       "වෙනත් නිර්මාණ (Other Creations)",
     ],
-    "වඩු (Carpentry)": [
+  },
+  {
+    category: "වඩු (Carpentry)",
+    subCategory: [
       "ලී ඇඳන් (Wooden Beds)",
       "පුටු (Chairs)",
       "මේස (Tables)",
@@ -54,35 +53,56 @@ const CategoryMenu = () => {
       "එළවළු කපන ලැලි (Vegetable Cutting Boards)",
       "විදුරු කැබිනට් (Glass Cabinets)",
     ],
-    "පේෂ කර්ම (Textiles)": [
+  },
+  {
+    category: "පේෂ කර්ම (Textiles)",
+    subCategory: [
       "බේඩ් ෂිට් (Bed Sheets)",
       "අත් පිස්නා (Hand Towels)",
       "හැන්ඩ් ලුම් සාරි (Handloom Sarees)",
       "කොට්ට උර (Pillowcases)",
       "තුවා (Towels)",
     ],
-    "මැහුම් (Sewing/Tailoring)": [
+  },
+  {
+    category: "මැහුම් (Sewing/Tailoring)",
+    subCategory: [
       "මදුරු නෙට් (Mosquito Nets)",
       "කොට්ට උර (Pillowcases)",
       "නිම කළ ඇඳුම් (Ready-made Garments)",
       "පාසැල් නිළ ඇඳුම් (School Uniforms)",
       "රෙදි බෑග් (Cloth Bags)",
     ],
-    "කොසු/ඉදල් (Brooms/Brushes)": [
+  },
+  {
+    category: "කොසු/ඉදල් (Brooms/Brushes)",
+    subCategory: [
       "කොසු මුස්න (Broom Handles)",
       "ඉරටු ඉදල් (Coir Brushes)",
       "B වර්ග (Type B)",
     ],
-    "බේකරි (Bakery)": ["සියළුම බේකරි නිෂ්පාදන (All Bakery Products)"],
-    "පෙදරේරු (Masonry)": [
+  },
+  {
+    category: "බේකරි (Bakery)",
+    subCategory: ["සියළුම බේකරි නිෂ්පාදන (All Bakery Products)"],
+  },
+  {
+    category: "පෙදරේරු (Masonry)",
+    subCategory: [
       "සිමේන්ති මල් පොච්චි වර්ග (Types of Cement Flower Pots)",
       "ගඩොල් (Bricks)",
     ],
-    "ලිපි කවර (Letter Covers)": [
-      "ලිපි කවර (Letter Covers)",
-      "බේහෙත් කවර (Medicine Covers)",
-    ],
-  };
+  },
+  {
+    category: "ලිපි කවර (Letter Covers)",
+    subCategory: ["ලිපි කවර (Letter Covers)", "බේහෙත් කවර (Medicine Covers)"],
+  },
+];
+
+const CategoryMenu = () => {
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [subMenuAnchorEl, setSubMenuAnchorEl] = useState(null);
+  const [activeCategory, setActiveCategory] = useState(null);
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -91,32 +111,30 @@ const CategoryMenu = () => {
   const handleClose = () => {
     setAnchorEl(null);
     setSubMenuAnchorEl(null);
-    setActiveCategory("");
+    setActiveCategory(null);
   };
 
   const handleCategoryHover = (event, category) => {
-    if (categories[category].length > 0) {
+    if (category.subCategory.length > 0) {
       setSubMenuAnchorEl(event.currentTarget);
       setActiveCategory(category);
     } else {
       setSubMenuAnchorEl(null);
-      setActiveCategory("");
+      setActiveCategory(null);
     }
   };
 
   const isMenuOpen = Boolean(anchorEl);
-  const isSubMenuOpen = Boolean(subMenuAnchorEl) && activeCategory !== "";
+  const isSubMenuOpen = Boolean(subMenuAnchorEl) && activeCategory !== null;
 
   return (
     <div>
       <Button
         onClick={handleClick}
         sx={{
-          backgroundColor: "#588157",
+          backgroundColor: "#235661",
           color: "white",
-          "&:hover": {
-            backgroundColor: "#3a5a40",
-          },
+          "&:hover": { backgroundColor: "#3a5a40" },
           textTransform: "none",
           gap: 1,
         }}
@@ -126,35 +144,23 @@ const CategoryMenu = () => {
         Categories
       </Button>
 
-      <Menu
-        anchorEl={anchorEl}
-        open={isMenuOpen}
-        onClose={handleClose}
-        sx={{
-          "& .MuiPaper-root": {
-            width: 300,
-            maxHeight: "none",
-          },
-        }}
-      >
-        {Object.entries(categories).map(([category, subcategories]) => (
+      <Menu anchorEl={anchorEl} open={isMenuOpen} onClose={handleClose}>
+        {categories.map((category) => (
           <MenuItem
-            key={category}
+            key={category.category}
             onMouseEnter={(e) => handleCategoryHover(e, category)}
             onMouseLeave={() => {
-              if (!isSubMenuOpen) setActiveCategory("");
+              if (!isSubMenuOpen) setActiveCategory(null);
             }}
             sx={{
-              color: "#588157",
-              "&:hover": {
-                backgroundColor: "#f1f8e9",
-              },
+              color: "#235661",
+              "&:hover": { backgroundColor: "#f1f8e9" },
               display: "flex",
               justifyContent: "space-between",
             }}
           >
-            <ListItemText primary={category} />
-            {subcategories.length > 0 && (
+            <ListItemText primary={category.category} />
+            {category.subCategory.length > 0 && (
               <ListItemIcon sx={{ minWidth: "auto" }}>
                 <KeyboardArrowRight />
               </ListItemIcon>
@@ -171,16 +177,13 @@ const CategoryMenu = () => {
       >
         <Paper elevation={3}>
           <MenuList>
-            {categories[activeCategory]?.map((subcategory) => (
+            {activeCategory?.subCategory.map((subcategory) => (
               <MenuItem
                 key={subcategory}
                 onClick={handleClose}
                 sx={{
-                  width: 450,
-                  color: "#588157",
-                  "&:hover": {
-                    backgroundColor: "#f1f8e9",
-                  },
+                  color: "#235661",
+                  "&:hover": { backgroundColor: "#f1f8e9" },
                 }}
               >
                 <ListItemText primary={subcategory} />

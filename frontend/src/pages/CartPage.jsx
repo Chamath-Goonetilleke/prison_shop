@@ -25,14 +25,14 @@ const CartPage = () => {
       name: "GOLDEN PEARS",
       quantity: 1,
       price: 340.0,
-      image: "/api/placeholder/100/100",
+      image: "/bed.jpg",
     },
     {
       id: 2,
       name: "VEGETABLE BUDGET PACK",
       quantity: 1,
       price: 1574.0,
-      image: "/api/placeholder/100/100",
+      image: "/bed.jpg",
     },
   ]);
 

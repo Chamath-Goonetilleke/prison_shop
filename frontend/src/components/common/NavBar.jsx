@@ -118,9 +118,14 @@ export default function NavBar() {
 
   return (
     <Box sx={{ flexGrow: 1 }}>
-      <AppBar position="static">
+      <AppBar position="static" sx={{ backgroundColor: "#2a6595" }}>
         <Toolbar>
-          <Typography variant="h6" component="div" fontWeight={"bold"} sx={{ display: "block" }}>
+          <Typography
+            variant="h6"
+            component="div"
+            fontWeight={"bold"}
+            sx={{ display: "block" }}
+          >
             CELLMADE
           </Typography>
           <div style={{ display: "flex", width: "60%" }}>
@@ -131,18 +136,19 @@ export default function NavBar() {
                 marginLeft: "5rem",
                 marginRight: "0rem",
                 border: "1px solid white",
+                backgroundColor: "white",
                 borderRadius: "5px 0px 0px 5px",
               }}
               size="small"
               placeholder="Search..."
             />
             <Button
-              color="success"
               variant="contained"
               sx={{
                 margin: "1.5rem",
                 border: "1px solid white",
                 marginLeft: "0rem",
+                
               }}
             >
               <SearchIcon sx={{ mx: "1rem" }} />
@@ -164,7 +170,7 @@ export default function NavBar() {
           </Box>
           <Box sx={{ flexGrow: 1 }} />
           <Box sx={{ display: "flex" }}>
-            <CartPage/>
+            <CartPage />
             <IconButton
               sx={{ marginLeft: "2rem" }}
               size="large"

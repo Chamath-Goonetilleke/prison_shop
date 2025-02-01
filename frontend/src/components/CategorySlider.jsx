@@ -9,26 +9,16 @@ const CategorySlider = () => {
   const [showRightArrow, setShowRightArrow] = useState(true);
 
   const categories = [
-    { id: 1, name: "Plants", image: "/bed.jpg" },
-    { id: 2, name: "Perfumes", image: "/bed.jpg" },
-    { id: 3, name: "Gift Vouchers", image: "/bed.jpg" },
-    { id: 4, name: "Jewelry", image: "/bed.jpg" },
-    { id: 5, name: "Home & Living", image: "/bed.jpg" },
-    { id: 6, name: "Greeting Cards", image: "/bed.jpg" },
-    {
-      id: 7,
-      name: "Pirikara & Pooja Bhanda",
-      image: "/bed.jpg",
-    },
-    { id: 8, name: "Flowers", image: "/bed.jpg" },
-    { id: 9, name: "Cakes and Bakes", image: "/bed.jpg" },
-    { id: 9, name: "Cakes and Bakes", image: "/bed.jpg" },
-    { id: 9, name: "Cakes and Bakes", image: "/bed.jpg" },
-    { id: 9, name: "Cakes and Bakes", image: "/bed.jpg" },
-    { id: 9, name: "Cakes and Bakes", image: "/bed.jpg" },
-    { id: 9, name: "Cakes and Bakes", image: "/bed.jpg" },
-    { id: 9, name: "Cakes and Bakes", image: "/bed.jpg" },
-    { id: 9, name: "Cakes and Bakes", image: "/bed.jpg" },
+    { id: 1, name: "කම්හල් (Workshops/Factories)", image: "/cat-workshop.webp" },
+    { id: 2, name: "වඩු (Carpentry)", image: "/cat-carpentry.webp" },
+    { id: 3, name: "පේෂ කර්ම (Textiles)", image: "/cat-textiles.webp" },
+    { id: 4, name: "මැහුම් (Sewing/Tailoring)", image: "/bed.jpg" },
+    { id: 5, name: "කොසු/ඉදල් (Brooms/Brushes)", image: "/bed.jpg" },
+    { id: 6, name: "බේකරි (Bakery)", image: "/bed.jpg" },
+    { id: 7, name: "පෙදරේරු (Masonry)", image: "/bed.jpg" },
+    { id: 8, name: "ලිපි කවර (Letter Covers)", image: "/bed.jpg" },
+    { id: 8, name: "ලිපි කවර (Letter Covers)", image: "/bed.jpg" },
+    { id: 8, name: "ලිපි කවර (Letter Covers)", image: "/bed.jpg" },
   ];
 
   useEffect(() => {
@@ -90,8 +80,6 @@ const CategorySlider = () => {
 
   return (
     <Box sx={{ position: "relative", width: "100%", padding: "30px" }}>
-
-
       <Box
         ref={scrollRef}
         onScroll={handleScroll}
@@ -125,8 +113,8 @@ const CategorySlider = () => {
           >
             <Box
               sx={{
-                width: 96,
-                height: 96,
+                width: 150,
+                height: 150,
                 borderRadius: "50%",
                 overflow: "hidden",
                 backgroundColor: "#f5f5f5",
@@ -145,11 +133,11 @@ const CategorySlider = () => {
               />
             </Box>
             <Typography
-              variant="body2"
+              
               sx={{
                 textAlign: "center",
                 maxWidth: 96,
-                fontSize: "0.875rem",
+                fontSize: "1rem",
                 color: "#333",
               }}
             >
@@ -158,7 +146,6 @@ const CategorySlider = () => {
           </Box>
         ))}
       </Box>
-
     </Box>
   );
 };
