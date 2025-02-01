@@ -18,7 +18,7 @@ export default function ProductCard() {
           />
           <CardContent>
             <Typography gutterBottom fontSize="17px" component="center">
-              Lizard
+              King Size Bed
             </Typography>
             <Typography
               variant="body2"

@@ -73,7 +73,7 @@ const scroll = (direction) => {
                 display: "flex",
                 justifyContent: "space-between",
                 padding: "10px",
-                overflowX: "hidden", // Hide scrollbar
+                overflowX: "hidden",
                 scrollBehavior: "smooth",
                 whiteSpace: "nowrap",
                 flexGrow: 1,

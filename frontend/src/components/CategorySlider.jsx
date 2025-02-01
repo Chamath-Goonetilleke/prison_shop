@@ -9,14 +9,18 @@ const CategorySlider = () => {
   const [showRightArrow, setShowRightArrow] = useState(true);
 
   const categories = [
-    { id: 1, name: "කම්හල් (Workshops/Factories)", image: "/cat-workshop.webp" },
-    { id: 2, name: "වඩු (Carpentry)", image: "/cat-carpentry.webp" },
-    { id: 3, name: "පේෂ කර්ම (Textiles)", image: "/cat-textiles.webp" },
-    { id: 4, name: "මැහුම් (Sewing/Tailoring)", image: "/bed.jpg" },
-    { id: 5, name: "කොසු/ඉදල් (Brooms/Brushes)", image: "/bed.jpg" },
-    { id: 6, name: "බේකරි (Bakery)", image: "/bed.jpg" },
-    { id: 7, name: "පෙදරේරු (Masonry)", image: "/bed.jpg" },
-    { id: 8, name: "ලිපි කවර (Letter Covers)", image: "/bed.jpg" },
+    { id: 1, name: "කම්හල් (Workshops/Factories)", image: "/cat-workshop.png" },
+    { id: 2, name: "වඩු (Carpentry)", image: "/cat-carpentry.png" },
+    { id: 3, name: "පේෂ කර්ම (Textiles)", image: "/cat-textiles.png" },
+    { id: 4, name: "මැහුම් (Sewing/Tailoring)", image: "/cat-sewing.png" },
+    {
+      id: 5,
+      name: "කොසු/ඉදල් (Brooms/Brushes)",
+      image: "/cat-brooms_brushes.png",
+    },
+    { id: 6, name: "බේකරි (Bakery)", image: "/cat-bakery.png" },
+    { id: 7, name: "පෙදරේරු (Masonry)", image: "/cat-masonry.png" },
+    { id: 8, name: "ලිපි කවර (Letter Covers)", image: "/cat-letter_covers.png" },
     { id: 8, name: "ලිපි කවර (Letter Covers)", image: "/bed.jpg" },
     { id: 8, name: "ලිපි කවර (Letter Covers)", image: "/bed.jpg" },
   ];
@@ -34,7 +38,6 @@ const CategorySlider = () => {
         return;
       }
 
-      const progress = timestamp - startTime;
       const speed = 0.5;
 
       if (scrollContainer) {
@@ -79,7 +82,7 @@ const CategorySlider = () => {
   };
 
   return (
-    <Box sx={{ position: "relative", width: "100%", padding: "30px" }}>
+    <Box sx={{ position: "relative", width: "100%", padding: "20px" }}>
       <Box
         ref={scrollRef}
         onScroll={handleScroll}
@@ -93,7 +96,7 @@ const CategorySlider = () => {
             display: "none",
           },
           gap: "32px",
-          padding: "0 48px",
+          padding: "0 55px",
         }}
       >
         {categories.map((category) => (
@@ -104,6 +107,7 @@ const CategorySlider = () => {
               flexDirection: "column",
               alignItems: "center",
               cursor: "pointer",
+              my:"1rem",
               minWidth: "fit-content",
               transition: "transform 0.2s",
               "&:hover": {

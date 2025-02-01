@@ -1,9 +1,9 @@
-import React from 'react'
-import Carousel from '../components/common/Carousel'
-import CategoryMenu from '../components/CategoryMenu'
-import { Box, Typography } from '@mui/material';
-import CategorySlider from '../components/CategorySlider';
-import HomeProductGrid from '../components/HomeProductGrid';
+import React from "react";
+import Carousel from "../components/common/Carousel";
+import CategoryMenu from "../components/CategoryMenu";
+import { Box, Typography } from "@mui/material";
+import CategorySlider from "../components/CategorySlider";
+import HomeProductSection from "../components/HomeProductSection";
 
 export default function HomePage() {
   return (
@@ -77,9 +77,19 @@ export default function HomePage() {
         </Typography>
       </Box>
       <Carousel />
-      <CategorySlider />
-      <Box sx={{mx: '4rem',my:'2rem'}}>
-        <HomeProductGrid />
+      <div style={{ padding: "1rem" }}>
+        <CategorySlider />
+      </div>
+      <Box
+        sx={{
+          mx: "2rem",
+          display: "flex",
+          flexDirection: "column",
+          gap: "1rem",
+        }}
+      >
+        <HomeProductSection name={"කම්හල් (Workshops/Factories)"} color={"#fdf2e4"}/>
+        <HomeProductSection name={"වඩු (Carpentry)"} color={"#fdf2e4"} />
       </Box>
     </div>
   );

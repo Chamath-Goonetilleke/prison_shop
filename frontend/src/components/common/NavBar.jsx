@@ -124,7 +124,8 @@ export default function NavBar() {
             variant="h6"
             component="div"
             fontWeight={"bold"}
-            sx={{ display: "block" }}
+            sx={{ display: "block", cursor: "pointer" }}
+            onClick={()=>window.location = "/"}
           >
             CELLMADE
           </Typography>
@@ -178,7 +179,6 @@ export default function NavBar() {
               aria-label="account of current user"
               aria-controls={menuId}
               aria-haspopup="true"
-              onClick={handleProfileMenuOpen}
               color="inherit"
             >
               <AccountCircle fontSize="large" />
