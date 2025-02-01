@@ -7,7 +7,7 @@ import CardActionArea from "@mui/material/CardActionArea";
 
 export default function ProductCard() {
   return (
-    <div onClick={()=> window.location = "/product"} >
+    <div onClick={() => (window.location = "/product")}>
       <Card sx={{ maxWidth: 250, minWidth: 250 }}>
         <CardActionArea>
           <CardMedia
@@ -18,14 +18,14 @@ export default function ProductCard() {
           />
           <CardContent>
             <Typography gutterBottom fontSize="17px" component="center">
-              King Size Bed
+              Felicia Storage Bed
             </Typography>
             <Typography
               variant="body2"
               component="center"
               sx={{ color: "text.secondary" }}
             >
-              Rs 1500.00
+              Rs 112,455.00
             </Typography>
           </CardContent>
         </CardActionArea>

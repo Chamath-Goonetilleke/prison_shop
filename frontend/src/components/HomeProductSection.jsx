@@ -3,12 +3,19 @@ import Box from "@mui/material/Box";
 import ProductCard from "./common/ProductCard";
 import { Typography } from "@mui/material";
 import ArrowForwardOutlinedIcon from "@mui/icons-material/ArrowForwardOutlined";
-export default function HomeProductSection({ name, color }) {
+export default function HomeProductSection({ category, color }) {
   return (
-    <Box sx={{ width: "100%", backgroundColor: color, padding: "20px", borderRadius:'10px' }}>
+    <Box
+      sx={{
+        width: "100%",
+        backgroundColor: color,
+        padding: "20px",
+        borderRadius: "10px",
+      }}
+    >
       <Box>
         <Typography fontSize={"25px"} fontWeight={"bold"}>
-          {name}
+          {category.name}
         </Typography>
         <Box
           sx={{
@@ -40,14 +47,14 @@ export default function HomeProductSection({ name, color }) {
             sx={{ cursor: "pointer" }}
           >
             <img
-              src="/cat-workshop.png"
+              src={category.image}
               alt="workshop"
               style={{
                 maxWidth: 250,
                 minWidth: 250,
                 maxHeight: 210,
                 borderRadius: "10px",
-                opacity: 0.5,
+                opacity: 0.6,
               }}
             />
             <Box

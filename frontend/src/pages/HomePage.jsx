@@ -88,8 +88,17 @@ export default function HomePage() {
           gap: "1rem",
         }}
       >
-        <HomeProductSection name={"කම්හල් (Workshops/Factories)"} color={"#fdf2e4"}/>
-        <HomeProductSection name={"වඩු (Carpentry)"} color={"#fdf2e4"} />
+        <HomeProductSection
+          category={{
+            name: "කම්හල් (Workshops/Factories)",
+            image: "/cat-workshop.png",
+          }}
+          color={"#fdf2e4"}
+        />
+        <HomeProductSection
+          category={{ name: "වඩු (Carpentry)", image: "/cat-carpentry.png" }}
+          color={"#bedcf7"}
+        />
       </Box>
     </div>
   );

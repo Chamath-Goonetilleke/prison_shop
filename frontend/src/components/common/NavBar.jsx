@@ -118,17 +118,35 @@ export default function NavBar() {
 
   return (
     <Box sx={{ flexGrow: 1 }}>
-      <AppBar position="static" sx={{ backgroundColor: "#2a6595" }}>
+      <AppBar position="static" sx={{ backgroundColor: "#24364d" }}>
+        {" "}
+        {/* #2a6595 */}
         <Toolbar>
-          <Typography
-            variant="h6"
-            component="div"
-            fontWeight={"bold"}
-            sx={{ display: "block", cursor: "pointer" }}
-            onClick={()=>window.location = "/"}
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+              alignItems: "center",
+              margin: "10px",
+            }}
           >
-            CELLMADE
-          </Typography>
+            <img
+              src="/main-only-logo.png"
+              alt="logo"
+              style={{
+                width: 70,
+                height: 70,
+              }}
+            />
+            <Typography
+              fontFamily={"monospace"}
+              fontWeight={"bold"}
+              fontSize={"15px"}
+            >
+              CELLMADE
+            </Typography>
+          </Box>
           <div style={{ display: "flex", width: "60%" }}>
             <TextField
               sx={{
@@ -149,12 +167,23 @@ export default function NavBar() {
                 margin: "1.5rem",
                 border: "1px solid white",
                 marginLeft: "0rem",
-                
               }}
             >
               <SearchIcon sx={{ mx: "1rem" }} />
             </Button>
           </div>
+          <Box>
+            <img
+              src="/logo.png"
+              alt="logo"
+              style={{
+                width: 80,
+                height: 100,
+                padding: "10px",
+                marginRight: "1rem",
+              }}
+            />
+          </Box>
           <Box
             sx={{
               display: "flex",
@@ -166,7 +195,7 @@ export default function NavBar() {
               Hotline Number
             </Typography>
             <Typography variant="h7" fontWeight={"bold"}>
-              0332265458
+              0114 677177
             </Typography>
           </Box>
           <Box sx={{ flexGrow: 1 }} />

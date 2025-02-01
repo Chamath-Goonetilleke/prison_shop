@@ -22,18 +22,11 @@ const CartPage = () => {
   const [items, setItems] = React.useState([
     {
       id: 1,
-      name: "GOLDEN PEARS",
+      name: "Felicia Storage Bed",
       quantity: 1,
-      price: 340.0,
+      price: 112455.0,
       image: "/bed.jpg",
-    },
-    {
-      id: 2,
-      name: "VEGETABLE BUDGET PACK",
-      quantity: 1,
-      price: 1574.0,
-      image: "/bed.jpg",
-    },
+    }
   ]);
 
   const toggleDrawer = () => {

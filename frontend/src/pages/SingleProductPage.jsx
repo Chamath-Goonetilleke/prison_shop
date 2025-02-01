@@ -95,7 +95,7 @@ const scroll = (direction) => {
               style={{
                 cursor: "pointer",
                 border: "none",
-                background: "none"
+                background: "none",
               }}
             >
               <ArrowCircleRightOutlinedIcon fontSize="large" />
@@ -111,10 +111,8 @@ const scroll = (direction) => {
             gap: "50px",
           }}
         >
-          <Typography variant="h5">
-            CHOCOLATE FUDGE CAKE 1KG (2.2LBS)
-          </Typography>
-          <Typography variant="h6">Rs. 5,250.00</Typography>
+          <Typography variant="h4" fontWeight={"bold"} >Felicia Storage Bed</Typography>
+          <Typography variant="h6">Rs. 112,455.00</Typography>
 
           <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
             <IconButton onClick={() => handleQuantityChange("decrease")}>
@@ -148,14 +146,10 @@ const scroll = (direction) => {
             </Button>
           </div>
           <div style={{ textAlign: "justify" }}>
-            Elevate your dessert experience with our coffee gateau – a true
-            masterpiece. Luxuriously topped with cashews, dark chocolate,
-            caramel, and a delicate scattering of biscuits, this creation offers
-            a perfect symphony of textures and flavors. Indulge in the
-            delightful crunch of cashews paired with the rich allure of dark
-            chocolate and caramel, all crowned with the satisfying touch of
-            biscuits. A dessert like no other, designed to captivate your senses
-            and leave you craving for more.
+            Dimensions KBFL 007 : Length – 198cm | Width – 152cm | Height –
+            105cm Material Details Scratch Resistant Melamine Finish 15 year
+            warranty for structure 1 Year Warranty for bed mechanism Warranty
+            Covers Only Manufacturing Defects.
           </div>
         </div>
       </div>
