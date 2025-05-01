@@ -8,7 +8,6 @@ import {
   IconButton,
   Card,
   CardContent,
-  CardActions,
   Divider,
   Select,
   MenuItem,
@@ -25,12 +24,6 @@ import {
   CircularProgress,
   Alert,
   Snackbar,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
   CardMedia,
   List,
   ListItem,
@@ -99,6 +92,10 @@ export default function CategoryForm({ onBack, editCategory = null }) {
 
   const imageInputRef = useRef(null);
   const fileInputRef = useRef(null);
+
+  // Add state for confirmation dialog
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+  const [subcategoryToDelete, setSubcategoryToDelete] = useState(null);
 
   // Load category data if editing
   useEffect(() => {
@@ -365,13 +362,19 @@ export default function CategoryForm({ onBack, editCategory = null }) {
   };
 
   const handleDeleteSubcategory = async (subcategoryId) => {
-    if (!confirm("Are you sure you want to delete this subcategory?")) return;
+    setSubcategoryToDelete(subcategoryId);
+    setDeleteConfirmOpen(true);
+  };
+
+  // Add function to handle confirmed deletion
+  const confirmDeleteSubcategory = async () => {
+    setDeleteConfirmOpen(false);
+    if (!subcategoryToDelete) return;
 
     setLoading(true);
     try {
-      await subCategoryService.deleteSubCategory(subcategoryId);
+      await subCategoryService.deleteSubCategory(subcategoryToDelete);
       showNotification("Subcategory deleted successfully");
-
       // Refresh subcategories list
       fetchSubcategories(editCategory.id);
     } catch (error) {
@@ -379,6 +382,7 @@ export default function CategoryForm({ onBack, editCategory = null }) {
       showNotification(`Error deleting subcategory: ${error.message}`, "error");
     } finally {
       setLoading(false);
+      setSubcategoryToDelete(null);
     }
   };
 
@@ -881,6 +885,31 @@ export default function CategoryForm({ onBack, editCategory = null }) {
           <Button onClick={handleCloseAttributeDialog}>Cancel</Button>
           <Button onClick={handleSaveAttribute} variant="contained">
             Save
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Confirmation Dialog */}
+      <Dialog
+        open={deleteConfirmOpen}
+        onClose={() => setDeleteConfirmOpen(false)}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">{"Confirm Deletion"}</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            Are you sure you want to delete this subcategory?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setDeleteConfirmOpen(false)}>Cancel</Button>
+          <Button
+            onClick={confirmDeleteSubcategory}
+            color="error"
+            variant="contained"
+          >
+            Delete
           </Button>
         </DialogActions>
       </Dialog>
