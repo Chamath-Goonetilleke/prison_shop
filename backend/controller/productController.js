@@ -1,47 +1,15 @@
 const Product = require("../model/Product");
 const fs = require("fs");
 const path = require("path");
-const multer = require("multer");
-
-// Configure storage for product images
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    const uploadDir = path.join(__dirname, "../public/uploads/products");
-    // Create the directory if it doesn't exist
-    if (!fs.existsSync(uploadDir)) {
-      fs.mkdirSync(uploadDir, { recursive: true });
-    }
-    cb(null, uploadDir);
-  },
-  filename: (req, file, cb) => {
-    // Create a unique filename with timestamp and original extension
-    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-    const ext = path.extname(file.originalname);
-    cb(null, "product-" + uniqueSuffix + ext);
-  },
-});
-
-// File filter for image uploads
-const fileFilter = (req, file, cb) => {
-  // Accept only image files
-  if (file.mimetype.startsWith("image/")) {
-    cb(null, true);
-  } else {
-    cb(new Error("Only image files are allowed!"), false);
-  }
-};
-
-// Initialize multer upload
-const upload = multer({
-  storage: storage,
-  fileFilter: fileFilter,
-  limits: {
-    fileSize: 5 * 1024 * 1024, // 5MB max file size
-  },
-});
+const {
+  upload,
+  uploadToCloudinary,
+  deleteFromCloudinary,
+  getPublicIdFromUrl,
+} = require("../util/imageUpload");
 
 // Create and Save a new Product
-exports.create = (req, res) => {
+exports.create = async (req, res) => {
   // Validate request
   if (!req.body.nameEn || !req.body.price || !req.body.category_id) {
     return res.status(400).send({
@@ -69,8 +37,21 @@ exports.create = (req, res) => {
       active: req.body.active || "Yes",
       category_id: req.body.category_id,
       subCategory_id: req.body.subCategory_id || null,
-      mainImage: req.files.mainImage[0].path.replace(/\\/g, "/"),
     };
+
+    // Upload main image to Cloudinary
+    try {
+      const mainImageResult = await uploadToCloudinary(
+        req.files.mainImage[0].buffer,
+        { folder: "products" }
+      );
+      product.mainImage = mainImageResult.secure_url;
+    } catch (uploadError) {
+      console.error("Error uploading main image to Cloudinary:", uploadError);
+      return res.status(500).send({
+        message: "Error uploading main image: " + uploadError.message,
+      });
+    }
 
     // Parse attributes if provided
     if (req.body.attributes) {
@@ -86,10 +67,22 @@ exports.create = (req, res) => {
 
     // Handle additional images
     const additionalImages = [];
-    if (req.files.additionalImages) {
-      req.files.additionalImages.forEach((file) => {
-        additionalImages.push(file.path.replace(/\\/g, "/"));
-      });
+    if (req.files.additionalImages && req.files.additionalImages.length > 0) {
+      // Upload each additional image to Cloudinary
+      for (const file of req.files.additionalImages) {
+        try {
+          const result = await uploadToCloudinary(file.buffer, {
+            folder: "products/additional",
+          });
+          additionalImages.push(result.secure_url);
+        } catch (uploadError) {
+          console.error(
+            "Error uploading additional image to Cloudinary:",
+            uploadError
+          );
+          // Continue with the next image even if one fails
+        }
+      }
     }
     product.additionalImages = additionalImages;
 
@@ -178,7 +171,7 @@ exports.findBySubCategory = (req, res) => {
 };
 
 // Update a Product identified by the productId in the request
-exports.update = (req, res) => {
+exports.update = async (req, res) => {
   // Validate Request
   if (!req.body.nameEn || !req.body.price || !req.body.category_id) {
     return res.status(400).send({
@@ -205,7 +198,30 @@ exports.update = (req, res) => {
 
     // Handle main image if a new one was uploaded
     if (req.files && req.files.mainImage && req.files.mainImage[0]) {
-      product.mainImage = req.files.mainImage[0].path.replace(/\\/g, "/");
+      try {
+        const result = await uploadToCloudinary(req.files.mainImage[0].buffer, {
+          folder: "products",
+        });
+        product.mainImage = result.secure_url;
+
+        // Delete old main image from Cloudinary if it exists
+        if (req.body.existingMainImage) {
+          const publicId = getPublicIdFromUrl(req.body.existingMainImage);
+          if (publicId) {
+            await deleteFromCloudinary(publicId).catch((err) =>
+              console.error(
+                "Error deleting old main image from Cloudinary:",
+                err
+              )
+            );
+          }
+        }
+      } catch (uploadError) {
+        console.error("Error uploading main image to Cloudinary:", uploadError);
+        return res.status(500).send({
+          message: "Error uploading main image: " + uploadError.message,
+        });
+      }
     } else {
       // Keep existing main image
       product.mainImage = req.body.existingMainImage;
@@ -221,10 +237,25 @@ exports.update = (req, res) => {
     }
 
     // Add newly uploaded additional images
-    if (req.files && req.files.additionalImages) {
-      req.files.additionalImages.forEach((file) => {
-        additionalImages.push(file.path.replace(/\\/g, "/"));
-      });
+    if (
+      req.files &&
+      req.files.additionalImages &&
+      req.files.additionalImages.length > 0
+    ) {
+      for (const file of req.files.additionalImages) {
+        try {
+          const result = await uploadToCloudinary(file.buffer, {
+            folder: "products/additional",
+          });
+          additionalImages.push(result.secure_url);
+        } catch (uploadError) {
+          console.error(
+            "Error uploading additional image to Cloudinary:",
+            uploadError
+          );
+          // Continue with the next image even if one fails
+        }
+      }
     }
 
     product.additionalImages = additionalImages;
@@ -268,7 +299,7 @@ exports.delete = (req, res) => {
       return;
     }
 
-    // Store image paths for deletion after the database record is removed
+    // Store image URLs for deletion after the database record is removed
     const imagesToDelete = [];
     if (product.mainImage) {
       imagesToDelete.push(product.mainImage);
@@ -290,18 +321,13 @@ exports.delete = (req, res) => {
           });
         }
       } else {
-        // Delete image files from storage
-        imagesToDelete.forEach((imagePath) => {
-          const fullPath = path.join(__dirname, "..", imagePath);
-          if (fs.existsSync(fullPath)) {
-            fs.unlink(fullPath, (unlinkErr) => {
-              if (unlinkErr) {
-                console.error(
-                  `Error deleting image file: ${fullPath}`,
-                  unlinkErr
-                );
-              }
-            });
+        // Delete image files from Cloudinary
+        imagesToDelete.forEach((imageUrl) => {
+          const publicId = getPublicIdFromUrl(imageUrl);
+          if (publicId) {
+            deleteFromCloudinary(publicId).catch((err) =>
+              console.error("Error deleting image from Cloudinary:", err)
+            );
           }
         });
 
@@ -342,15 +368,10 @@ exports.uploadProductImages = (req, res, next) => {
   const uploadHandler = upload.fields(uploadFields);
 
   uploadHandler(req, res, (err) => {
-    if (err instanceof multer.MulterError) {
-      // A Multer error occurred during upload
+    if (err) {
+      // Handle multer error or other upload error
       return res.status(400).send({
         message: `Upload error: ${err.message}`,
-      });
-    } else if (err) {
-      // An unknown error occurred
-      return res.status(500).send({
-        message: `Error during file upload: ${err.message}`,
       });
     }
     // Everything went fine, proceed

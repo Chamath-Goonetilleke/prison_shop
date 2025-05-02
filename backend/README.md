@@ -10,7 +10,7 @@ This is the backend API for the Prison Shop application. It's built with Node.js
    npm install
    ```
 
-2. Create a `.env` file with your database credentials (use `.env.example` as a template)
+2. Create a `.env` file with your database credentials and Cloudinary configuration (use `.env.example` as a template)
 
 3. Start the development server:
    ```
@@ -30,6 +30,9 @@ This is the backend API for the Prison Shop application. It's built with Node.js
    - `DB_PASSWORD`: Your database password
    - `DB_NAME`: Your database name
    - `NODE_ENV`: Set to `production`
+   - `CLOUD_NAME`: Your Cloudinary cloud name
+   - `API_KEY`: Your Cloudinary API key
+   - `API_SECRET`: Your Cloudinary API secret
 
 4. Deploy from the Vercel dashboard
 
@@ -50,6 +53,22 @@ This is the backend API for the Prison Shop application. It's built with Node.js
 
 ## Notes for Vercel Deployment
 
-- Vercel has a serverless architecture, so file uploads are stored in the `/public` directory
+- The application uses Cloudinary for image storage, which eliminates the need for file system operations in the serverless environment
 - The application uses a MySQL database, which should be hosted separately (e.g., AWS RDS)
 - The `vercel.json` file configures routing and environment variables for the deployment
+
+## Cloudinary Configuration
+
+The application uses Cloudinary for image uploads. You'll need to create a Cloudinary account and add the following variables to your `.env` file:
+
+```
+CLOUD_NAME=your_cloud_name
+API_KEY=your_api_key
+API_SECRET=your_api_secret
+```
+
+Images are stored in the following Cloudinary folders:
+
+- Product main images: `products/`
+- Product additional images: `products/additional/`
+- Category images: `categories/`

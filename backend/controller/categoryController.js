@@ -1,47 +1,15 @@
 const Category = require("../model/Category");
 const fs = require("fs");
 const path = require("path");
-const multer = require("multer");
-
-// Configure storage for category images
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    const uploadDir = path.join(__dirname, "../public/uploads/categories");
-    // Create the directory if it doesn't exist
-    if (!fs.existsSync(uploadDir)) {
-      fs.mkdirSync(uploadDir, { recursive: true });
-    }
-    cb(null, uploadDir);
-  },
-  filename: (req, file, cb) => {
-    // Create a unique filename with timestamp and original extension
-    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-    const ext = path.extname(file.originalname);
-    cb(null, "category-" + uniqueSuffix + ext);
-  },
-});
-
-// File filter for image uploads
-const fileFilter = (req, file, cb) => {
-  // Accept only image files
-  if (file.mimetype.startsWith("image/")) {
-    cb(null, true);
-  } else {
-    cb(new Error("Only image files are allowed!"), false);
-  }
-};
-
-// Initialize multer upload
-const upload = multer({
-  storage: storage,
-  fileFilter: fileFilter,
-  limits: {
-    fileSize: 5 * 1024 * 1024, // 5MB max file size
-  },
-});
+const {
+  upload,
+  uploadToCloudinary,
+  deleteFromCloudinary,
+  getPublicIdFromUrl,
+} = require("../util/imageUpload");
 
 // Create and Save a new Category
-exports.create = (req, res) => {
+exports.create = async (req, res) => {
   // Validate request
   if (!req.body.nameEn || !req.body.code) {
     return res.status(400).send({
@@ -58,9 +26,19 @@ exports.create = (req, res) => {
       description: req.body.description,
     };
 
-    // Add image if uploaded
+    // Upload image to Cloudinary if provided
     if (req.file) {
-      category.image = req.file.path.replace(/\\/g, "/");
+      try {
+        const result = await uploadToCloudinary(req.file.buffer, {
+          folder: "categories",
+        });
+        category.image = result.secure_url;
+      } catch (uploadError) {
+        console.error("Error uploading to Cloudinary:", uploadError);
+        return res.status(500).send({
+          message: "Error uploading image: " + uploadError.message,
+        });
+      }
     }
 
     // Save Category in the database
@@ -116,7 +94,7 @@ exports.findOne = (req, res) => {
 };
 
 // Update a Category identified by the categoryId in the request
-exports.update = (req, res) => {
+exports.update = async (req, res) => {
   // Validate Request
   if (!req.body.nameEn || !req.body.code) {
     return res.status(400).send({
@@ -134,9 +112,29 @@ exports.update = (req, res) => {
       image: req.body.existingImage, // Default to existing image
     };
 
-    // Update image if a new one was uploaded
+    // Upload new image to Cloudinary if provided
     if (req.file) {
-      category.image = req.file.path.replace(/\\/g, "/");
+      try {
+        const result = await uploadToCloudinary(req.file.buffer, {
+          folder: "categories",
+        });
+        category.image = result.secure_url;
+
+        // Delete old image from Cloudinary if exists
+        if (req.body.existingImage) {
+          const publicId = getPublicIdFromUrl(req.body.existingImage);
+          if (publicId) {
+            await deleteFromCloudinary(publicId).catch((err) =>
+              console.error("Error deleting old image from Cloudinary:", err)
+            );
+          }
+        }
+      } catch (uploadError) {
+        console.error("Error uploading to Cloudinary:", uploadError);
+        return res.status(500).send({
+          message: "Error uploading image: " + uploadError.message,
+        });
+      }
     }
 
     // Update the Category
@@ -178,8 +176,8 @@ exports.delete = (req, res) => {
       return;
     }
 
-    // Store image path for deletion after the database record is removed
-    const imagePath = category.image;
+    // Store image URL for deletion after the database record is removed
+    const imageUrl = category.image;
 
     // Delete the category from the database
     Category.delete(req.params.categoryId, (err, data) => {
@@ -195,18 +193,13 @@ exports.delete = (req, res) => {
           });
         }
       } else {
-        // Delete image file from storage if it exists
-        if (imagePath) {
-          const fullPath = path.join(__dirname, "..", imagePath);
-          if (fs.existsSync(fullPath)) {
-            fs.unlink(fullPath, (unlinkErr) => {
-              if (unlinkErr) {
-                console.error(
-                  `Error deleting image file: ${fullPath}`,
-                  unlinkErr
-                );
-              }
-            });
+        // Delete image from Cloudinary if it exists
+        if (imageUrl) {
+          const publicId = getPublicIdFromUrl(imageUrl);
+          if (publicId) {
+            deleteFromCloudinary(publicId).catch((err) =>
+              console.error("Error deleting image from Cloudinary:", err)
+            );
           }
         }
 
@@ -327,5 +320,5 @@ exports.getCategoryAttributes = (req, res) => {
   });
 };
 
-// Middleware for handling file uploads
+// Middleware for handling file uploads with Cloudinary
 exports.uploadCategoryImage = upload.single("image");

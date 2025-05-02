@@ -24,12 +24,6 @@ app.use(bodyParser.json());
 // Parse requests of content-type - application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// Serve static files from the uploads directory
-app.use("/uploads", express.static(path.join(__dirname, "uploads")));
-
-// Add this line after your existing middleware setup
-app.use(express.static("public"));
-
 // Define routes
 app.use("/api/products", productRoutes);
 app.use("/api/categories", categoryRoutes);
@@ -38,12 +32,6 @@ app.use("/api/subcategories", subCategoryRoutes);
 // Define a simple route for testing
 app.get("/", (req, res) => {
   res.json({ message: "Welcome to Prison Shop API" });
-});
-
-// Ensure there's a route to access uploads
-app.get("/uploads/:type/:file", (req, res) => {
-  const { type, file } = req.params;
-  res.sendFile(path.join(__dirname, "public/uploads", type, file));
 });
 
 // Handle 404 errors
