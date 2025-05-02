@@ -6,9 +6,10 @@ dotenv.config();
 
 // Create a connection to the database
 const connection = mysql.createConnection({
-  host: process.env.DB_HOST || "localhost",
+  host:
+    process.env.DB_HOST || "cellmade.c7soaooksm06.us-west-2.rds.amazonaws.com",
   port: 3306,
-  user: process.env.DB_USER || "root",
+  user: process.env.DB_USER || "admin",
   password: process.env.DB_PASSWORD || "kavindya123",
   database: process.env.DB_NAME || "prison_shop",
 });
