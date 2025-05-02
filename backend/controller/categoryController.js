@@ -6,7 +6,7 @@ const multer = require("multer");
 // Configure storage for category images
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    const uploadDir = path.join(__dirname, "../uploads/categories");
+    const uploadDir = path.join(__dirname, "../public/uploads/categories");
     // Create the directory if it doesn't exist
     if (!fs.existsSync(uploadDir)) {
       fs.mkdirSync(uploadDir, { recursive: true });
