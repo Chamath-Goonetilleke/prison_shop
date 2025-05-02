@@ -121,50 +121,51 @@ function createTables() {
   `;
 
   // Execute table creation queries
-  connection.query(productsTable, (err) => {
+  connection.query(categoriesTable, (err) => {
     if (err) {
-      console.error("Error creating products table: ", err);
+      console.error("Error creating categories table: ", err);
       return;
     }
-    console.log("Products table created or already exists");
+    console.log("Categories table created or already exists");
 
-    connection.query(attributesTable, (err) => {
+    // Create subcategories table after categories table
+    connection.query(subcategoriesTable, (err) => {
       if (err) {
-        console.error("Error creating product_attributes table: ", err);
+        console.error("Error creating subcategories table: ", err);
         return;
       }
-      console.log("Product attributes table created or already exists");
+      console.log("Subcategories table created or already exists");
 
-      connection.query(imagesTable, (err) => {
+      // Create category attributes table
+      connection.query(categoryAttributesTable, (err) => {
         if (err) {
-          console.error("Error creating product_images table: ", err);
+          console.error("Error creating category_attributes table: ", err);
           return;
         }
-        console.log("Product images table created or already exists");
+        console.log("Category attributes table created or already exists");
 
-        // Create categories table after product tables
-        connection.query(categoriesTable, (err) => {
+        // Now create products table after the tables it references
+        connection.query(productsTable, (err) => {
           if (err) {
-            console.error("Error creating categories table: ", err);
+            console.error("Error creating products table: ", err);
             return;
           }
-          console.log("Categories table created or already exists");
+          console.log("Products table created or already exists");
 
-          // Create category attributes table after categories table
-          connection.query(categoryAttributesTable, (err) => {
+          // Create product-related tables after products table
+          connection.query(attributesTable, (err) => {
             if (err) {
-              console.error("Error creating category_attributes table: ", err);
+              console.error("Error creating product_attributes table: ", err);
               return;
             }
-            console.log("Category attributes table created or already exists");
+            console.log("Product attributes table created or already exists");
 
-            // Create subcategories table after category tables
-            connection.query(subcategoriesTable, (err) => {
+            connection.query(imagesTable, (err) => {
               if (err) {
-                console.error("Error creating subcategories table: ", err);
+                console.error("Error creating product_images table: ", err);
                 return;
               }
-              console.log("Subcategories table created or already exists");
+              console.log("Product images table created or already exists");
             });
           });
         });

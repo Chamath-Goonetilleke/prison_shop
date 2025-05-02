@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = "http://localhost:8080/api/categories";
+const API_URL = "https://prison-shop.vercel.app/api/categories";
 
 const categoryService = {
   // Get all categories
@@ -18,7 +18,7 @@ const categoryService = {
   getSubcategoriesByCategory: async (categoryId) => {
     try {
       const response = await axios.get(
-        `http://localhost:8080/api/subcategories/category/${categoryId}`
+        `https://prison-shop.vercel.app/api/subcategories/category/${categoryId}`
       );
       return response.data;
     } catch (error) {
@@ -34,7 +34,7 @@ const categoryService = {
   getAllSubcategories: async () => {
     try {
       const response = await axios.get(
-        "http://localhost:8080/api/subcategories"
+        "https://prison-shop.vercel.app/api/subcategories"
       );
       return response.data;
     } catch (error) {

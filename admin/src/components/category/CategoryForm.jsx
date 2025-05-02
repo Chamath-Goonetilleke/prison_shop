@@ -112,7 +112,7 @@ export default function CategoryForm({ onBack, editCategory = null }) {
       if (editCategory.image) {
         // Create a preview URL for existing image
         const imagePath = editCategory.image;
-        const imageUrl = `http://localhost:8080/${imagePath}`;
+        const imageUrl = `https://prison-shop.vercel.app/${imagePath}`;
         setImagePreview(imageUrl);
       }
 

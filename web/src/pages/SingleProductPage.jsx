@@ -160,11 +160,11 @@ const SingleProductPage = () => {
   }
 
   const mainImageUrl = selectedImage
-    ? `http://localhost:8080/uploads/products/${getFilenameFromPath(
+    ? `https://prison-shop.vercel.app/uploads/products/${getFilenameFromPath(
         selectedImage
       )}`
     : product.mainImage
-    ? `http://localhost:8080/uploads/products/${getFilenameFromPath(
+    ? `https://prison-shop.vercel.app/uploads/products/${getFilenameFromPath(
         product.mainImage
       )}`
     : "/bed.jpg";
@@ -225,7 +225,7 @@ const SingleProductPage = () => {
               >
                 {/* Main image thumbnail */}
                 <img
-                  src={`http://localhost:8080/uploads/products/${getFilenameFromPath(
+                  src={`https://prison-shop.vercel.app/uploads/products/${getFilenameFromPath(
                     product.mainImage
                   )}`}
                   alt={product.nameEn}
@@ -246,7 +246,7 @@ const SingleProductPage = () => {
                 {product.additionalImages.map((imagePath, index) => (
                   <img
                     key={index}
-                    src={`http://localhost:8080/uploads/products/${getFilenameFromPath(
+                    src={`https://prison-shop.vercel.app/uploads/products/${getFilenameFromPath(
                       imagePath
                     )}`}
                     alt={`${product.nameEn} -${index + 1}`}

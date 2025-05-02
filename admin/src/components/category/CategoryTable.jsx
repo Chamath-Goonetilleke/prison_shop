@@ -156,7 +156,7 @@ export default function CategoryTable({ onEdit, onViewAttributes }) {
                               <img
                                 src={
                                   category.image
-                                    ? `http://localhost:8080/uploads/categories/${getFilenameFromPath(
+                                    ? `https://prison-shop.vercel.app/uploads/categories/${getFilenameFromPath(
                                         category.image
                                       )}`
                                     : "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2YwZjBmMCIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMjAiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIiBmaWxsPSIjNjY2Ij5ObyBJbWFnZTwvdGV4dD48L3N2Zz4="

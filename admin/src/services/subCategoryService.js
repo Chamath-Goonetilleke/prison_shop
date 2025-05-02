@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = "http://localhost:8080/api/subcategories";
+const API_URL = "https://prison-shop.vercel.app/api/subcategories";
 
 const subCategoryService = {
   getAllSubCategories: async () => {

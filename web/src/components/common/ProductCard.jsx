@@ -12,7 +12,7 @@ export default function ProductCard({ product }) {
   };
 
   const imageUrl = product?.mainImage
-    ? `http://localhost:8080/uploads/products/${getFilenameFromPath(
+    ? `https://prison-shop.vercel.app/uploads/products/${getFilenameFromPath(
         product.mainImage
       )}`
     : "/bed.jpg";
