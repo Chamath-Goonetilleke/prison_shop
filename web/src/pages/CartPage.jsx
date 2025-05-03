@@ -18,8 +18,10 @@ import {
   Close as CloseIcon,
 } from "@mui/icons-material";
 import { useCart } from "../context/CartContext";
+import { useNavigate } from "react-router-dom";
 
 const CartPage = () => {
+  const navigate = useNavigate();
   const {
     cartItems,
     updateQuantity,
@@ -30,6 +32,11 @@ const CartPage = () => {
     setCartOpen,
     itemCount,
   } = useCart();
+
+  const handleCheckout = () => {
+    setCartOpen(false); // Close the cart drawer
+    navigate("/checkout"); // Navigate to checkout page
+  };
 
   return (
     <>
@@ -238,6 +245,7 @@ const CartPage = () => {
                 <Button
                   variant="contained"
                   fullWidth
+                  onClick={handleCheckout}
                   sx={{
                     bgcolor: "success.main",
                     "&:hover": {

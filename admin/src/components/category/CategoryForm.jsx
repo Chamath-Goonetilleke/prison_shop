@@ -46,10 +46,6 @@ const ATTRIBUTE_TYPES = [
   { value: "select", label: "Dropdown Select" },
   { value: "multiselect", label: "Multi-Select" },
   { value: "color", label: "Color" },
-  { value: "dimensions", label: "Dimensions" },
-  { value: "weight", label: "Weight" },
-  { value: "material", label: "Material" },
-  { value: "language", label: "Language" },
 ];
 
 export default function CategoryForm({ onBack, editCategory = null }) {
@@ -110,10 +106,7 @@ export default function CategoryForm({ onBack, editCategory = null }) {
       });
 
       if (editCategory.image) {
-        // Create a preview URL for existing image
-        const imagePath = editCategory.image;
-        const imageUrl = `http://localhost:8080/${imagePath}`;
-        setImagePreview(imageUrl);
+        setImagePreview(editCategory.image);
       }
 
       // Fetch subcategories for this category

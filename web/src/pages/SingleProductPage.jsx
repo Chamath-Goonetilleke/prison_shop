@@ -352,7 +352,10 @@ const SingleProductPage = () => {
         >
           <div>
             <Typography variant={isMobile ? "h5" : "h4"} fontWeight="bold">
-              {product.nameSi && product.nameSi} ({product.nameEn})
+              {product.nameSi && product.nameEn
+                ? `${product.nameSi} (${product.nameEn})`
+                : product.nameSi? product.nameSi
+                : product.nameEn && product.nameEn}
             </Typography>
             <Typography sx={{ py: "0.5rem" }}>
               <strong>Product Code: {product.productCode}</strong>

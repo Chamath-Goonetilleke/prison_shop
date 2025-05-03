@@ -15,9 +15,10 @@ import { AppProvider } from "@toolpad/core/AppProvider";
 import { DashboardLayout } from "@toolpad/core/DashboardLayout";
 import { useDemoRouter } from "@toolpad/core/internal";
 import CategoryManagement from "./category/CategoryManagement";
-import ProductManagement from './product/ProductManagement';
+import ProductManagement from "./product/ProductManagement";
 import OrderManagement from "./orders/OrderManagement";
 import SubCategoryManagement from "./category/SubCategoryManagement";
+import SettingsManagement from "./settings/SettingsManagement";
 
 const NAVIGATION = [
   {
@@ -39,17 +40,16 @@ const NAVIGATION = [
   },
 
   {
-  segment: "product-management",
-  title: "Product Management",
-  icon: <InventoryIcon />,
-  children: [
-
-    {
-      segment: "products",
-      title: "Products",
-      icon: <ShoppingBagIcon />, // More fitting for a list of products/items
-    },
-  ],
+    segment: "product-management",
+    title: "Product Management",
+    icon: <InventoryIcon />,
+    children: [
+      {
+        segment: "products",
+        title: "Products",
+        icon: <ShoppingBagIcon />, // More fitting for a list of products/items
+      },
+    ],
   },
 
   {
@@ -122,8 +122,11 @@ function AdminDashboard(props) {
         {router.pathname === "/categories/sub-categories" && (
           <SubCategoryManagement />
         )}
-        {router.pathname === "/product-management/products" && <ProductManagement />}
+        {router.pathname === "/product-management/products" && (
+          <ProductManagement />
+        )}
         {router.pathname === "/orders" && <OrderManagement />}
+        {router.pathname === "/settings" && <SettingsManagement />}
       </DashboardLayout>
     </AppProvider>
   );

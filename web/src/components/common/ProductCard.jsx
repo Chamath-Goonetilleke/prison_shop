@@ -95,7 +95,11 @@ export default function ProductCard({ product }) {
                 textOverflow: "ellipsis",
               }}
             >
-              {product.nameSi ? `${product.nameSi}` : product.nameEn}
+              {product.nameSi && product.nameEn
+                ? product.nameSi
+                : product.nameSi
+                ? product.nameSi
+                : product.nameEn && product.nameEn}
             </Typography>
             <Typography
               variant={isMobile ? "caption" : "body2"}
@@ -106,7 +110,7 @@ export default function ProductCard({ product }) {
                 textOverflow: "ellipsis",
               }}
             >
-              {product.nameEn}
+              {product.nameSi && product.nameEn && product.nameEn}
             </Typography>
             <Typography
               variant={isMobile ? "body2" : "subtitle1"}

@@ -120,6 +120,54 @@ function createTables() {
     )
   `;
 
+  // Orders table
+  const ordersTable = `
+    CREATE TABLE IF NOT EXISTS orders (
+      id INT PRIMARY KEY AUTO_INCREMENT,
+      orderNumber VARCHAR(50) NOT NULL,
+      customer_name VARCHAR(255) NOT NULL,
+      customer_email VARCHAR(255) NOT NULL,
+      customer_phone VARCHAR(50) NOT NULL,
+      delivery_address TEXT NOT NULL,
+      total_amount DECIMAL(10, 2) NOT NULL,
+      status ENUM('pending', 'approved', 'shipped', 'delivered', 'cancelled') DEFAULT 'pending',
+      payment_slip VARCHAR(255),
+      admin_notes TEXT,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    )
+  `;
+
+  // Order items table
+  const orderItemsTable = `
+    CREATE TABLE IF NOT EXISTS order_items (
+      id INT PRIMARY KEY AUTO_INCREMENT,
+      order_id INT NOT NULL,
+      product_id INT NOT NULL,
+      product_name VARCHAR(255) NOT NULL,
+      quantity INT NOT NULL,
+      price DECIMAL(10, 2) NOT NULL,
+      subtotal DECIMAL(10, 2) NOT NULL,
+      FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE,
+      FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE RESTRICT
+    )
+  `;
+
+  // Bank details table
+  const bankDetailsTable = `
+    CREATE TABLE IF NOT EXISTS bank_details (
+      id INT PRIMARY KEY AUTO_INCREMENT,
+      bank_name VARCHAR(255) NOT NULL,
+      account_name VARCHAR(255) NOT NULL,
+      account_number VARCHAR(50) NOT NULL,
+      branch VARCHAR(255) NOT NULL,
+      instructions TEXT,
+      active BOOLEAN DEFAULT true,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    )
+  `;
+
   // Execute table creation queries
   connection.query(categoriesTable, (err) => {
     if (err) {
@@ -166,6 +214,33 @@ function createTables() {
                 return;
               }
               console.log("Product images table created or already exists");
+
+              // Create orders table
+              connection.query(ordersTable, (err) => {
+                if (err) {
+                  console.error("Error creating orders table: ", err);
+                  return;
+                }
+                console.log("Orders table created or already exists");
+
+                // Create order items table after orders table
+                connection.query(orderItemsTable, (err) => {
+                  if (err) {
+                    console.error("Error creating order_items table: ", err);
+                    return;
+                  }
+                  console.log("Order items table created or already exists");
+                });
+
+                // Create bank details table
+                connection.query(bankDetailsTable, (err) => {
+                  if (err) {
+                    console.error("Error creating bank_details table: ", err);
+                    return;
+                  }
+                  console.log("Bank details table created or already exists");
+                });
+              });
             });
           });
         });
