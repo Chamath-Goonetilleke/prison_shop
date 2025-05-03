@@ -6,16 +6,7 @@ import Typography from "@mui/material/Typography";
 import CardActionArea from "@mui/material/CardActionArea";
 
 export default function ProductCard({ product }) {
-  const getFilenameFromPath = (path) => {
-    if (!path) return "";
-    return path.split("/").pop().split("\\").pop();
-  };
-
-  const imageUrl = product?.mainImage
-    ? `https://prison-shop.vercel.app/uploads/products/${getFilenameFromPath(
-        product.mainImage
-      )}`
-    : "/bed.jpg";
+  const imageUrl = product?.mainImage ? product.mainImage : "/bed.jpg";
 
   // Safely format the price
   const formatPrice = (price) => {

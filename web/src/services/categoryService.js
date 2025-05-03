@@ -1,12 +1,19 @@
 import axios from "axios";
 
-const API_URL = "https://prison-shop.vercel.app/api/categories";
+// Define base API URLs based on environment
+const BASE_URL =
+  process.env.NODE_ENV === "production"
+    ? "https://prison-shop.vercel.app/api"
+    : "http://localhost:8080/api";
+
+const CATEGORY_API_URL = `${BASE_URL}/categories`;
+const SUBCATEGORY_API_URL = `${BASE_URL}/subcategories`;
 
 const categoryService = {
   // Get all categories
   getAllCategories: async () => {
     try {
-      const response = await axios.get(API_URL);
+      const response = await axios.get(CATEGORY_API_URL);
       return response.data;
     } catch (error) {
       console.error("Error fetching categories:", error);
@@ -18,7 +25,7 @@ const categoryService = {
   getSubcategoriesByCategory: async (categoryId) => {
     try {
       const response = await axios.get(
-        `https://prison-shop.vercel.app/api/subcategories/category/${categoryId}`
+        `${SUBCATEGORY_API_URL}/category/${categoryId}`
       );
       return response.data;
     } catch (error) {
@@ -33,9 +40,7 @@ const categoryService = {
   // Get all subcategories
   getAllSubcategories: async () => {
     try {
-      const response = await axios.get(
-        "https://prison-shop.vercel.app/api/subcategories"
-      );
+      const response = await axios.get(SUBCATEGORY_API_URL);
       return response.data;
     } catch (error) {
       console.error("Error fetching all subcategories:", error);

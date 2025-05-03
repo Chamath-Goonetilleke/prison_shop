@@ -160,13 +160,9 @@ const SingleProductPage = () => {
   }
 
   const mainImageUrl = selectedImage
-    ? `https://prison-shop.vercel.app/uploads/products/${getFilenameFromPath(
-        selectedImage
-      )}`
+    ? selectedImage
     : product.mainImage
-    ? `https://prison-shop.vercel.app/uploads/products/${getFilenameFromPath(
-        product.mainImage
-      )}`
+    ? product.mainImage
     : "/bed.jpg";
 
   // Prepare attributes list for display
@@ -225,9 +221,7 @@ const SingleProductPage = () => {
               >
                 {/* Main image thumbnail */}
                 <img
-                  src={`https://prison-shop.vercel.app/uploads/products/${getFilenameFromPath(
-                    product.mainImage
-                  )}`}
+                  src={product.mainImage}
                   alt={product.nameEn}
                   onClick={() => handleThumbnailClick(product.mainImage)}
                   style={{
@@ -246,9 +240,7 @@ const SingleProductPage = () => {
                 {product.additionalImages.map((imagePath, index) => (
                   <img
                     key={index}
-                    src={`https://prison-shop.vercel.app/uploads/products/${getFilenameFromPath(
-                      imagePath
-                    )}`}
+                    src={imagePath}
                     alt={`${product.nameEn} -${index + 1}`}
                     onClick={() => handleThumbnailClick(imagePath)}
                     style={{

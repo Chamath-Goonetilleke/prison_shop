@@ -1,6 +1,10 @@
 import axios from "axios";
 
-const API_URL = "https://prison-shop.vercel.app/api/categories";
+// Define base API URL based on environment
+const API_URL =
+  process.env.NODE_ENV === "production"
+    ? "https://prison-shop.vercel.app/api/categories"
+    : "http://localhost:8080/api/categories";
 
 const categoryService = {
   // Get all categories

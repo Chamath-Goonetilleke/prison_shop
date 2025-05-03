@@ -103,7 +103,7 @@ const ProductView = ({ product, onBack, onEdit }) => {
             component="img"
             src={
               product.mainImage
-                ? `https://prison-shop.vercel.app/uploads/products/${getFilenameFromPath(product.mainImage)}`
+                ? product.mainImage
                 : "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2YwZjBmMCIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMjAiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIiBmaWxsPSIjNjY2Ij5ObyBJbWFnZTwvdGV4dD48L3N2Zz4="
             }
             alt={product.nameEn}
@@ -146,7 +146,7 @@ const ProductView = ({ product, onBack, onEdit }) => {
                   component="img"
                   src={
                     product.mainImage
-                      ? `https://prison-shop.vercel.app/uploads/products/${getFilenameFromPath(product.mainImage)}`
+                      ? product.mainImage
                       : "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2YwZjBmMCIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMjAiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIiBmaWxsPSIjNjY2Ij5ObyBJbWFnZTwvdGV4dD48L3N2Zz4="
                   }
                   alt={product.nameEn}
@@ -163,7 +163,7 @@ const ProductView = ({ product, onBack, onEdit }) => {
                   <Box
                     key={index}
                     component="img"
-                    src={`https://prison-shop.vercel.app/uploads/products/${getFilenameFromPath(image)}`}
+                    src={image}
                     alt={`${product.nameEn} - image ${index + 1}`}
                     sx={{
                       maxWidth: "120px",

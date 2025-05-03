@@ -94,20 +94,8 @@ const CategorySlider = () => {
       return category.image;
     }
 
-    // Otherwise use a placeholder based on code
-    const code = category.code.toLowerCase();
-    const placeholderImages = {
-      workshop: "/cat-workshop.png",
-      carpentry: "/cat-carpentry.png",
-      textiles: "/cat-textiles.png",
-      tailoring: "/cat-sewing.png",
-      brooms: "/cat-brooms_brushes.png",
-      bakery: "/cat-bakery.png",
-      masonry: "/cat-masonry.png",
-      stationery: "/cat-letter_covers.png",
-    };
-
-    return placeholderImages[code] || "/placeholder.png";
+    // Otherwise use a placeholder
+    return "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2YwZjBmMCIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMjAiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIiBmaWxsPSIjNjY2Ij5ObyBJbWFnZTwvdGV4dD48L3N2Zz4=";
   };
 
   // Function to get display name

@@ -448,13 +448,8 @@ export default function AddProductForm({ onBack, editProduct, mode = "add" }) {
 
       // Set preview images
       setPreviewImages({
-        mainImage: editProduct.mainImage
-          ? `https://prison-shop.vercel.app/uploads/products/${getFilenameFromPath(editProduct.mainImage)}`
-          : null,
-        additionalImages: (editProduct.additionalImages || []).map(
-          (image) =>
-            `https://prison-shop.vercel.app/uploads/products/${getFilenameFromPath(image)}`
-        ),
+        mainImage: editProduct.mainImage || null,
+        additionalImages: editProduct.additionalImages || [],
       });
 
       setNewProduct(productToEdit);
