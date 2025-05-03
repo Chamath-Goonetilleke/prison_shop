@@ -1,5 +1,12 @@
 import React, { useState, useRef, useEffect } from "react";
-import { IconButton, Box, Typography, CircularProgress } from "@mui/material";
+import {
+  IconButton,
+  Box,
+  Typography,
+  CircularProgress,
+  useMediaQuery,
+  useTheme,
+} from "@mui/material";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import categoryService from "../services/categoryService";
 
@@ -10,6 +17,9 @@ const CategorySlider = () => {
   const [showRightArrow, setShowRightArrow] = useState(true);
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const isTablet = useMediaQuery(theme.breakpoints.between("sm", "md"));
 
   // Fetch categories from the database
   useEffect(() => {
@@ -80,7 +90,7 @@ const CategorySlider = () => {
 
   const scroll = (direction) => {
     const container = scrollRef.current;
-    const scrollAmount = 300;
+    const scrollAmount = isMobile ? 200 : 300;
     container.scrollBy({
       left: direction === "left" ? -scrollAmount : scrollAmount,
       behavior: "smooth",
@@ -125,7 +135,13 @@ const CategorySlider = () => {
   }
 
   return (
-    <Box sx={{ position: "relative", width: "100%", padding: "20px" }}>
+    <Box
+      sx={{
+        position: "relative",
+        width: "100%",
+        padding: { xs: "10px", sm: "15px", md: "20px" },
+      }}
+    >
       <Box
         ref={scrollRef}
         onScroll={handleScroll}
@@ -138,8 +154,8 @@ const CategorySlider = () => {
           "&::-webkit-scrollbar": {
             display: "none",
           },
-          gap: "32px",
-          padding: "0 55px",
+          gap: { xs: "16px", sm: "24px", md: "32px" },
+          padding: { xs: "0 40px", sm: "0 50px", md: "0 55px" },
         }}
       >
         {categories.map((category) => (
@@ -160,8 +176,8 @@ const CategorySlider = () => {
           >
             <Box
               sx={{
-                width: 150,
-                height: 150,
+                width: { xs: 100, sm: 120, md: 150 },
+                height: { xs: 100, sm: 120, md: 150 },
                 borderRadius: "50%",
                 overflow: "hidden",
                 backgroundColor: "#f5f5f5",
@@ -182,8 +198,8 @@ const CategorySlider = () => {
             <Typography
               sx={{
                 textAlign: "center",
-                maxWidth: 150,
-                fontSize: "1rem",
+                maxWidth: { xs: 100, sm: 120, md: 150 },
+                fontSize: { xs: "0.8rem", sm: "0.9rem", md: "1rem" },
                 color: "#333",
               }}
             >
@@ -192,6 +208,45 @@ const CategorySlider = () => {
           </Box>
         ))}
       </Box>
+
+      {/* Left and Right arrow buttons with responsive sizing */}
+      <IconButton
+        onClick={() => scroll("left")}
+        sx={{
+          position: "absolute",
+          top: "50%",
+          left: { xs: 0, sm: 5 },
+          transform: "translateY(-50%)",
+          backgroundColor: "rgba(255,255,255,0.8)",
+          "&:hover": {
+            backgroundColor: "rgba(255,255,255,0.9)",
+          },
+          display: showLeftArrow ? "flex" : "none",
+          width: { xs: 32, sm: 40 },
+          height: { xs: 32, sm: 40 },
+        }}
+      >
+        <ChevronLeft size={isMobile ? 18 : 24} />
+      </IconButton>
+
+      <IconButton
+        onClick={() => scroll("right")}
+        sx={{
+          position: "absolute",
+          top: "50%",
+          right: { xs: 0, sm: 5 },
+          transform: "translateY(-50%)",
+          backgroundColor: "rgba(255,255,255,0.8)",
+          "&:hover": {
+            backgroundColor: "rgba(255,255,255,0.9)",
+          },
+          display: showRightArrow ? "flex" : "none",
+          width: { xs: 32, sm: 40 },
+          height: { xs: 32, sm: 40 },
+        }}
+      >
+        <ChevronRight size={isMobile ? 18 : 24} />
+      </IconButton>
     </Box>
   );
 };

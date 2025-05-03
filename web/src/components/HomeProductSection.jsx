@@ -2,13 +2,21 @@ import * as React from "react";
 import { useState, useEffect } from "react";
 import Box from "@mui/material/Box";
 import ProductCard from "./common/ProductCard";
-import { Typography, CircularProgress } from "@mui/material";
+import {
+  Typography,
+  CircularProgress,
+  useMediaQuery,
+  useTheme,
+} from "@mui/material";
 import ArrowForwardOutlinedIcon from "@mui/icons-material/ArrowForwardOutlined";
 import productService from "../services/productService";
 
 export default function HomeProductSection({ category, color }) {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const isTablet = useMediaQuery(theme.breakpoints.between("sm", "md"));
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -40,32 +48,37 @@ export default function HomeProductSection({ category, color }) {
       sx={{
         width: "100%",
         backgroundColor: color,
-        padding: "20px",
+        padding: { xs: "10px", sm: "15px", md: "20px" },
         borderRadius: "10px",
       }}
     >
       <Box>
-        <Typography fontSize={"25px"} fontWeight={"bold"}>
+        <Typography
+          fontSize={{ xs: "18px", sm: "22px", md: "25px" }}
+          fontWeight={"bold"}
+        >
           {category.nameSi} ({category.nameEn})
         </Typography>
         <Box
           sx={{
             display: "flex",
-            alignItems: "center",
+            flexDirection: { xs: "column", md: "row" },
+            alignItems: { xs: "center", md: "flex-start" },
             justifyContent: "space-between",
+            gap: { xs: "15px", md: "0" },
           }}
         >
           <Box
             style={{
               display: "flex",
-              justifyContent: "space-between",
+              justifyContent: "flex-start",
               padding: "10px",
               overflowX: "auto",
               scrollBehavior: "smooth",
               whiteSpace: "nowrap",
               flexGrow: 1,
-              maxWidth: "78%",
-              gap: "25px",
+              maxWidth: isMobile ? "100%" : isTablet ? "90%" : "78%",
+              gap: isMobile ? "10px" : "25px",
             }}
           >
             {loading ? (
@@ -79,7 +92,11 @@ export default function HomeProductSection({ category, color }) {
           <Box
             position="relative"
             display="inline-block"
-            sx={{ cursor: "pointer" }}
+            sx={{
+              cursor: "pointer",
+              width: { xs: "100%", md: "auto" },
+              textAlign: { xs: "center", md: "left" },
+            }}
             onClick={() => (window.location = `/category/${category.id}`)}
           >
             <img
@@ -89,8 +106,8 @@ export default function HomeProductSection({ category, color }) {
               }
               alt={category.name}
               style={{
-                maxWidth: 250,
-                minWidth: 250,
+                maxWidth: isMobile ? "100%" : 250,
+                minWidth: isMobile ? "auto" : 250,
                 maxHeight: 210,
                 borderRadius: "10px",
                 opacity: 0.6,
@@ -105,10 +122,10 @@ export default function HomeProductSection({ category, color }) {
                 backgroundColor: "#2a6595",
                 color: "white",
                 fontWeight: "bold",
-                fontSize: "21px",
+                fontSize: { xs: "16px", sm: "18px", md: "21px" },
                 textAlign: "center",
-                padding: "10px",
-                width: "65%",
+                padding: { xs: "8px", md: "10px" },
+                width: { xs: "75%", md: "65%" },
               }}
             >
               View More <ArrowForwardOutlinedIcon />

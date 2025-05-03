@@ -43,11 +43,7 @@ const NAVIGATION = [
   title: "Product Management",
   icon: <InventoryIcon />,
   children: [
-    {
-      segment: "product-search",
-      title: "Products Search",
-      icon: <SearchIcon />, // Better represents a search action
-    },
+
     {
       segment: "products",
       title: "Products",

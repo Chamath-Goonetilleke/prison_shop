@@ -16,6 +16,8 @@ import {
   TableContainer,
   TableRow,
   Chip,
+  useMediaQuery,
+  useTheme,
 } from "@mui/material";
 import { Add, Remove } from "@mui/icons-material";
 import Breadcrumb from "../components/common/BreadCrumb";
@@ -34,6 +36,9 @@ const SingleProductPage = () => {
   const [quantity, setQuantity] = useState(1);
   const [selectedImage, setSelectedImage] = useState(null);
   const scrollContainerRef = useRef(null);
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const isTablet = useMediaQuery(theme.breakpoints.between("sm", "md"));
 
   // Fetch product data
   useEffect(() => {
@@ -170,20 +175,40 @@ const SingleProductPage = () => {
   const hasAttributes = Object.keys(productAttributes).length > 0;
 
   return (
-    <div style={{ margin: "3rem" }}>
+    <div
+      style={{
+        margin: isMobile ? "1rem" : isTablet ? "2rem" : "3rem",
+      }}
+    >
       <Breadcrumb
         category={category}
         subcategory={subcategory}
         product={product}
       />
 
-      <div style={{ display: "flex", gap: "20px", padding: "20px" }}>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: isMobile ? "column" : "row",
+          gap: isMobile ? "10px" : "20px",
+          padding: isMobile ? "10px" : "20px",
+        }}
+      >
         {/* Left side - Images */}
-        <div style={{ flex: 1.3 }}>
+        <div
+          style={{
+            flex: isMobile ? "none" : 1.3,
+            width: isMobile ? "100%" : "auto",
+          }}
+        >
           <img
             src={mainImageUrl}
             alt={product.nameEn}
-            style={{ width: "100%", borderRadius: "10px", maxHeight: "70vh" }}
+            style={{
+              width: "100%",
+              borderRadius: "10px",
+              maxHeight: isMobile ? "50vh" : "70vh",
+            }}
           />
 
           {product.additionalImages && product.additionalImages.length > 0 && (
@@ -191,7 +216,8 @@ const SingleProductPage = () => {
               style={{
                 display: "flex",
                 alignItems: "center",
-                maxWidth: "95vh",
+                maxWidth: isMobile ? "100%" : "95vh",
+                marginTop: "10px",
               }}
             >
               {/* Left Arrow Button */}
@@ -203,7 +229,9 @@ const SingleProductPage = () => {
                   background: "none",
                 }}
               >
-                <ArrowCircleLeftOutlinedIcon fontSize="large" />
+                <ArrowCircleLeftOutlinedIcon
+                  fontSize={isMobile ? "medium" : "large"}
+                />
               </button>
 
               {/* Scrollable Image Container */}
@@ -211,12 +239,12 @@ const SingleProductPage = () => {
                 ref={scrollContainerRef}
                 style={{
                   display: "flex",
-                  padding: "10px",
+                  padding: isMobile ? "5px" : "10px",
                   overflowX: "hidden",
                   scrollBehavior: "smooth",
                   whiteSpace: "nowrap",
                   flexGrow: 1,
-                  gap: "10px",
+                  gap: isMobile ? "5px" : "10px",
                 }}
               >
                 {/* Main image thumbnail */}
@@ -225,8 +253,8 @@ const SingleProductPage = () => {
                   alt={product.nameEn}
                   onClick={() => handleThumbnailClick(product.mainImage)}
                   style={{
-                    minWidth: "150px",
-                    maxWidth: "150px",
+                    minWidth: isMobile ? "80px" : "150px",
+                    maxWidth: isMobile ? "80px" : "150px",
                     cursor: "pointer",
                     border:
                       selectedImage === product.mainImage
@@ -244,8 +272,8 @@ const SingleProductPage = () => {
                     alt={`${product.nameEn} -${index + 1}`}
                     onClick={() => handleThumbnailClick(imagePath)}
                     style={{
-                      minWidth: "150px",
-                      maxWidth: "150px",
+                      minWidth: isMobile ? "80px" : "150px",
+                      maxWidth: isMobile ? "80px" : "150px",
                       cursor: "pointer",
                       border:
                         selectedImage === imagePath
@@ -266,7 +294,9 @@ const SingleProductPage = () => {
                   background: "none",
                 }}
               >
-                <ArrowCircleRightOutlinedIcon fontSize="large" />
+                <ArrowCircleRightOutlinedIcon
+                  fontSize={isMobile ? "medium" : "large"}
+                />
               </button>
             </div>
           )}
@@ -275,15 +305,16 @@ const SingleProductPage = () => {
         {/* Right side - Product details */}
         <div
           style={{
-            flex: 1,
+            flex: isMobile ? "none" : 1,
             display: "flex",
             flexDirection: "column",
-            marginLeft: "2rem",
-            gap: "30px",
+            marginLeft: isMobile ? "0" : isTablet ? "1rem" : "2rem",
+            marginTop: isMobile ? "1rem" : "0",
+            gap: isMobile ? "15px" : "30px",
           }}
         >
           <div>
-            <Typography variant="h4" fontWeight="bold">
+            <Typography variant={isMobile ? "h5" : "h4"} fontWeight="bold">
               {product.nameSi && product.nameSi} ({product.nameEn})
             </Typography>
             <Typography sx={{ py: "0.5rem" }}>
@@ -293,14 +324,18 @@ const SingleProductPage = () => {
               <Chip
                 label={product.status || "In Stock"}
                 color={product.status === "Out of Stock" ? "error" : "success"}
-                size="medium"
+                size={isMobile ? "small" : "medium"}
               />
               {product.stock > 0
                 ? `${product.stock} units in stock`
                 : "Out of stock"}
             </Box>
 
-            <Typography variant="h5" color="primary" sx={{ mt: 6 }}>
+            <Typography
+              variant={isMobile ? "h6" : "h5"}
+              color="primary"
+              sx={{ mt: isMobile ? 3 : 6 }}
+            >
               Rs. {formatPrice(product.price)}
             </Typography>
           </div>
@@ -309,8 +344,8 @@ const SingleProductPage = () => {
             style={{
               display: "flex",
               alignItems: "center",
-              gap: "10px",
-              marginTop: "1rem",
+              gap: isMobile ? "5px" : "10px",
+              marginTop: isMobile ? "0" : "1rem",
             }}
           >
             <Typography variant="subtitle1" fontWeight="bold" sx={{ mr: 1 }}>
@@ -344,8 +379,8 @@ const SingleProductPage = () => {
             style={{
               display: "flex",
               flexDirection: "column",
-              gap: "20px",
-              marginTop: "3rem",
+              gap: isMobile ? "10px" : "20px",
+              marginTop: isMobile ? "1rem" : "3rem",
             }}
           >
             <Button
@@ -353,7 +388,7 @@ const SingleProductPage = () => {
               style={{
                 backgroundColor: "green",
                 color: "white",
-                height: "3rem",
+                height: isMobile ? "2.5rem" : "3rem",
               }}
               disabled={product.stock <= 0}
             >
@@ -361,7 +396,7 @@ const SingleProductPage = () => {
             </Button>
             <Button
               variant="outlined"
-              sx={{ height: "3rem" }}
+              sx={{ height: isMobile ? "2.5rem" : "3rem" }}
               disabled={product.stock <= 0}
             >
               BUY IT NOW
@@ -372,16 +407,21 @@ const SingleProductPage = () => {
 
       {/* Product Attributes/Specifications */}
       {hasAttributes && (
-        <div style={{ marginBottom: "2rem", marginTop: "2rem" }}>
+        <div
+          style={{
+            marginBottom: isMobile ? "1.5rem" : "2rem",
+            marginTop: isMobile ? "1.5rem" : "2rem",
+          }}
+        >
           <Typography variant="h6" fontWeight="bold" gutterBottom>
             Product Specifications
           </Typography>
           <TableContainer
             component={Paper}
             variant="outlined"
-            sx={{ width: "55%" }}
+            sx={{ width: isMobile ? "100%" : isTablet ? "75%" : "55%" }}
           >
-            <Table size="medium">
+            <Table size={isMobile ? "small" : "medium"}>
               <TableBody>
                 {Object.entries(productAttributes).map(([key, value]) => {
                   // Skip internal or empty attributes
@@ -394,10 +434,16 @@ const SingleProductPage = () => {
 
                   return (
                     <TableRow key={key}>
-                      <TableCell sx={{ fontWeight: "bold", width: "40%" }}>
+                      <TableCell
+                        sx={{
+                          fontWeight: "bold",
+                          width: "40%",
+                          padding: isMobile ? 1 : 2,
+                        }}
+                      >
                         {formattedKey}
                       </TableCell>
-                      <TableCell>
+                      <TableCell sx={{ padding: isMobile ? 1 : 2 }}>
                         {typeof value === "object"
                           ? JSON.stringify(value)
                           : value.toString()}
@@ -415,11 +461,17 @@ const SingleProductPage = () => {
 
       {/* Description */}
       {product.description && (
-        <div>
+        <div style={{ margin: isMobile ? "1rem 0" : 0 }}>
           <Typography variant="h6" fontWeight="bold" gutterBottom>
             Description
           </Typography>
-          <Typography variant="body1" sx={{ textAlign: "justify" }}>
+          <Typography
+            variant="body1"
+            sx={{
+              textAlign: "justify",
+              fontSize: isMobile ? "14px" : "16px",
+            }}
+          >
             {product.description}
           </Typography>
         </div>
