@@ -4,17 +4,18 @@ import HomePage from "./pages/HomePage";
 import NavBar from "./components/common/NavBar";
 import SingleProductPage from "./pages/SingleProductPage";
 import Footer from "./components/common/Footer";
+import { CartProvider } from "./context/CartContext";
 
 function App() {
   return (
-    <>
+    <CartProvider>
       <NavBar />
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/product/:productId" element={<SingleProductPage />} />
       </Routes>
-      <Footer/>
-    </>
+      <Footer />
+    </CartProvider>
   );
 }
 

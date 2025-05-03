@@ -4,11 +4,28 @@ import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
 import Typography from "@mui/material/Typography";
 import CardActionArea from "@mui/material/CardActionArea";
-import { useMediaQuery, useTheme } from "@mui/material";
+import {
+  useMediaQuery,
+  useTheme,
+  Button,
+  Box,
+  IconButton,
+  Snackbar,
+  Alert,
+} from "@mui/material";
+import { useNavigate } from "react-router-dom";
+import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
+import { useCart } from "../../context/CartContext";
 
 export default function ProductCard({ product }) {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const navigate = useNavigate();
+  const { addToCart } = useCart();
+  const [notification, setNotification] = React.useState({
+    open: false,
+    message: "",
+  });
 
   const imageUrl = product?.mainImage ? product.mainImage : "/bed.jpg";
 
@@ -21,42 +38,127 @@ export default function ProductCard({ product }) {
     return "0.00";
   };
 
+  const handleCardClick = () => {
+    navigate(`/product/${product.id}`);
+  };
+
+  const handleAddToCart = (e) => {
+    e.stopPropagation(); // Prevent the card click event
+    addToCart(product, 1);
+    setNotification({
+      open: true,
+      message: `${product.nameEn} added to cart!`,
+    });
+  };
+
+  const handleCloseNotification = () => {
+    setNotification({
+      ...notification,
+      open: false,
+    });
+  };
+
   return (
-    <div onClick={() => (window.location = `/product/${product?.id || ""}`)}>
+    <>
       <Card
         sx={{
-          maxWidth: { xs: 160, sm: 200, md: 250 },
-          minWidth: { xs: 160, sm: 200, md: 250 },
+          width: isMobile ? 150 : 200,
+          transition: "transform 0.2s",
+          "&:hover": {
+            transform: "scale(1.05)",
+            boxShadow: 3,
+          },
+          position: "relative",
         }}
       >
-        <CardActionArea>
+        <CardActionArea onClick={handleCardClick}>
           <CardMedia
             component="img"
-            height={isMobile ? "120" : "140"}
+            height={isMobile ? 120 : 180}
             image={imageUrl}
-            alt={product?.nameEn || "Product"}
+            alt={product.nameEn}
+            onError={(e) => {
+              e.target.onerror = null;
+              e.target.src =
+                "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2YwZjBmMCIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMjAiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIiBmaWxsPSIjNjY2Ij5ObyBJbWFnZTwvdGV4dD48L3N2Zz4=";
+            }}
           />
-          <CardContent sx={{ padding: isMobile ? 1 : 2 }}>
+          <CardContent sx={{ pt: 1, pb: "30px !important" }}>
             <Typography
               gutterBottom
-              fontSize={{ xs: "14px", sm: "16px", md: "17px" }}
-              component="center"
-            >
-              {product?.nameEn || "Product Name"}
-            </Typography>
-            <Typography
-              variant="body2"
-              component="center"
+              variant={isMobile ? "body2" : "subtitle1"}
+              component="div"
+              noWrap
               sx={{
-                color: "text.secondary",
-                fontSize: { xs: "13px", sm: "14px", md: "14px" },
+                fontWeight: "bold",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
               }}
             >
-              Rs {formatPrice(product?.price)}
+              {product.nameSi ? `${product.nameSi}` : product.nameEn}
+            </Typography>
+            <Typography
+              variant={isMobile ? "caption" : "body2"}
+              color="text.secondary"
+              noWrap
+              sx={{
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+              }}
+            >
+              {product.nameEn}
+            </Typography>
+            <Typography
+              variant={isMobile ? "body2" : "subtitle1"}
+              color="primary"
+              sx={{ mt: 1, fontWeight: "bold" }}
+            >
+              Rs. {formatPrice(product.price)}
             </Typography>
           </CardContent>
         </CardActionArea>
+
+        {/* Add to Cart Button positioned at bottom right */}
+        <Box
+          sx={{
+            position: "absolute",
+            bottom: 8,
+            right: 8,
+            zIndex: 1,
+          }}
+        >
+          <IconButton
+            size="small"
+            color="primary"
+            onClick={handleAddToCart}
+            sx={{
+              backgroundColor: "rgba(255,255,255,0.7)",
+              "&:hover": {
+                backgroundColor: "rgba(255,255,255,0.9)",
+              },
+            }}
+          >
+            <AddShoppingCartIcon fontSize={isMobile ? "small" : "medium"} />
+          </IconButton>
+        </Box>
       </Card>
-    </div>
+
+      {/* Notification */}
+      <Snackbar
+        open={notification.open}
+        autoHideDuration={2000}
+        onClose={handleCloseNotification}
+        anchorOrigin={{ vertical: "top", horizontal: "right" }}
+      >
+        <Alert
+          onClose={handleCloseNotification}
+          severity="success"
+          variant="filled"
+          sx={{ width: "100%" }}
+        >
+          {notification.message}
+        </Alert>
+      </Snackbar>
+    </>
   );
 }

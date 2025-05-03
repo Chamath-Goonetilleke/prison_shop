@@ -18,6 +18,8 @@ import {
   Chip,
   useMediaQuery,
   useTheme,
+  Snackbar,
+  Alert,
 } from "@mui/material";
 import { Add, Remove } from "@mui/icons-material";
 import Breadcrumb from "../components/common/BreadCrumb";
@@ -25,6 +27,7 @@ import ArrowCircleLeftOutlinedIcon from "@mui/icons-material/ArrowCircleLeftOutl
 import ArrowCircleRightOutlinedIcon from "@mui/icons-material/ArrowCircleRightOutlined";
 import productService from "../services/productService";
 import categoryService from "../services/categoryService";
+import { useCart } from "../context/CartContext";
 
 const SingleProductPage = () => {
   const { productId } = useParams();
@@ -35,10 +38,16 @@ const SingleProductPage = () => {
   const [error, setError] = useState(null);
   const [quantity, setQuantity] = useState(1);
   const [selectedImage, setSelectedImage] = useState(null);
+  const [notification, setNotification] = useState({
+    open: false,
+    message: "",
+    severity: "success",
+  });
   const scrollContainerRef = useRef(null);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const isTablet = useMediaQuery(theme.breakpoints.between("sm", "md"));
+  const { addToCart, setCartOpen } = useCart();
 
   // Fetch product data
   useEffect(() => {
@@ -127,6 +136,34 @@ const SingleProductPage = () => {
   // Handler for clicking on a thumbnail
   const handleThumbnailClick = (imagePath) => {
     setSelectedImage(imagePath);
+  };
+
+  // Handle add to cart
+  const handleAddToCart = () => {
+    if (product) {
+      addToCart(product, quantity);
+      setNotification({
+        open: true,
+        message: `${product.nameEn} added to cart successfully!`,
+        severity: "success",
+      });
+    }
+  };
+
+  // Handle buy now
+  const handleBuyNow = () => {
+    if (product) {
+      addToCart(product, quantity);
+      setCartOpen(true);
+    }
+  };
+
+  // Handle notification close
+  const handleCloseNotification = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setNotification({ ...notification, open: false });
   };
 
   // Loading state
@@ -391,6 +428,7 @@ const SingleProductPage = () => {
                 height: isMobile ? "2.5rem" : "3rem",
               }}
               disabled={product.stock <= 0}
+              onClick={handleAddToCart}
             >
               {product.stock > 0 ? "ADD TO CART" : "OUT OF STOCK"}
             </Button>
@@ -398,6 +436,7 @@ const SingleProductPage = () => {
               variant="outlined"
               sx={{ height: isMobile ? "2.5rem" : "3rem" }}
               disabled={product.stock <= 0}
+              onClick={handleBuyNow}
             >
               BUY IT NOW
             </Button>
@@ -476,6 +515,22 @@ const SingleProductPage = () => {
           </Typography>
         </div>
       )}
+
+      {/* Success notification */}
+      <Snackbar
+        open={notification.open}
+        autoHideDuration={3000}
+        onClose={handleCloseNotification}
+        anchorOrigin={{ vertical: "top", horizontal: "right" }}
+      >
+        <Alert
+          onClose={handleCloseNotification}
+          severity={notification.severity}
+          variant="filled"
+        >
+          {notification.message}
+        </Alert>
+      </Snackbar>
     </div>
   );
 };

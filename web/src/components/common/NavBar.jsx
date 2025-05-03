@@ -27,6 +27,8 @@ import {
   Divider,
 } from "@mui/material";
 import CartPage from "../../pages/CartPage";
+import { Link } from "react-router-dom";
+import { useCart } from "../../context/CartContext";
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -38,11 +40,25 @@ const Search = styled("div")(({ theme }) => ({
   },
 }));
 
+// Styled badge component for the cart
+const StyledBadge = styled(Badge)(({ theme }) => ({
+  "& .MuiBadge-badge": {
+    right: -3,
+    top: 2,
+    border: `2px solid ${theme.palette.background.paper}`,
+    padding: "0 4px",
+    backgroundColor: theme.palette.error.main,
+    color: "white",
+    fontWeight: "bold",
+  },
+}));
+
 export default function NavBar() {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const [searchExpanded, setSearchExpanded] = React.useState(false);
+  const { itemCount } = useCart();
 
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
@@ -152,7 +168,7 @@ export default function NavBar() {
       </Box>
       <Divider />
       <List>
-        <ListItem button>
+        <ListItem button component={Link} to="/">
           <ListItemText primary="Home" />
         </ListItem>
         <ListItem button>
@@ -206,7 +222,16 @@ export default function NavBar() {
                 <MenuIcon />
               </IconButton>
 
-              <Box sx={{ display: "flex", alignItems: "center" }}>
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  component: Link,
+                  to: "/",
+                }}
+                component={Link}
+                to="/"
+              >
                 <img
                   src="/main-only-logo.png"
                   alt="logo"
@@ -268,6 +293,8 @@ export default function NavBar() {
                   alignItems: "center",
                   margin: "10px",
                 }}
+                component={Link}
+                to="/"
               >
                 <img
                   src="/main-only-logo.png"
@@ -281,6 +308,7 @@ export default function NavBar() {
                   fontFamily={"monospace"}
                   fontWeight={"bold"}
                   fontSize={isTablet ? "12px" : "15px"}
+                  color="white"
                 >
                   CELLMADE
                 </Typography>
@@ -344,7 +372,7 @@ export default function NavBar() {
 
               <Box sx={{ flexGrow: 1 }} />
 
-              <Box sx={{ display: "flex" }}>
+              <Box sx={{ display: "flex", alignItems: "center" }}>
                 <CartPage />
                 <IconButton
                   sx={{ marginLeft: isTablet ? "1rem" : "2rem" }}
