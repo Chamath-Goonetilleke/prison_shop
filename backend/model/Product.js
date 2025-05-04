@@ -26,6 +26,7 @@ class Product {
     this.active = product.active || "Yes";
     this.category_id = product.category_id;
     this.subCategory_id = product.subCategory_id || null;
+    this.prison_id = product.prison_id || null;
     this.mainImage = product.mainImage;
     this.createdAt = new Date();
     this.updatedAt = new Date();
@@ -192,10 +193,12 @@ class Product {
       SELECT p.*, 
              c.nameEn as categoryName, c.code as categoryCode,
              s.nameEn as subCategoryName,
+             pr.nameEn as prisonName, pr.nameSi as prisonNameSi,
              GROUP_CONCAT(DISTINCT pi.image_path) AS additional_images
       FROM products p
       LEFT JOIN categories c ON p.category_id = c.id
       LEFT JOIN subcategories s ON p.subCategory_id = s.id
+      LEFT JOIN prisons pr ON p.prison_id = pr.id
       LEFT JOIN product_images pi ON p.id = pi.product_id
       GROUP BY p.id
       ORDER BY p.created_at DESC
@@ -273,10 +276,12 @@ class Product {
       SELECT p.*, 
              c.nameEn as categoryName, c.code as categoryCode,
              s.nameEn as subCategoryName,
+             pr.nameEn as prisonName, pr.nameSi as prisonNameSi,
              GROUP_CONCAT(DISTINCT pi.image_path) AS additional_images
       FROM products p
       LEFT JOIN categories c ON p.category_id = c.id
       LEFT JOIN subcategories s ON p.subCategory_id = s.id
+      LEFT JOIN prisons pr ON p.prison_id = pr.id
       LEFT JOIN product_images pi ON p.id = pi.product_id
       WHERE p.id = ?
       GROUP BY p.id
@@ -349,7 +354,7 @@ class Product {
     delete productData.attributes;
 
     db.query(
-      "UPDATE products SET nameEn = ?, nameSi = ?, description = ?, price = ?, stock = ?, status = ?, active = ?, category_id = ?, subCategory_id = ?, mainImage = ?, updated_at = ? WHERE id = ?",
+      "UPDATE products SET nameEn = ?, nameSi = ?, description = ?, price = ?, stock = ?, status = ?, active = ?, category_id = ?, subCategory_id = ?, prison_id = ?, mainImage = ?, updated_at = ? WHERE id = ?",
       [
         productData.nameEn,
         productData.nameSi,
@@ -360,6 +365,7 @@ class Product {
         productData.active,
         productData.category_id,
         productData.subCategory_id,
+        productData.prison_id,
         productData.mainImage,
         new Date(),
         productId,
@@ -569,11 +575,13 @@ class Product {
       SELECT p.*, 
              c.nameEn as categoryName, c.code as categoryCode,
              s.nameEn as subCategoryName,
+             pr.nameEn as prisonName, pr.nameSi as prisonNameSi,
              GROUP_CONCAT(DISTINCT pi.image_path) AS additional_images
       FROM products p
       LEFT JOIN categories c ON p.category_id = c.id
       LEFT JOIN subcategories s ON p.subCategory_id = s.id
       LEFT JOIN product_images pi ON p.id = pi.product_id
+      LEFT JOIN prisons pr ON p.prison_id = pr.id
       WHERE p.category_id = ?
       GROUP BY p.id
       ORDER BY p.created_at DESC

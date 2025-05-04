@@ -41,19 +41,10 @@ export default function Footer() {
               }}
             >
               <img
-                src="/main-only-logo.png"
+                src="/Prison_Craft_logo.png"
                 alt="main logo"
-                style={{ width: isMobile ? 100 : 130 }}
+                style={{ width: isMobile ? 120 : 160 }}
               />
-              <Typography
-                fontFamily={"monospace"}
-                fontWeight={"bold"}
-                fontSize={isMobile ? "18px" : "20px"}
-                color="white"
-                marginTop={"10px"}
-              >
-                CELLMADE
-              </Typography>
             </Box>
           </Grid>
 

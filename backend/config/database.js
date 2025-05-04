@@ -42,11 +42,28 @@ function createTables() {
       active ENUM('Yes', 'No') DEFAULT 'Yes',
       category_id INT NOT NULL,
       subCategory_id INT,
+      prison_id INT,
       mainImage VARCHAR(255),
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
       updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
       FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE CASCADE,
-      FOREIGN KEY (subCategory_id) REFERENCES subcategories(id) ON DELETE SET NULL
+      FOREIGN KEY (subCategory_id) REFERENCES subcategories(id) ON DELETE SET NULL,
+      FOREIGN KEY (prison_id) REFERENCES prisons(id) ON DELETE SET NULL
+    )
+  `;
+
+  // Prison table
+  const prisonsTable = `
+    CREATE TABLE IF NOT EXISTS prisons (
+      id INT PRIMARY KEY AUTO_INCREMENT,
+      prison_no VARCHAR(50) NOT NULL,
+      nameEn VARCHAR(255) NOT NULL,
+      nameSi VARCHAR(255),
+      location TEXT,
+      contact VARCHAR(50),
+      status ENUM('Active', 'Inactive') DEFAULT 'Active',
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
     )
   `;
 
@@ -184,61 +201,70 @@ function createTables() {
       }
       console.log("Subcategories table created or already exists");
 
-      // Create category attributes table
-      connection.query(categoryAttributesTable, (err) => {
+      // Create prisons table
+      connection.query(prisonsTable, (err) => {
         if (err) {
-          console.error("Error creating category_attributes table: ", err);
+          console.error("Error creating prisons table: ", err);
           return;
         }
-        console.log("Category attributes table created or already exists");
+        console.log("Prisons table created or already exists");
 
-        // Now create products table after the tables it references
-        connection.query(productsTable, (err) => {
+        // Create category attributes table
+        connection.query(categoryAttributesTable, (err) => {
           if (err) {
-            console.error("Error creating products table: ", err);
+            console.error("Error creating category_attributes table: ", err);
             return;
           }
-          console.log("Products table created or already exists");
+          console.log("Category attributes table created or already exists");
 
-          // Create product-related tables after products table
-          connection.query(attributesTable, (err) => {
+          // Now create products table after the tables it references
+          connection.query(productsTable, (err) => {
             if (err) {
-              console.error("Error creating product_attributes table: ", err);
+              console.error("Error creating products table: ", err);
               return;
             }
-            console.log("Product attributes table created or already exists");
+            console.log("Products table created or already exists");
 
-            connection.query(imagesTable, (err) => {
+            // Create product-related tables after products table
+            connection.query(attributesTable, (err) => {
               if (err) {
-                console.error("Error creating product_images table: ", err);
+                console.error("Error creating product_attributes table: ", err);
                 return;
               }
-              console.log("Product images table created or already exists");
+              console.log("Product attributes table created or already exists");
 
-              // Create orders table
-              connection.query(ordersTable, (err) => {
+              connection.query(imagesTable, (err) => {
                 if (err) {
-                  console.error("Error creating orders table: ", err);
+                  console.error("Error creating product_images table: ", err);
                   return;
                 }
-                console.log("Orders table created or already exists");
+                console.log("Product images table created or already exists");
 
-                // Create order items table after orders table
-                connection.query(orderItemsTable, (err) => {
+                // Create orders table
+                connection.query(ordersTable, (err) => {
                   if (err) {
-                    console.error("Error creating order_items table: ", err);
+                    console.error("Error creating orders table: ", err);
                     return;
                   }
-                  console.log("Order items table created or already exists");
-                });
+                  console.log("Orders table created or already exists");
 
-                // Create bank details table
-                connection.query(bankDetailsTable, (err) => {
-                  if (err) {
-                    console.error("Error creating bank_details table: ", err);
-                    return;
-                  }
-                  console.log("Bank details table created or already exists");
+                  // Create order items table after orders table
+                  connection.query(orderItemsTable, (err) => {
+                    if (err) {
+                      console.error("Error creating order_items table: ", err);
+                      return;
+                    }
+                    console.log("Order items table created or already exists");
+                  });
+
+                  // Create bank details table
+                  connection.query(bankDetailsTable, (err) => {
+                    if (err) {
+                      console.error("Error creating bank_details table: ", err);
+                      return;
+                    }
+                    console.log("Bank details table created or already exists");
+                  });
                 });
               });
             });

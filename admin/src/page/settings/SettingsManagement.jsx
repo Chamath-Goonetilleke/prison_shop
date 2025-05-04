@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Box, Tab, Tabs, Typography, Paper } from "@mui/material";
 import BankDetailsManagement from "./BankDetailsManagement";
+import PrisonManagement from "../../components/prison/PrisonManagement";
 
 // TabPanel component for tab content
 function TabPanel(props) {
@@ -48,12 +49,16 @@ export default function SettingsManagement() {
             aria-label="settings tabs"
           >
             <Tab label="Bank Details" {...a11yProps(0)} />
+            <Tab label="Prison Management" {...a11yProps(1)} />
             {/* Add more settings tabs as needed */}
           </Tabs>
         </Box>
 
         <TabPanel value={tabValue} index={0}>
           <BankDetailsManagement />
+        </TabPanel>
+        <TabPanel value={tabValue} index={1}>
+          <PrisonManagement />
         </TabPanel>
         {/* Add more TabPanels for other settings as needed */}
       </Paper>

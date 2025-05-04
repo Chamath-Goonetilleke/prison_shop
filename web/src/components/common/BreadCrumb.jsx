@@ -36,7 +36,7 @@ export default function Breadcrumb({ category, subcategory, product }) {
         {subcategory && (
           <Typography
             sx={{
-              color: "text.primary",
+              color: "black",
               display: "flex",
               alignItems: "center",
             }}

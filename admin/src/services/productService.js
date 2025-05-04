@@ -69,6 +69,7 @@ const productService = {
         productData.category_id || productData.category || ""
       );
       formData.append("subCategory_id", productData.subCategory || "");
+      formData.append("prison_id", productData.prison_id || "");
       formData.append("description", productData.description || "");
       // Product code will be auto-generated on the server
       // formData.append("productCode", productData.productCode || "");
@@ -149,6 +150,7 @@ const productService = {
         productData.category_id || productData.category || ""
       );
       formData.append("subCategory_id", productData.subCategory || "");
+      formData.append("prison_id", productData.prison_id || "");
       formData.append("description", productData.description || "");
       // Product code will be auto-generated on the server
       // formData.append("productCode", productData.productCode || "");

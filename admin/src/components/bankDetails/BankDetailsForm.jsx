@@ -53,7 +53,7 @@ const BankDetailsForm = ({ bankDetails, onSave, onCancel }) => {
       ...prev,
       [name]: value,
     }));
-    
+
     // Clear error for this field
     if (errors[name]) {
       setErrors((prev) => ({
@@ -85,18 +85,18 @@ const BankDetailsForm = ({ bankDetails, onSave, onCancel }) => {
     if (!formData.branch.trim()) {
       newErrors.branch = "Branch is required";
     }
-    
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!validateForm()) {
       return;
     }
-    
+
     setLoading(true);
     try {
       // If editing existing bank details
@@ -107,7 +107,7 @@ const BankDetailsForm = ({ bankDetails, onSave, onCancel }) => {
           message: "Bank details updated successfully",
           severity: "success",
         });
-      } 
+      }
       // If creating new bank details
       else {
         await bankDetailsService.createBankDetails(formData);
@@ -117,7 +117,7 @@ const BankDetailsForm = ({ bankDetails, onSave, onCancel }) => {
           severity: "success",
         });
       }
-      
+
       // Call onSave callback
       if (onSave) {
         onSave();
@@ -144,9 +144,11 @@ const BankDetailsForm = ({ bankDetails, onSave, onCancel }) => {
   return (
     <Paper elevation={3} sx={{ p: 3 }}>
       <Typography variant="h6" gutterBottom>
-        {bankDetails && bankDetails.id ? "Edit Bank Details" : "Add New Bank Details"}
+        {bankDetails && bankDetails.id
+          ? "Edit Bank Details"
+          : "Add New Bank Details"}
       </Typography>
-      
+
       <form onSubmit={handleSubmit}>
         <Grid container spacing={3}>
           <Grid item xs={12} sm={6}>
@@ -222,7 +224,11 @@ const BankDetailsForm = ({ bankDetails, onSave, onCancel }) => {
               label="Active (Show this account on checkout page)"
             />
           </Grid>
-          <Grid item xs={12} sx={{ display: "flex", justifyContent: "flex-end", gap: 2 }}>
+          <Grid
+            item
+            xs={12}
+            sx={{ display: "flex", justifyContent: "flex-end", gap: 2 }}
+          >
             {onCancel && (
               <Button variant="outlined" onClick={onCancel}>
                 Cancel
@@ -231,7 +237,9 @@ const BankDetailsForm = ({ bankDetails, onSave, onCancel }) => {
             <Button
               type="submit"
               variant="contained"
-              startIcon={loading ? <CircularProgress size={20} /> : <SaveIcon />}
+              startIcon={
+                loading ? <CircularProgress size={20} /> : <SaveIcon />
+              }
               disabled={loading}
             >
               {loading ? "Saving..." : "Save"}
@@ -239,7 +247,7 @@ const BankDetailsForm = ({ bankDetails, onSave, onCancel }) => {
           </Grid>
         </Grid>
       </form>
-      
+
       <Snackbar
         open={notification.open}
         autoHideDuration={6000}
@@ -258,4 +266,4 @@ const BankDetailsForm = ({ bankDetails, onSave, onCancel }) => {
   );
 };
 
-export default BankDetailsForm; 
+export default BankDetailsForm;

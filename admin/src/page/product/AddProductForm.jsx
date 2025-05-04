@@ -29,12 +29,9 @@ import StarBorderIcon from "@mui/icons-material/StarBorder";
 import productService from "../../services/productService";
 import categoryService from "../../services/categoryService";
 import subCategoryService from "../../services/subCategoryService";
+import prisonService from "../../services/prisonService";
 
 // Helper function to extract filename from path
-const getFilenameFromPath = (path) => {
-  if (!path) return "";
-  return path.split("/").pop().split("\\").pop();
-};
 
 // Will be loaded dynamically from the database
 const PRODUCT_TYPES = {};
@@ -54,205 +51,6 @@ const ATTRIBUTE_TYPES = {
 };
 
 // Product type attribute configurations
-const PRODUCT_TYPE_ATTRIBUTES = {
-  [PRODUCT_TYPES.WORKSHOP]: [
-    {
-      id: "subCategory",
-      name: "Sub Category",
-      type: ATTRIBUTE_TYPES.SELECT,
-      options: [
-        "කල්දේරම් / පිහි වර්ග (Kettles / Types of Knives)",
-        "ඇළුමිනියම් හැඳි වර්ග (Aluminum Spoons)",
-        "බාල්දි වර්ග (Buckets)",
-        "කේක් තැටි (Cake Trays)",
-        "යකඩ ඇඳන් (Iron Beds)",
-        "අත් මුල්ලු (Hand Tools/Joints)",
-        "දුම් කබල් (Smoke Chambers/Stoves)",
-        "ඉටිපන්දම් රඳවන (Candle Holders)",
-        "රේක්ක (Rakes)",
-        "අත් සවල් (Hand Shovels)",
-        "ලියුම් පෙට්ටි (Letter Boxes)",
-        "විවිධ විසිතුරු භාණ්ඩ (Various Ornaments/Decorations)",
-        "වෙනත් නිර්මාණ (Other Creations)",
-      ],
-    },
-    { id: "material", name: "Material", type: ATTRIBUTE_TYPES.TEXT },
-    { id: "dimensions", name: "Dimensions (cm)", type: ATTRIBUTE_TYPES.TEXT },
-    { id: "weight", name: "Weight (kg)", type: ATTRIBUTE_TYPES.NUMBER },
-    { id: "color", name: "Color", type: ATTRIBUTE_TYPES.COLOR },
-    { id: "finishType", name: "Finish Type", type: ATTRIBUTE_TYPES.TEXT },
-  ],
-
-  [PRODUCT_TYPES.CARPENTRY]: [
-    {
-      id: "subCategory",
-      name: "Sub Category",
-      type: ATTRIBUTE_TYPES.SELECT,
-      options: [
-        "ලී ඇඳන් (Wooden Beds)",
-        "පුටු (Chairs)",
-        "මේස (Tables)",
-        "හකුලන පුටු (Folding Chairs)",
-        "කණ්ණාඩි මේස (Dressing Tables/Mirror Tables)",
-        "අල්මාරි (Wardrobes/Cupboards)",
-        "විවිධ කැටයම් වර්ග (Various Carvings)",
-        "බුදු කුටි (Buddha Shrines)",
-        "අකුලන ස්ටුල් (Folding Stools)",
-        "පොල් කටු හැදි (Coconut Shell Spoons)",
-        "පාන් ලැලි (Bread Boards)",
-        "හැඳි පෙට්ටි (Spoon Boxes/Cutlery Holders)",
-        "ලුණු පොල්කටු (Salt Coconut Shells)",
-        "එළවළු කපන ලැලි (Vegetable Cutting Boards)",
-        "විදුරු කැබිනට් (Glass Cabinets)",
-      ],
-    },
-    { id: "woodType", name: "Wood Type", type: ATTRIBUTE_TYPES.TEXT },
-    { id: "dimensions", name: "Dimensions (cm)", type: ATTRIBUTE_TYPES.TEXT },
-    { id: "weight", name: "Weight (kg)", type: ATTRIBUTE_TYPES.NUMBER },
-    { id: "color", name: "Color/Finish", type: ATTRIBUTE_TYPES.TEXT },
-    {
-      id: "hasCarving",
-      name: "Has Carving",
-      type: ATTRIBUTE_TYPES.SELECT,
-      options: ["Yes", "No"],
-    },
-    {
-      id: "assembly",
-      name: "Assembly Required",
-      type: ATTRIBUTE_TYPES.SELECT,
-      options: ["Yes", "No"],
-    },
-  ],
-
-  [PRODUCT_TYPES.TEXTILES]: [
-    {
-      id: "subCategory",
-      name: "Sub Category",
-      type: ATTRIBUTE_TYPES.SELECT,
-      options: [
-        "බේඩ් ෂිට් (Bed Sheets)",
-        "අත් පිස්නා (Hand Towels)",
-        "හැන්ඩ් ලුම් සාරි (Handloom Sarees)",
-        "කොට්ට උර (Pillowcases)",
-        "තුවා (Towels)",
-      ],
-    },
-    { id: "material", name: "Material", type: ATTRIBUTE_TYPES.TEXT },
-    { id: "dimensions", name: "Dimensions (cm)", type: ATTRIBUTE_TYPES.TEXT },
-    { id: "color", name: "Color", type: ATTRIBUTE_TYPES.COLOR },
-    { id: "pattern", name: "Pattern/Design", type: ATTRIBUTE_TYPES.TEXT },
-    { id: "threadCount", name: "Thread Count", type: ATTRIBUTE_TYPES.NUMBER },
-  ],
-
-  [PRODUCT_TYPES.TAILORING]: [
-    {
-      id: "subCategory",
-      name: "Sub Category",
-      type: ATTRIBUTE_TYPES.SELECT,
-      options: [
-        "මදුරු නෙට් (Mosquito Nets)",
-        "කොට්ට උර (Pillowcases)",
-        "නිම කළ ඇඳුම් (Ready-made Garments)",
-        "පාසැල් නිළ ඇඳුම් (School Uniforms)",
-        "රෙදි බෑග් (Cloth Bags)",
-      ],
-    },
-    { id: "material", name: "Material", type: ATTRIBUTE_TYPES.TEXT },
-    {
-      id: "size",
-      name: "Size",
-      type: ATTRIBUTE_TYPES.SELECT,
-      options: ["XS", "S", "M", "L", "XL", "XXL", "Custom"],
-    },
-    { id: "color", name: "Color", type: ATTRIBUTE_TYPES.COLOR },
-    { id: "pattern", name: "Pattern/Design", type: ATTRIBUTE_TYPES.TEXT },
-    {
-      id: "customMeasurements",
-      name: "Custom Measurements",
-      type: ATTRIBUTE_TYPES.TEXTAREA,
-    },
-  ],
-
-  [PRODUCT_TYPES.BROOMS]: [
-    {
-      id: "subCategory",
-      name: "Sub Category",
-      type: ATTRIBUTE_TYPES.SELECT,
-      options: [
-        "කොසු මුස්න (Broom Handles)",
-        "ඉරටු ඉදල් (Coir Brushes)",
-        "B වර්ග (Type B)",
-      ],
-    },
-    { id: "material", name: "Material", type: ATTRIBUTE_TYPES.TEXT },
-    { id: "length", name: "Length (cm)", type: ATTRIBUTE_TYPES.NUMBER },
-    { id: "weight", name: "Weight (g)", type: ATTRIBUTE_TYPES.NUMBER },
-    {
-      id: "durability",
-      name: "Durability",
-      type: ATTRIBUTE_TYPES.SELECT,
-      options: ["Low", "Medium", "High"],
-    },
-  ],
-
-  [PRODUCT_TYPES.BAKERY]: [
-    { id: "subCategory", name: "Sub Category", type: ATTRIBUTE_TYPES.TEXT },
-    { id: "ingredients", name: "Ingredients", type: ATTRIBUTE_TYPES.TEXTAREA },
-    { id: "weight", name: "Weight (g)", type: ATTRIBUTE_TYPES.NUMBER },
-    {
-      id: "expiryDays",
-      name: "Shelf Life (days)",
-      type: ATTRIBUTE_TYPES.NUMBER,
-    },
-    {
-      id: "dietary",
-      name: "Dietary Labels",
-      type: ATTRIBUTE_TYPES.MULTISELECT,
-      options: ["Vegetarian", "Vegan", "Gluten-Free", "No Eggs", "No Dairy"],
-    },
-    { id: "storage", name: "Storage Instructions", type: ATTRIBUTE_TYPES.TEXT },
-  ],
-
-  [PRODUCT_TYPES.MASONRY]: [
-    {
-      id: "subCategory",
-      name: "Sub Category",
-      type: ATTRIBUTE_TYPES.SELECT,
-      options: [
-        "සිමේන්ති මල් පොච්චි වර්ග (Types of Cement Flower Pots)",
-        "ගඩොල් (Bricks)",
-      ],
-    },
-    { id: "material", name: "Material", type: ATTRIBUTE_TYPES.TEXT },
-    { id: "dimensions", name: "Dimensions (cm)", type: ATTRIBUTE_TYPES.TEXT },
-    { id: "weight", name: "Weight (kg)", type: ATTRIBUTE_TYPES.NUMBER },
-    { id: "color", name: "Color", type: ATTRIBUTE_TYPES.COLOR },
-    {
-      id: "weatherResistant",
-      name: "Weather Resistant",
-      type: ATTRIBUTE_TYPES.SELECT,
-      options: ["Yes", "No"],
-    },
-  ],
-
-  [PRODUCT_TYPES.STATIONERY]: [
-    {
-      id: "subCategory",
-      name: "Sub Category",
-      type: ATTRIBUTE_TYPES.SELECT,
-      options: ["ලිපි කවර (Letter Covers)", "බේහෙත් කවර (Medicine Covers)"],
-    },
-    { id: "material", name: "Material", type: ATTRIBUTE_TYPES.TEXT },
-    { id: "dimensions", name: "Dimensions (cm)", type: ATTRIBUTE_TYPES.TEXT },
-    { id: "color", name: "Color", type: ATTRIBUTE_TYPES.COLOR },
-    {
-      id: "paperWeight",
-      name: "Paper Weight (gsm)",
-      type: ATTRIBUTE_TYPES.NUMBER,
-    },
-    { id: "printType", name: "Print Type", type: ATTRIBUTE_TYPES.TEXT },
-  ],
-};
 
 export default function AddProductForm({ onBack, editProduct, mode = "add" }) {
   const [newProduct, setNewProduct] = useState({
@@ -266,6 +64,7 @@ export default function AddProductForm({ onBack, editProduct, mode = "add" }) {
     category: "",
     category_id: "",
     subCategory: "",
+    prison_id: "",
     status: "In Stock",
     active: "Yes",
     type: "",
@@ -290,6 +89,8 @@ export default function AddProductForm({ onBack, editProduct, mode = "add" }) {
     message: "",
     severity: "success",
   });
+
+  const [prisons, setPrisons] = useState([]);
 
   const mainImageInputRef = useRef(null);
   const additionalImagesInputRef = useRef(null);
@@ -414,6 +215,21 @@ export default function AddProductForm({ onBack, editProduct, mode = "add" }) {
     }
   };
 
+  // Fetch prisons on component mount
+  useEffect(() => {
+    const fetchPrisons = async () => {
+      try {
+        const data = await prisonService.getActivePrisons();
+        setPrisons(data);
+      } catch (error) {
+        console.error("Error fetching prisons:", error);
+        showNotification("Error loading prisons", "error");
+      }
+    };
+
+    fetchPrisons();
+  }, []);
+
   // Add a useEffect to populate form when in edit mode
   useEffect(() => {
     if (mode === "edit" && editProduct) {
@@ -438,6 +254,7 @@ export default function AddProductForm({ onBack, editProduct, mode = "add" }) {
         category: "",
         category_id: editProduct.category_id,
         subCategory: editProduct.subCategory_id || "",
+        prison_id: editProduct.prison_id || "",
         status: editProduct.status || "In Stock",
         active: editProduct.active || "Yes",
         type: categoryCode, // Use the category code from the found category
@@ -668,6 +485,7 @@ export default function AddProductForm({ onBack, editProduct, mode = "add" }) {
         category_id: newProduct.category_id, // Add category_id to product data
         subCategory: newProduct.subCategory,
         mainImage: newProduct.mainImage,
+        prison_id: newProduct.prison_id,
         additionalImages: newProduct.additionalImages,
         attributes: newProduct.attributes,
       };
@@ -1015,14 +833,26 @@ export default function AddProductForm({ onBack, editProduct, mode = "add" }) {
           </FormControl>
         </div>
 
-        <div
-          style={{
-            display: "flex",
-            width: "100%",
-            gap: "1rem",
-            marginBottom: "16px",
-          }}
-        >
+        <div style={{ display: "flex", width: "100%", gap: "1rem" }}>
+          <FormControl fullWidth margin="normal">
+            <InputLabel>Prison</InputLabel>
+            <Select
+              name="prison_id"
+              value={newProduct.prison_id}
+              label="Prison"
+              onChange={handleBasicInfoChange}
+            >
+              <MenuItem value="">Select Prison</MenuItem>
+              {prisons.map((prison) => (
+                <MenuItem key={prison.id} value={prison.id}>
+                  {prison.nameSi
+                    ? `${prison.nameEn} (${prison.nameSi})`
+                    : prison.nameEn}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+
           <FormControl fullWidth margin="normal">
             <InputLabel>Status</InputLabel>
             <Select
@@ -1035,7 +865,16 @@ export default function AddProductForm({ onBack, editProduct, mode = "add" }) {
               <MenuItem value="Out of Stock">Out of Stock</MenuItem>
             </Select>
           </FormControl>
+        </div>
 
+        <div
+          style={{
+            display: "flex",
+            width: "100%",
+            gap: "1rem",
+            marginBottom: "16px",
+          }}
+        >
           <FormControl fullWidth margin="normal">
             <InputLabel>Active</InputLabel>
             <Select

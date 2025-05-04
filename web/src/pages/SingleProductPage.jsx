@@ -354,13 +354,26 @@ const SingleProductPage = () => {
             <Typography variant={isMobile ? "h5" : "h4"} fontWeight="bold">
               {product.nameSi && product.nameEn
                 ? `${product.nameSi} (${product.nameEn})`
-                : product.nameSi? product.nameSi
+                : product.nameSi
+                ? product.nameSi
                 : product.nameEn && product.nameEn}
             </Typography>
             <Typography sx={{ py: "0.5rem" }}>
               <strong>Product Code: {product.productCode}</strong>
             </Typography>
+
             <Box sx={{ mt: 2, display: "flex", alignItems: "center", gap: 2 }}>
+              {product.prisonName && (
+                <Chip
+                  label={
+                    product.prisonNameSi && product.prisonName
+                      ? `${product.prisonNameSi} (${product.prisonName})`
+                      : product.prisonName || ""
+                  }
+                  color={"primary"}
+                  size={isMobile ? "small" : "medium"}
+                ></Chip>
+              )}
               <Chip
                 label={product.status || "In Stock"}
                 color={product.status === "Out of Stock" ? "error" : "success"}
@@ -373,7 +386,6 @@ const SingleProductPage = () => {
 
             <Typography
               variant={isMobile ? "h6" : "h5"}
-              color="primary"
               sx={{ mt: isMobile ? 3 : 6 }}
             >
               Rs. {formatPrice(product.price)}

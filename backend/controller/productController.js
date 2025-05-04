@@ -37,6 +37,7 @@ exports.create = async (req, res) => {
       active: req.body.active || "Yes",
       category_id: req.body.category_id,
       subCategory_id: req.body.subCategory_id || null,
+      prison_id: req.body.prison_id || null,
     };
 
     // Upload main image to Cloudinary
@@ -193,6 +194,7 @@ exports.update = async (req, res) => {
       active: req.body.active || "Yes",
       category_id: req.body.category_id,
       subCategory_id: req.body.subCategory_id || null,
+      prison_id: req.body.prison_id || null,
       attributes: req.body.attributes ? JSON.parse(req.body.attributes) : {},
     };
 

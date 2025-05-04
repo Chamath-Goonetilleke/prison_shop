@@ -57,7 +57,7 @@ export default function NavBar() {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
   const [mobileOpen, setMobileOpen] = React.useState(false);
-  const [searchExpanded, setSearchExpanded] = React.useState(false);
+  const [searchExpanded, setSearchExpanded] = React.useState(true);
   const { itemCount } = useCart();
 
   const theme = useTheme();
@@ -150,21 +150,21 @@ export default function NavBar() {
     <Box onClick={handleDrawerToggle} sx={{ textAlign: "center" }}>
       <Box sx={{ display: "flex", justifyContent: "center", p: 2 }}>
         <img
-          src="/main-only-logo.png"
+          src="/Prison_Craft_logo.png"
           alt="logo"
           style={{
             width: 50,
             height: 50,
           }}
         />
-        <Typography
+        {/* <Typography
           fontFamily={"monospace"}
           fontWeight={"bold"}
           fontSize={"15px"}
           sx={{ my: 2 }}
         >
           CELLMADE
-        </Typography>
+        </Typography> */}
       </Box>
       <Divider />
       <List>
@@ -226,34 +226,32 @@ export default function NavBar() {
                 sx={{
                   display: "flex",
                   alignItems: "center",
-                  component: Link,
                   to: "/",
                 }}
                 component={Link}
                 to="/"
               >
                 <img
-                  src="/main-only-logo.png"
+                  src="/Prison_Craft_logo.png"
                   alt="logo"
                   style={{
-                    width: 40,
-                    height: 40,
+                    marginLeft: "20px",
+                    width: 60,
+                    height: 60,
                   }}
                 />
-                <Typography
+                {/* <Typography
                   fontFamily={"monospace"}
                   fontWeight={"bold"}
                   fontSize={"12px"}
                   sx={{ ml: 1 }}
                 >
                   CELLMADE
-                </Typography>
+                </Typography> */}
               </Box>
 
               <Box sx={{ display: "flex" }}>
-                <IconButton color="inherit" onClick={toggleSearchExpanded}>
-                  <SearchIcon />
-                </IconButton>
+               
                 <CartPage />
               </Box>
             </Box>
@@ -297,21 +295,21 @@ export default function NavBar() {
                 to="/"
               >
                 <img
-                  src="/main-only-logo.png"
+                  src="/Prison_Craft_logo.png"
                   alt="logo"
                   style={{
-                    width: isTablet ? 50 : 70,
-                    height: isTablet ? 50 : 70,
+                    width: isTablet ? 50 : 80,
+                    height: isTablet ? 50 : 80,
                   }}
                 />
-                <Typography
+                {/* <Typography
                   fontFamily={"monospace"}
                   fontWeight={"bold"}
                   fontSize={isTablet ? "12px" : "15px"}
                   color="white"
                 >
                   CELLMADE
-                </Typography>
+                </Typography> */}
               </Box>
 
               <div style={{ display: "flex", width: isTablet ? "40%" : "60%" }}>

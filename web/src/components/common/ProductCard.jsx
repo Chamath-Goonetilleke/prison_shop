@@ -12,6 +12,7 @@ import {
   IconButton,
   Snackbar,
   Alert,
+  Chip,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
@@ -112,13 +113,22 @@ export default function ProductCard({ product }) {
             >
               {product.nameSi && product.nameEn && product.nameEn}
             </Typography>
-            <Typography
-              variant={isMobile ? "body2" : "subtitle1"}
-              color="primary"
-              sx={{ mt: 1, fontWeight: "bold" }}
-            >
-              Rs. {formatPrice(product.price)}
-            </Typography>
+            {/* Show prison information if available */}
+
+            {product.status !== "Out of Stock" ? (
+              <Typography
+                variant={isMobile ? "body2" : "subtitle1"}
+                sx={{ mt: 1, fontWeight: "bold" }}
+              >
+                Rs. {formatPrice(product.price)}
+              </Typography>
+            ) : (
+              <Chip
+                label={"Out of Stock"}
+                color={"error"}
+                size={isMobile ? "small" : "medium"}
+              />
+            )}
           </CardContent>
         </CardActionArea>
 
@@ -144,6 +154,22 @@ export default function ProductCard({ product }) {
           >
             <AddShoppingCartIcon fontSize={isMobile ? "small" : "medium"} />
           </IconButton>
+        </Box>
+        <Box
+          sx={{
+            position: "absolute",
+            top: 8,
+            right: 8,
+            zIndex: 1,
+          }}
+        >
+          {product.prisonName && (
+            <Chip
+              label={product.prisonName}
+              color={"primary"}
+              size={"small"}
+            ></Chip>
+          )}
         </Box>
       </Card>
 

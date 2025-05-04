@@ -13,6 +13,7 @@ const categoryRoutes = require("./routes/categoryRoutes");
 const subCategoryRoutes = require("./routes/subCategoryRoutes");
 const orderRoutes = require("./routes/orderRoutes");
 const bankDetailsRoutes = require("./routes/bankDetailsRoutes");
+const prisonRoutes = require("./routes/prisonRoutes");
 
 // Create Express app
 const app = express();
@@ -32,6 +33,7 @@ app.use("/api/categories", categoryRoutes);
 app.use("/api/subcategories", subCategoryRoutes);
 app.use("/api/orders", orderRoutes);
 app.use("/api/bank-details", bankDetailsRoutes);
+app.use("/api/prisons", prisonRoutes);
 
 // Define a simple route for testing
 app.get("/", (req, res) => {

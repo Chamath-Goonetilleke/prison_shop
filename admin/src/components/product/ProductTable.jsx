@@ -37,6 +37,7 @@ const columns = [
   { id: "nameSi", label: "Name(Sinhala)", minWidth: 170 },
   { id: "type", label: "Category", minWidth: 100 },
   { id: "subCategory", label: "Sub Category", minWidth: 100 },
+  { id: "prisonName", label: "Prison", minWidth: 100 },
   { id: "price", label: "Price", minWidth: 100 },
   { id: "stock", label: "Stock", minWidth: 80 },
   { id: "status", label: "Status", minWidth: 100 },
