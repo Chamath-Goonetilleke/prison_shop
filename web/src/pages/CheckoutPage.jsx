@@ -17,15 +17,21 @@ import {
   Card,
   CardContent,
   CardHeader,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import orderService from "../services/orderService";
 import bankDetailsService from "../services/bankDetailsService";
+import productService from "../services/productService";
 import { useCart } from "../context/CartContext";
 
 const CheckoutPage = () => {
   const navigate = useNavigate();
-  const { cartItems: cart, clearCart } = useCart();
+  const { cartItems: cart, clearCart, removeItem } = useCart();
   const [totalAmount, setTotalAmount] = useState(0);
   const [loading, setLoading] = useState(false);
   const [bankDetails, setBankDetails] = useState([]);
@@ -43,6 +49,10 @@ const CheckoutPage = () => {
     delivery_address: "",
   });
   const [formErrors, setFormErrors] = useState({});
+  const [stockDialog, setStockDialog] = useState({
+    open: false,
+    unavailableItems: [],
+  });
 
   // Calculate total amount when cart changes
   useEffect(() => {
@@ -120,6 +130,23 @@ const CheckoutPage = () => {
     return Object.keys(errors).length === 0;
   };
 
+  // Handle removing unavailable items
+  const handleRemoveUnavailableItems = () => {
+    // Remove each unavailable item from the cart
+    stockDialog.unavailableItems.forEach((item) => {
+      removeItem(item.product_id);
+    });
+
+    // Close the dialog
+    setStockDialog({ open: false, unavailableItems: [] });
+
+    setNotification({
+      open: true,
+      message: "Unavailable items removed from cart",
+      severity: "info",
+    });
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -138,6 +165,18 @@ const CheckoutPage = () => {
 
     try {
       setLoading(true);
+
+      // First check stock availability
+      const stockStatus = await productService.checkStockAvailability(cart);
+
+      // If any items are unavailable, show dialog and stop checkout
+      if (!stockStatus.allAvailable) {
+        setStockDialog({
+          open: true,
+          unavailableItems: stockStatus.unavailableItems,
+        });
+        return;
+      }
 
       // Prepare cart items for order submission
       const orderItems = cart.map((item) => ({
@@ -412,6 +451,53 @@ const CheckoutPage = () => {
         </Grid>
       )}
 
+      {/* Stock Availability Dialog */}
+      <Dialog
+        open={stockDialog.open}
+        onClose={() => setStockDialog({ open: false, unavailableItems: [] })}
+      >
+        <DialogTitle>Out of Stock Items</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Some items in your cart are no longer available:
+          </DialogContentText>
+          <List>
+            {stockDialog.unavailableItems.map((item) => (
+              <ListItem key={item.product_id}>
+                <ListItemText
+                  primary={item.product_name}
+                  secondary={
+                    item.reason === "Out of stock"
+                      ? "This item is out of stock"
+                      : `Only ${item.available} available (you requested ${item.requested})`
+                  }
+                />
+              </ListItem>
+            ))}
+          </List>
+          <DialogContentText sx={{ mt: 2 }}>
+            Please remove these items from your cart to proceed with checkout.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={() =>
+              setStockDialog({ open: false, unavailableItems: [] })
+            }
+          >
+            Cancel
+          </Button>
+          <Button
+            onClick={handleRemoveUnavailableItems}
+            color="primary"
+            variant="contained"
+          >
+            Remove Unavailable Items
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Notification Snackbar */}
       <Snackbar
         open={notification.open}
         autoHideDuration={6000}

@@ -114,9 +114,16 @@ const SingleProductPage = () => {
   };
 
   const handleQuantityChange = (type) => {
-    setQuantity((prev) =>
-      type === "increase" ? prev + 1 : prev > 1 ? prev - 1 : 1
-    );
+    setQuantity((prev) => {
+      // Get the maximum allowed quantity based on stock
+      const maxQuantity = product.stock || 0;
+
+      // Calculate the new quantity
+      const newQuantity = type === "increase" ? prev + 1 : prev - 1;
+
+      // Ensure the quantity is between 1 and available stock
+      return Math.max(1, Math.min(newQuantity, maxQuantity));
+    });
   };
 
   // Helper function to format price
@@ -140,21 +147,33 @@ const SingleProductPage = () => {
 
   // Handle add to cart
   const handleAddToCart = () => {
-    if (product) {
+    if (product && product.stock > 0) {
       addToCart(product, quantity);
       setNotification({
         open: true,
         message: `${product.nameEn} added to cart successfully!`,
         severity: "success",
       });
+    } else {
+      setNotification({
+        open: true,
+        message: "This product is out of stock",
+        severity: "error",
+      });
     }
   };
 
   // Handle buy now
   const handleBuyNow = () => {
-    if (product) {
+    if (product && product.stock > 0) {
       addToCart(product, quantity);
       setCartOpen(true);
+    } else {
+      setNotification({
+        open: true,
+        message: "This product is out of stock",
+        severity: "error",
+      });
     }
   };
 

@@ -20,6 +20,18 @@ const categoryService = {
       throw error;
     }
   },
+  // Get all categories with products
+  getAllProductCategories: async () => {
+    try {
+      const response = await axios.get(
+        CATEGORY_API_URL + "/with-products/list"
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching categories:", error);
+      throw error;
+    }
+  },
 
   // Get subcategories for a specific category
   getSubcategoriesByCategory: async (categoryId) => {

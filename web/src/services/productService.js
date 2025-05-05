@@ -71,6 +71,23 @@ const productService = {
       throw error;
     }
   },
+
+  // Check stock availability for cart items
+  checkStockAvailability: async (cartItems) => {
+    try {
+      // Transform cart items to the format expected by the API
+      const items = cartItems.map((item) => ({
+        product_id: item.id,
+        quantity: item.quantity,
+      }));
+
+      const response = await axios.post(`${API_URL}/check-stock`, { items });
+      return response.data;
+    } catch (error) {
+      console.error("Error checking stock availability:", error);
+      throw error;
+    }
+  },
 };
 
 export default productService;
