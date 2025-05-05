@@ -165,7 +165,7 @@ export default function ProductCard({ product }) {
         >
           {product.prisonName && (
             <Chip
-              label={product.prisonName}
+              label={product.prisonNameSi}
               color={"primary"}
               size={"small"}
             ></Chip>

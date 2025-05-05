@@ -13,6 +13,7 @@ import {
 import CategorySlider from "../components/CategorySlider";
 import HomeProductSection from "../components/HomeProductSection";
 import categoryService from "../services/categoryService";
+import prisonService from "../services/prisonService";
 
 const BACKGROUND_COLORS = [
   "#fdf2e4", // Light orange
@@ -29,6 +30,7 @@ export default function HomePage() {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const isTablet = useMediaQuery(theme.breakpoints.between("sm", "md"));
+  const[prisons, setPrisons] = useState([])
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -42,6 +44,17 @@ export default function HomePage() {
       }
     };
 
+    const fetchPrisons=async()=>{
+      try {
+        const data = await prisonService.getAllPrisons();
+        setPrisons(data);
+      } catch (error) {
+        console.error("Error fetching prisons:", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+fetchPrisons();
     fetchCategories();
   }, []);
 
@@ -60,62 +73,16 @@ export default function HomePage() {
         {isMobile && (
           <Box sx={{ display: "flex", gap: 2 }}>
             <CategoryMenu />
-            <Typography
+           { prisons.map((prison, index)=>(
+              <Typography
               sx={{ cursor: "pointer", px: 1 }}
               fontWeight="bold"
               fontSize="15px"
             >
-              වැලිකඩ
+              {prison.nameSi}
             </Typography>
-            <Typography
-              sx={{ cursor: "pointer", px: 1 }}
-              fontWeight="bold"
-              fontSize="15px"
-            >
-              බෝගම්බර
-            </Typography>
-            <Typography
-              sx={{ cursor: "pointer", px: 1 }}
-              fontWeight="bold"
-              fontSize="15px"
-            >
-              මහර
-            </Typography>
-            <Typography
-              sx={{ cursor: "pointer", px: 1 }}
-              fontWeight="bold"
-              fontSize="15px"
-            >
-              අනුරාධපුර
-            </Typography>
-            <Typography
-              sx={{ cursor: "pointer", px: 1 }}
-              fontWeight="bold"
-              fontSize="15px"
-            >
-              පල්ලේකැලේ
-            </Typography>
-            <Typography
-              sx={{ cursor: "pointer", px: 1 }}
-              fontWeight="bold"
-              fontSize="15px"
-            >
-              පල්ලන්සේන
-            </Typography>
-            <Typography
-              sx={{ cursor: "pointer", px: 1 }}
-              fontWeight="bold"
-              fontSize="15px"
-            >
-              තල්දෙන
-            </Typography>
-            <Typography
-              sx={{ cursor: "pointer", px: 1 }}
-              fontWeight="bold"
-              fontSize="15px"
-            >
-              අගුණ කොළ
-            </Typography>
+            ))}
+            
           </Box>
         )}
 
@@ -124,67 +91,21 @@ export default function HomePage() {
           <Box
             sx={{
               display: "flex",
-              justifyContent: "space-between",
               alignItems: "center",
+              gap:"1rem"
             }}
           >
             <CategoryMenu />
-            <Typography
+            { prisons.map((prison, index)=>(
+              <Typography
               sx={{ cursor: "pointer" }}
               fontWeight="bold"
               fontSize={isTablet ? "15px" : "17px"}
             >
-              වැලිකඩ
+              {prison.nameSi}
             </Typography>
-            <Typography
-              sx={{ cursor: "pointer" }}
-              fontWeight="bold"
-              fontSize={isTablet ? "15px" : "17px"}
-            >
-              බෝගම්බර
-            </Typography>
-            <Typography
-              sx={{ cursor: "pointer" }}
-              fontWeight="bold"
-              fontSize={isTablet ? "15px" : "17px"}
-            >
-              මහර
-            </Typography>
-            <Typography
-              sx={{ cursor: "pointer" }}
-              fontWeight="bold"
-              fontSize={isTablet ? "15px" : "17px"}
-            >
-              අනුරාධපුර
-            </Typography>
-            <Typography
-              sx={{ cursor: "pointer" }}
-              fontWeight="bold"
-              fontSize={isTablet ? "15px" : "17px"}
-            >
-              පල්ලේකැලේ
-            </Typography>
-            <Typography
-              sx={{ cursor: "pointer" }}
-              fontWeight="bold"
-              fontSize={isTablet ? "15px" : "17px"}
-            >
-              පල්ලන්සේන
-            </Typography>
-            <Typography
-              sx={{ cursor: "pointer" }}
-              fontWeight="bold"
-              fontSize={isTablet ? "15px" : "17px"}
-            >
-              තල්දෙන
-            </Typography>
-            <Typography
-              sx={{ cursor: "pointer" }}
-              fontWeight="bold"
-              fontSize={isTablet ? "15px" : "17px"}
-            >
-              අගුණ කොළ
-            </Typography>
+            ))}
+           
           </Box>
         )}
       </Box>
