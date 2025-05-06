@@ -19,7 +19,10 @@ import ProductManagement from "./product/ProductManagement";
 import OrderManagement from "./orders/OrderManagement";
 import SubCategoryManagement from "./category/SubCategoryManagement";
 import SettingsManagement from "./settings/SettingsManagement";
-
+import UserManagement from "./settings/UserManagement";
+import GroupIcon from "@mui/icons-material/Group";
+import axios from "axios";
+import { useEffect } from "react";
 const NAVIGATION = [
   {
     segment: "categories",
@@ -56,6 +59,11 @@ const NAVIGATION = [
     segment: "orders",
     title: "Orders",
     icon: <ShoppingCartIcon />,
+  },
+  {
+    segment: "users",
+    title: "User Management",
+    icon: <GroupIcon />,
   },
   {
     segment: "settings",
@@ -103,14 +111,55 @@ DemoPageContent.propTypes = {
 };
 
 function AdminDashboard(props) {
-  const router = useDemoRouter("/categories");
+  const router = useDemoRouter("/orders");
 
+  const [isSuperAdmin, setIsSuperAdmin] = React.useState(false);
+  const [session, setSession] = React.useState(null);
+
+  const checkAdminRole = async () => {
+    try {
+      const token = localStorage.getItem("adminToken");
+      const response = await axios.get(
+        "http://localhost:8080/api/auth/admin/me",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      setSession({
+        user: {
+          name: response.data.firstName + " " + response.data.lastName,
+          email: response.data.email,
+        },
+      });
+      setIsSuperAdmin(response.data.role === "super_admin");
+    } catch (error) {
+      console.error("Error checking admin role:", error);
+    }
+  };
+
+  useEffect(()=>{
+    checkAdminRole()
+  },[])
+
+  const authentication = React.useMemo(() => {
+    return {
+      signOut: () => {
+        localStorage.clear();
+        window.location.reload();
+        setSession(null);
+      },
+    };
+  }, []);
   return (
     <AppProvider
+      session={session}
       branding={{
         logo: <img src="/main-only-logo.png" alt="main-only-logo" />,
         title: "CELLMADE",
       }}
+      authentication={authentication}
       navigation={NAVIGATION}
       router={router}
       theme={demoTheme}
@@ -126,7 +175,10 @@ function AdminDashboard(props) {
           <ProductManagement />
         )}
         {router.pathname === "/orders" && <OrderManagement />}
-        {router.pathname === "/settings" && <SettingsManagement />}
+        {router.pathname === "/users" && <UserManagement />}
+        {router.pathname === "/settings" && (
+          <SettingsManagement isSuperAdmin={isSuperAdmin} />
+        )}
       </DashboardLayout>
     </AppProvider>
   );

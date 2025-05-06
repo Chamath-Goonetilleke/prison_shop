@@ -185,6 +185,39 @@ function createTables() {
     )
   `;
 
+  // Users table (for customers)
+  const usersTable = `
+    CREATE TABLE IF NOT EXISTS users (
+      id INT PRIMARY KEY AUTO_INCREMENT,
+      email VARCHAR(255) NOT NULL UNIQUE,
+      password VARCHAR(255) NOT NULL,
+      first_name VARCHAR(100) NOT NULL,
+      last_name VARCHAR(100) NOT NULL,
+      phone VARCHAR(20),
+      address TEXT,
+      is_blocked BOOLEAN DEFAULT false,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    )
+  `;
+
+  // Admins table
+  const adminsTable = `
+    CREATE TABLE IF NOT EXISTS admins (
+      id INT PRIMARY KEY AUTO_INCREMENT,
+      email VARCHAR(255) NOT NULL UNIQUE,
+      password VARCHAR(255) NOT NULL,
+      first_name VARCHAR(100) NOT NULL,
+      last_name VARCHAR(100) NOT NULL,
+      role ENUM('super_admin', 'prison_admin') NOT NULL,
+      prison_id INT,
+      is_active BOOLEAN DEFAULT true,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+      FOREIGN KEY (prison_id) REFERENCES prisons(id) ON DELETE SET NULL
+    )
+  `;
+
   // Execute table creation queries
   connection.query(categoriesTable, (err) => {
     if (err) {
@@ -264,6 +297,46 @@ function createTables() {
                       return;
                     }
                     console.log("Bank details table created or already exists");
+                  });
+
+                  // Create users table
+                  connection.query(usersTable, (err) => {
+                    if (err) {
+                      console.error("Error creating users table: ", err);
+                      return;
+                    }
+                    console.log("Users table created or already exists");
+                  });
+
+                  // Create admins table
+                  connection.query(adminsTable, (err) => {
+                    if (err) {
+                      console.error("Error creating admins table: ", err);
+                      return;
+                    }
+                    console.log("Admins table created or already exists");
+
+                    // Insert super admin account
+                    const superAdminPassword = require("bcryptjs").hashSync(
+                      "admin123",
+                      10
+                    );
+                    const superAdminQuery = `
+                      INSERT IGNORE INTO admins (email, password, first_name, last_name, role)
+                      VALUES ('superadmin@cellmade.com', '${superAdminPassword}', 'Super', 'Admin', 'super_admin')
+                    `;
+                    connection.query(superAdminQuery, (err) => {
+                      if (err) {
+                        console.error(
+                          "Error creating super admin account: ",
+                          err
+                        );
+                        return;
+                      }
+                      console.log(
+                        "Super admin account created or already exists"
+                      );
+                    });
                   });
                 });
               });

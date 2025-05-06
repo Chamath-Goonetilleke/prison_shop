@@ -15,6 +15,8 @@ import AccountCircle from "@mui/icons-material/AccountCircle";
 import MailIcon from "@mui/icons-material/Mail";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+
 import {
   Button,
   TextField,
@@ -27,9 +29,9 @@ import {
   Divider,
 } from "@mui/material";
 import CartPage from "../../pages/CartPage";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useCart } from "../../context/CartContext";
-
+import { useAuth } from "../../context/AuthContext";
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
   borderRadius: theme.shape.borderRadius,
@@ -40,26 +42,14 @@ const Search = styled("div")(({ theme }) => ({
   },
 }));
 
-// Styled badge component for the cart
-const StyledBadge = styled(Badge)(({ theme }) => ({
-  "& .MuiBadge-badge": {
-    right: -3,
-    top: 2,
-    border: `2px solid ${theme.palette.background.paper}`,
-    padding: "0 4px",
-    backgroundColor: theme.palette.error.main,
-    color: "white",
-    fontWeight: "bold",
-  },
-}));
-
 export default function NavBar() {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const [searchExpanded, setSearchExpanded] = React.useState(true);
   const { itemCount } = useCart();
-
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const isTablet = useMediaQuery(theme.breakpoints.between("sm", "md"));
@@ -92,27 +82,41 @@ export default function NavBar() {
     setSearchExpanded(!searchExpanded);
   };
 
+  const handleMenu = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleLogout = () => {
+    logout();
+    handleClose();
+    navigate("/");
+  };
+
   const menuId = "primary-search-account-menu";
-  const renderMenu = (
-    <Menu
-      anchorEl={anchorEl}
-      anchorOrigin={{
-        vertical: "top",
-        horizontal: "right",
-      }}
-      id={menuId}
-      keepMounted
-      transformOrigin={{
-        vertical: "top",
-        horizontal: "right",
-      }}
-      open={isMenuOpen}
-      onClose={handleMenuClose}
-    >
-      <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
-      <MenuItem onClick={handleMenuClose}>My account</MenuItem>
-    </Menu>
-  );
+  // const renderMenu = (
+  //   <Menu
+  //     anchorEl={anchorEl}
+  //     anchorOrigin={{
+  //       vertical: "top",
+  //       horizontal: "right",
+  //     }}
+  //     id={menuId}
+  //     keepMounted
+  //     transformOrigin={{
+  //       vertical: "top",
+  //       horizontal: "right",
+  //     }}
+  //     open={isMenuOpen}
+  //     onClose={handleMenuClose}
+  //   >
+  //     <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
+  //     <MenuItem onClick={handleMenuClose}>My account</MenuItem>
+  //   </Menu>
+  // );
 
   const mobileMenuId = "primary-search-account-menu-mobile";
   const renderMobileMenu = (
@@ -251,7 +255,6 @@ export default function NavBar() {
               </Box>
 
               <Box sx={{ display: "flex" }}>
-               
                 <CartPage />
               </Box>
             </Box>
@@ -370,19 +373,43 @@ export default function NavBar() {
 
               <Box sx={{ flexGrow: 1 }} />
 
-              <Box sx={{ display: "flex", alignItems: "center" }}>
+              <Box sx={{ display: "flex", alignItems: "center", gap:"1rem" }}>
                 <CartPage />
-                <IconButton
-                  sx={{ marginLeft: isTablet ? "1rem" : "2rem" }}
-                  size="large"
-                  edge="end"
-                  aria-label="account of current user"
-                  aria-controls={menuId}
-                  aria-haspopup="true"
-                  color="inherit"
-                >
-                  <AccountCircle fontSize={isTablet ? "medium" : "large"} />
-                </IconButton>
+                {user ? (
+                  <>
+                    <IconButton
+                      color="inherit"
+                      onClick={handleMenu}
+                      aria-label="account menu"
+                    >
+                      <AccountCircleIcon fontSize="large" />
+                    </IconButton>
+                    <Menu
+                      anchorEl={anchorEl}
+                      open={Boolean(anchorEl)}
+                      onClose={handleClose}
+                    >
+                      <MenuItem
+                        onClick={() => {
+                          handleClose();
+                          navigate("/profile");
+                        }}
+                      >
+                        Profile
+                      </MenuItem>
+                      <MenuItem onClick={handleLogout}>Logout</MenuItem>
+                    </Menu>
+                  </>
+                ) : (
+                  <>
+                    <Button color="inherit" component={Link} to="/login">
+                      Login
+                    </Button>
+                    <Button color="inherit" component={Link} to="/register">
+                      Register
+                    </Button>
+                  </>
+                )}
               </Box>
             </>
           )}
@@ -408,7 +435,6 @@ export default function NavBar() {
       </Drawer>
 
       {renderMobileMenu}
-      {renderMenu}
     </Box>
   );
 }

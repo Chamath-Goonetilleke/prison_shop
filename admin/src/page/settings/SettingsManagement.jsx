@@ -1,67 +1,43 @@
-import React, { useState } from "react";
-import { Box, Tab, Tabs, Typography, Paper } from "@mui/material";
+import React, { useState, useEffect } from "react";
+import { Box, Typography, Tabs, Tab, Paper } from "@mui/material";
 import BankDetailsManagement from "./BankDetailsManagement";
+import UserManagement from "./UserManagement";
+import AdminManagement from "./AdminManagement";
 import PrisonManagement from "../../components/prison/PrisonManagement";
+import axios from "axios";
 
-// TabPanel component for tab content
-function TabPanel(props) {
-  const { children, value, index, ...other } = props;
+const SettingsManagement = ({isSuperAdmin}) => {
+  const [value, setValue] = useState(0);
 
-  return (
-    <div
-      role="tabpanel"
-      hidden={value !== index}
-      id={`settings-tabpanel-${index}`}
-      aria-labelledby={`settings-tab-${index}`}
-      {...other}
-    >
-      {value === index && <Box sx={{ p: 3 }}>{children}</Box>}
-    </div>
-  );
-}
 
-// Helper function for tab accessibility
-function a11yProps(index) {
-  return {
-    id: `settings-tab-${index}`,
-    "aria-controls": `settings-tabpanel-${index}`,
-  };
-}
+  
 
-export default function SettingsManagement() {
-  const [tabValue, setTabValue] = useState(0);
-
-  const handleTabChange = (event, newValue) => {
-    setTabValue(newValue);
+  const handleChange = (event, newValue) => {
+    setValue(newValue);
   };
 
   return (
-    <Box sx={{ width: "100%", p: 2 }}>
-      <Typography variant="h5" sx={{ mb: 3 }}>
-        Settings
-      </Typography>
-
-      <Paper sx={{ width: "100%" }}>
-        <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
-          <Tabs
-            value={tabValue}
-            onChange={handleTabChange}
-            aria-label="settings tabs"
-          >
-            <Tab label="Bank Details" {...a11yProps(0)} />
-            <Tab label="Prison Management" {...a11yProps(1)} />
-            {/* Add more settings tabs as needed */}
-          </Tabs>
-        </Box>
-
-        <TabPanel value={tabValue} index={0}>
-          <BankDetailsManagement />
-        </TabPanel>
-        <TabPanel value={tabValue} index={1}>
-          <PrisonManagement />
-        </TabPanel>
-        {/* Add more TabPanels for other settings as needed */}
+    <Box sx={{ width: "100%" }}>
+      <Paper sx={{ width: "100%", mb: 2 }}>
+        <Tabs
+          value={value}
+          onChange={handleChange}
+          indicatorColor="primary"
+          textColor="primary"
+          variant="scrollable"
+          scrollButtons="auto"
+        >
+          <Tab label="Bank Details" />
+          <Tab label="Prison Management" />
+          {isSuperAdmin && <Tab label="Admin Management" />}
+        </Tabs>
       </Paper>
+
+      {value === 0 && <BankDetailsManagement />}
+      {value === 1 && <PrisonManagement />}
+      {value === 2 && isSuperAdmin && <AdminManagement />}
     </Box>
   );
-}
+};
+
+export default SettingsManagement;

@@ -14,6 +14,8 @@ const subCategoryRoutes = require("./routes/subCategoryRoutes");
 const orderRoutes = require("./routes/orderRoutes");
 const bankDetailsRoutes = require("./routes/bankDetailsRoutes");
 const prisonRoutes = require("./routes/prisonRoutes");
+const authRoutes = require("./routes/authRoutes");
+const userManagementRoutes = require("./routes/userManagementRoutes");
 
 // Create Express app
 const app = express();
@@ -34,6 +36,8 @@ app.use("/api/subcategories", subCategoryRoutes);
 app.use("/api/orders", orderRoutes);
 app.use("/api/bank-details", bankDetailsRoutes);
 app.use("/api/prisons", prisonRoutes);
+app.use("/api/auth", authRoutes);
+app.use("/api/management", userManagementRoutes);
 
 // Define a simple route for testing
 app.get("/", (req, res) => {

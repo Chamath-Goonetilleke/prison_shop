@@ -63,7 +63,7 @@ export default function HomeProductSection({ category, color }) {
           sx={{
             display: "flex",
             flexDirection: { xs: "column", md: "row" },
-            alignItems: { xs: "center", md: "flex-start" },
+            alignItems: "center",
             justifyContent: "space-between",
             gap: { xs: "15px", md: "0" },
           }}
