@@ -1,6 +1,7 @@
 const Product = require("../model/Product");
 const fs = require("fs");
 const path = require("path");
+const db = require("../config/database");
 const {
   upload,
   uploadToCloudinary,
@@ -357,6 +358,95 @@ exports.search = (req, res) => {
     } else {
       res.send(data);
     }
+  });
+};
+
+// Check stock availability for multiple products
+exports.checkStockAvailability = (req, res) => {
+  // Validate request
+  if (!req.body.items || !Array.isArray(req.body.items)) {
+    return res.status(400).send({
+      message: "Items array is required!",
+    });
+  }
+
+  const items = req.body.items;
+
+  // Extract product IDs and quantities
+  const productChecks = items.map((item) => ({
+    id: item.product_id,
+    requestedQuantity: item.quantity,
+  }));
+
+  if (productChecks.length === 0) {
+    return res.status(400).send({
+      message: "No items to check",
+    });
+  }
+
+  // Get all product IDs to check
+  const productIds = productChecks.map((item) => item.id);
+
+  // Query the database for current stock levels
+  const query = `
+    SELECT id, nameEn, stock, status 
+    FROM products 
+    WHERE id IN (${productIds.map(() => "?").join(",")})
+  `;
+
+  db.query(query, productIds, (err, results) => {
+    if (err) {
+      console.error("Error checking stock availability:", err);
+      return res.status(500).send({
+        message: "Error checking stock availability",
+      });
+    }
+
+    // Check each requested item against available stock
+    const stockStatus = {
+      allAvailable: true,
+      unavailableItems: [],
+      availableItems: [],
+    };
+
+    productChecks.forEach((check) => {
+      const product = results.find((p) => p.id === check.id);
+
+      if (!product) {
+        // Product not found
+        stockStatus.allAvailable = false;
+        stockStatus.unavailableItems.push({
+          product_id: check.id,
+          reason: "Product not found",
+          requested: check.requestedQuantity,
+          available: 0,
+        });
+      } else if (
+        product.status === "Out of Stock" ||
+        product.stock < check.requestedQuantity
+      ) {
+        // Not enough stock
+        stockStatus.allAvailable = false;
+        stockStatus.unavailableItems.push({
+          product_id: check.id,
+          product_name: product.nameEn,
+          reason: product.stock === 0 ? "Out of stock" : "Insufficient stock",
+          requested: check.requestedQuantity,
+          available: product.stock,
+        });
+      } else {
+        // Item available
+        stockStatus.availableItems.push({
+          product_id: check.id,
+          product_name: product.nameEn,
+          requested: check.requestedQuantity,
+          available: product.stock,
+        });
+      }
+    });
+
+    // Return the stock status
+    res.send(stockStatus);
   });
 };
 

@@ -297,11 +297,11 @@ exports.deleteAttribute = (req, res) => {
       } else {
         res.status(500).send({
           message:
-            "Could not delete Attribute with id " + req.params.attributeId,
+            "Could not delete attribute with id " + req.params.attributeId,
         });
       }
     } else {
-      res.send({ message: "Attribute was deleted successfully!" });
+      res.send({ message: "Attribute deleted successfully!" });
     }
   });
 };
@@ -322,3 +322,18 @@ exports.getCategoryAttributes = (req, res) => {
 
 // Middleware for handling file uploads with Cloudinary
 exports.uploadCategoryImage = upload.single("image");
+
+// Get categories that have at least one product
+exports.getCategoriesWithProducts = (req, res) => {
+  Category.getCategoriesWithProducts((err, data) => {
+    if (err) {
+      res.status(500).send({
+        message:
+          err.message ||
+          "An error occurred while retrieving categories with products.",
+      });
+    } else {
+      res.send(data);
+    }
+  });
+};

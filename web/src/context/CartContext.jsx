@@ -35,12 +35,29 @@ export const CartProvider = ({ children }) => {
         (item) => item.id === product.id
       );
 
+      // Get the available stock
+      const availableStock = product.stock || 0;
+
+      // Ensure quantity doesn't exceed stock
+      const finalQuantity = Math.min(quantity, availableStock);
+
+      // If no stock available, don't add to cart
+      if (availableStock <= 0) {
+        return prevItems;
+      }
+
       if (existingItemIndex !== -1) {
         // Update quantity of existing item
         const updatedItems = [...prevItems];
+        // Calculate new quantity, not exceeding available stock
+        const newQuantity = Math.min(
+          updatedItems[existingItemIndex].quantity + finalQuantity,
+          availableStock
+        );
+
         updatedItems[existingItemIndex] = {
           ...updatedItems[existingItemIndex],
-          quantity: updatedItems[existingItemIndex].quantity + quantity,
+          quantity: newQuantity,
         };
         return updatedItems;
       } else {
@@ -53,7 +70,8 @@ export const CartProvider = ({ children }) => {
             nameSi: product.nameSi,
             price: product.price,
             image: product.mainImage || "/bed.jpg",
-            quantity,
+            quantity: finalQuantity,
+            maxStock: availableStock,
           },
         ];
       }
@@ -65,7 +83,14 @@ export const CartProvider = ({ children }) => {
     setCartItems((prevItems) =>
       prevItems.map((item) => {
         if (item.id === id) {
-          const newQuantity = Math.max(1, item.quantity + delta);
+          // Ensure quantity doesn't go below 1 or exceed available stock
+          const newQuantity = Math.max(
+            1,
+            Math.min(
+              item.quantity + delta,
+              item.maxStock || Number.MAX_SAFE_INTEGER
+            )
+          );
           return { ...item, quantity: newQuantity };
         }
         return item;

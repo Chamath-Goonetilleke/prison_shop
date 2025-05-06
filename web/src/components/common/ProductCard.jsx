@@ -26,6 +26,7 @@ export default function ProductCard({ product }) {
   const [notification, setNotification] = React.useState({
     open: false,
     message: "",
+    severity: "success",
   });
 
   const imageUrl = product?.mainImage ? product.mainImage : "/bed.jpg";
@@ -45,10 +46,24 @@ export default function ProductCard({ product }) {
 
   const handleAddToCart = (e) => {
     e.stopPropagation(); // Prevent the card click event
+
+    // Check if product is out of stock
+    if (product.status === "Out of Stock" || product.stock <= 0) {
+      setNotification({
+        open: true,
+        message: `${product.nameEn} is out of stock!`,
+        severity: "error",
+      });
+      return;
+    }
+
+    // Add to cart (the CartContext will handle stock limitations)
     addToCart(product, 1);
+
     setNotification({
       open: true,
       message: `${product.nameEn} added to cart!`,
+      severity: "success",
     });
   };
 
@@ -75,7 +90,7 @@ export default function ProductCard({ product }) {
         <CardActionArea onClick={handleCardClick}>
           <CardMedia
             component="img"
-            height={isMobile ? 120 : 180}
+            height={isMobile ? 120 : 160}
             image={imageUrl}
             alt={product.nameEn}
             onError={(e) => {
@@ -116,12 +131,23 @@ export default function ProductCard({ product }) {
             {/* Show prison information if available */}
 
             {product.status !== "Out of Stock" ? (
-              <Typography
-                variant={isMobile ? "body2" : "subtitle1"}
-                sx={{ mt: 1, fontWeight: "bold" }}
-              >
-                Rs. {formatPrice(product.price)}
-              </Typography>
+              <>
+                <Typography
+                  variant={isMobile ? "body2" : "subtitle1"}
+                  sx={{ mt: 1, fontWeight: "bold" }}
+                >
+                  Rs. {formatPrice(product.price)}
+                </Typography>
+                {product.stock > 0 && (
+                  <Typography
+                    variant={isMobile ? "caption" : "body2"}
+                    color="text.secondary"
+                    sx={{ fontSize: isMobile ? "10px" : "12px" }}
+                  >
+                    {product.stock} in stock
+                  </Typography>
+                )}
+              </>
             ) : (
               <Chip
                 label={"Out of Stock"}
@@ -145,11 +171,16 @@ export default function ProductCard({ product }) {
             size="small"
             color="primary"
             onClick={handleAddToCart}
+            disabled={product.status === "Out of Stock" || product.stock <= 0}
             sx={{
               backgroundColor: "rgba(255,255,255,0.7)",
               "&:hover": {
                 backgroundColor: "rgba(255,255,255,0.9)",
               },
+              opacity:
+                product.status === "Out of Stock" || product.stock <= 0
+                  ? 0.5
+                  : 1,
             }}
           >
             <AddShoppingCartIcon fontSize={isMobile ? "small" : "medium"} />
@@ -182,7 +213,7 @@ export default function ProductCard({ product }) {
       >
         <Alert
           onClose={handleCloseNotification}
-          severity="success"
+          severity={notification.severity}
           variant="filled"
           sx={{ width: "100%" }}
         >

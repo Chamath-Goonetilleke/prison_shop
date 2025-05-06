@@ -35,7 +35,7 @@ export default function HomePage() {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const data = await categoryService.getAllCategories();
+        const data = await categoryService.getAllProductCategories();
         setCategories(data);
       } catch (error) {
         console.error("Error fetching categories:", error);

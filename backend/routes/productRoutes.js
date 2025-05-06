@@ -23,6 +23,9 @@ router.get("/subcategory/:subCategoryId", productController.findBySubCategory);
 // Search products
 router.get("/search", productController.search);
 
+// Check stock availability
+router.post("/check-stock", productController.checkStockAvailability);
+
 // Update a Product with productId
 router.put("/:productId", upload, productController.update);
 

@@ -95,15 +95,41 @@ class Order {
             });
           }
 
-          // Update product stock (subtract quantities)
+          // Update product stock and status (if needed)
           const updatePromises = orderItems.map((item) => {
             return new Promise((resolve, reject) => {
+              // First get current stock to determine if status needs updating
               db.query(
-                "UPDATE products SET stock = stock - ? WHERE id = ?",
-                [item.quantity, item.product_id],
-                (err) => {
-                  if (err) reject(err);
-                  else resolve();
+                "SELECT stock FROM products WHERE id = ?",
+                [item.product_id],
+                (err, results) => {
+                  if (err) {
+                    reject(err);
+                    return;
+                  }
+
+                  if (results.length === 0) {
+                    reject(
+                      new Error(`Product with ID ${item.product_id} not found`)
+                    );
+                    return;
+                  }
+
+                  const currentStock = results[0].stock;
+                  const newStock = Math.max(0, currentStock - item.quantity);
+
+                  // If stock becomes 0, update status to "Out of Stock"
+                  const newStatus =
+                    newStock === 0 ? "Out of Stock" : "In Stock";
+
+                  db.query(
+                    "UPDATE products SET stock = ?, status = ? WHERE id = ?",
+                    [newStock, newStatus, item.product_id],
+                    (err) => {
+                      if (err) reject(err);
+                      else resolve();
+                    }
+                  );
                 }
               );
             });
@@ -195,25 +221,116 @@ class Order {
 
   // Update order status
   static updateStatus(orderId, status, adminNotes, result) {
-    db.query(
-      "UPDATE orders SET status = ?, admin_notes = ?, updated_at = ? WHERE id = ?",
-      [status, adminNotes, new Date(), orderId],
-      (err, res) => {
-        if (err) {
-          console.error("Error updating order status:", err);
-          result(err, null);
-          return;
-        }
-
-        if (res.affectedRows == 0) {
-          // Order not found
-          result({ kind: "not_found" }, null);
-          return;
-        }
-
-        result(null, { id: orderId, status, admin_notes: adminNotes });
+    // Start transaction to handle status change and any stock updates
+    db.beginTransaction(async (err) => {
+      if (err) {
+        console.error("Error starting transaction:", err);
+        return result(err, null);
       }
-    );
+
+      try {
+        // First check current status
+        const [orderResult] = await new Promise((resolve, reject) => {
+          db.query(
+            "SELECT status FROM orders WHERE id = ?",
+            [orderId],
+            (err, results) => {
+              if (err) reject(err);
+              else resolve(results);
+            }
+          );
+        });
+
+        if (!orderResult) {
+          return db.rollback(() => {
+            result({ kind: "not_found" }, null);
+          });
+        }
+
+        const oldStatus = orderResult.status;
+
+        // Update the order status
+        await new Promise((resolve, reject) => {
+          db.query(
+            "UPDATE orders SET status = ?, admin_notes = ?, updated_at = ? WHERE id = ?",
+            [status, adminNotes, new Date(), orderId],
+            (err, res) => {
+              if (err) reject(err);
+              else if (res.affectedRows === 0)
+                reject(new Error("Order not found"));
+              else resolve();
+            }
+          );
+        });
+
+        // If order is being canceled, restore stock
+        if (
+          status === ORDER_STATUS.CANCELLED &&
+          oldStatus !== ORDER_STATUS.CANCELLED
+        ) {
+          // Get order items
+          const orderItems = await new Promise((resolve, reject) => {
+            db.query(
+              "SELECT product_id, quantity FROM order_items WHERE order_id = ?",
+              [orderId],
+              (err, results) => {
+                if (err) reject(err);
+                else resolve(results);
+              }
+            );
+          });
+
+          // Restore stock for each product
+          for (const item of orderItems) {
+            // Get current product stock and status
+            const [product] = await new Promise((resolve, reject) => {
+              db.query(
+                "SELECT stock, status FROM products WHERE id = ?",
+                [item.product_id],
+                (err, results) => {
+                  if (err) reject(err);
+                  else resolve(results);
+                }
+              );
+            });
+
+            if (product) {
+              const newStock = product.stock + item.quantity;
+              // If product was out of stock and now has stock, update status
+              const newStatus = newStock > 0 ? "In Stock" : product.status;
+
+              await new Promise((resolve, reject) => {
+                db.query(
+                  "UPDATE products SET stock = ?, status = ? WHERE id = ?",
+                  [newStock, newStatus, item.product_id],
+                  (err) => {
+                    if (err) reject(err);
+                    else resolve();
+                  }
+                );
+              });
+            }
+          }
+        }
+
+        // Commit transaction
+        db.commit((err) => {
+          if (err) {
+            return db.rollback(() => {
+              console.error("Error committing transaction:", err);
+              result(err, null);
+            });
+          }
+
+          result(null, { id: orderId, status, admin_notes: adminNotes });
+        });
+      } catch (error) {
+        db.rollback(() => {
+          console.error("Error updating order status:", error);
+          result(error, null);
+        });
+      }
+    });
   }
 
   // Get orders by customer email

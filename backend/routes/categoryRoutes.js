@@ -29,4 +29,7 @@ router.put("/attributes/:attributeId", categories.updateAttribute);
 // Delete an attribute
 router.delete("/attributes/:attributeId", categories.deleteAttribute);
 
+// Get categories that have at least one product
+router.get("/with-products/list", categories.getCategoriesWithProducts);
+
 module.exports = router;
