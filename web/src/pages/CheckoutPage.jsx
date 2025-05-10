@@ -24,6 +24,7 @@ import {
   DialogActions,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 import orderService from "../services/orderService";
 import bankDetailsService from "../services/bankDetailsService";
 import productService from "../services/productService";
@@ -32,6 +33,7 @@ import { useCart } from "../context/CartContext";
 const CheckoutPage = () => {
   const navigate = useNavigate();
   const { cartItems: cart, clearCart, removeItem } = useCart();
+  const { user, token } = useAuth();
   const [totalAmount, setTotalAmount] = useState(0);
   const [loading, setLoading] = useState(false);
   const [bankDetails, setBankDetails] = useState([]);
@@ -43,16 +45,30 @@ const CheckoutPage = () => {
     severity: "info",
   });
   const [formData, setFormData] = useState({
-    customer_name: "",
-    customer_email: "",
-    customer_phone: "",
-    delivery_address: "",
+    customer_name: user ? `${user.firstName} ${user.lastName}` : "",
+    customer_email: user ? user.email : "",
+    customer_phone: user ? user.phone : "",
+    delivery_address: user ? user.address : "",
   });
   const [formErrors, setFormErrors] = useState({});
   const [stockDialog, setStockDialog] = useState({
     open: false,
     unavailableItems: [],
   });
+
+  // Update form data if user logs in during checkout
+  useEffect(() => {
+    if (user) {
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        customer_name:
+          prevFormData.customer_name || `${user.firstName} ${user.lastName}`,
+        customer_email: prevFormData.customer_email || user.email,
+        customer_phone: prevFormData.customer_phone || user.phone,
+        delivery_address: prevFormData.delivery_address || user.address,
+      }));
+    }
+  }, [user]);
 
   // Calculate total amount when cart changes
   useEffect(() => {
@@ -195,8 +211,13 @@ const CheckoutPage = () => {
         items: orderItems,
       };
 
-      // Submit order
-      const response = await orderService.createOrder(orderData);
+      // Add customer_id if user is logged in
+      if (user && user.id) {
+        orderData.customer_id = user.id;
+      }
+
+      // Submit order with authentication token if available
+      const response = await orderService.createOrder(orderData, token);
 
       // Clear cart using CartContext
       clearCart();

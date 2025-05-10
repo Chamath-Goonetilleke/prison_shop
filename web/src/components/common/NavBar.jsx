@@ -181,6 +181,9 @@ export default function NavBar() {
         <ListItem button>
           <ListItemText primary="Categories" />
         </ListItem>
+        <ListItem button component={Link} to="/custom-orders">
+          <ListItemText primary="Custom Orders" />
+        </ListItem>
         <ListItem button>
           <ListItemText primary="About Us" />
         </ListItem>
@@ -373,7 +376,17 @@ export default function NavBar() {
 
               <Box sx={{ flexGrow: 1 }} />
 
-              <Box sx={{ display: "flex", alignItems: "center", gap:"1rem" }}>
+              <Box sx={{ display: "flex", alignItems: "center", gap: "1rem" }}>
+                {user && (
+                  <Button
+                    color="inherit"
+                    component={Link}
+                    to="/custom-orders"
+                    sx={{ textTransform: "none" }}
+                  >
+                    Custom Orders
+                  </Button>
+                )}
                 <CartPage />
                 {user ? (
                   <>

@@ -11,12 +11,14 @@ import SearchIcon from "@mui/icons-material/Search";
 import ShoppingBagIcon from "@mui/icons-material/ShoppingBag";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import SettingsIcon from "@mui/icons-material/Settings";
+import BuildIcon from "@mui/icons-material/Build";
 import { AppProvider } from "@toolpad/core/AppProvider";
 import { DashboardLayout } from "@toolpad/core/DashboardLayout";
 import { useDemoRouter } from "@toolpad/core/internal";
 import CategoryManagement from "./category/CategoryManagement";
 import ProductManagement from "./product/ProductManagement";
 import OrderManagement from "./orders/OrderManagement";
+import CustomOrderManagement from "./customOrders/CustomOrderManagement";
 import SubCategoryManagement from "./category/SubCategoryManagement";
 import SettingsManagement from "./settings/SettingsManagement";
 import UserManagement from "./settings/UserManagement";
@@ -59,6 +61,11 @@ const NAVIGATION = [
     segment: "orders",
     title: "Orders",
     icon: <ShoppingCartIcon />,
+  },
+  {
+    segment: "custom-orders",
+    title: "Custom Orders",
+    icon: <BuildIcon />,
   },
   {
     segment: "users",
@@ -139,9 +146,9 @@ function AdminDashboard(props) {
     }
   };
 
-  useEffect(()=>{
-    checkAdminRole()
-  },[])
+  useEffect(() => {
+    checkAdminRole();
+  }, []);
 
   const authentication = React.useMemo(() => {
     return {
@@ -175,6 +182,7 @@ function AdminDashboard(props) {
           <ProductManagement />
         )}
         {router.pathname === "/orders" && <OrderManagement />}
+        {router.pathname === "/custom-orders" && <CustomOrderManagement />}
         {router.pathname === "/users" && <UserManagement />}
         {router.pathname === "/settings" && (
           <SettingsManagement isSuperAdmin={isSuperAdmin} />

@@ -16,6 +16,7 @@ const bankDetailsRoutes = require("./routes/bankDetailsRoutes");
 const prisonRoutes = require("./routes/prisonRoutes");
 const authRoutes = require("./routes/authRoutes");
 const userManagementRoutes = require("./routes/userManagementRoutes");
+const customOrderRoutes = require("./routes/customOrderRoutes");
 
 // Create Express app
 const app = express();
@@ -38,6 +39,7 @@ app.use("/api/bank-details", bankDetailsRoutes);
 app.use("/api/prisons", prisonRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/management", userManagementRoutes);
+app.use("/api/custom-orders", customOrderRoutes);
 
 // Define a simple route for testing
 app.get("/", (req, res) => {

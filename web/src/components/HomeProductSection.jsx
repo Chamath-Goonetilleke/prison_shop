@@ -7,6 +7,7 @@ import {
   CircularProgress,
   useMediaQuery,
   useTheme,
+  Button,
 } from "@mui/material";
 import ArrowForwardOutlinedIcon from "@mui/icons-material/ArrowForwardOutlined";
 import productService from "../services/productService";
@@ -53,12 +54,19 @@ export default function HomeProductSection({ category, color }) {
       }}
     >
       <Box>
-        <Typography
-          fontSize={{ xs: "18px", sm: "22px", md: "25px" }}
-          fontWeight={"bold"}
+        <Box
+          sx={{ display: { display: "flex", justifyContent: "space-between" } }}
         >
-          {category.nameSi} ({category.nameEn})
-        </Typography>
+          <Typography
+            fontSize={{ xs: "18px", sm: "22px", md: "25px" }}
+            fontWeight={"bold"}
+          >
+            {category.nameSi} ({category.nameEn})
+          </Typography>
+          <Button sx={{ display: { xs: "block", md: "none" } }}>
+            View All
+          </Button>
+        </Box>
         <Box
           sx={{
             display: "flex",
@@ -93,6 +101,7 @@ export default function HomeProductSection({ category, color }) {
             position="relative"
             display="inline-block"
             sx={{
+              display: { xs: "none", md: "block" },
               cursor: "pointer",
               width: { xs: "100%", md: "auto" },
               textAlign: { xs: "center", md: "left" },

@@ -14,6 +14,7 @@ class Order {
   constructor(order) {
     this.id = order.id;
     this.orderNumber = order.orderNumber;
+    this.customer_id = order.customer_id || null;
     this.customer_name = order.customer_name;
     this.customer_email = order.customer_email;
     this.customer_phone = order.customer_phone;
@@ -103,12 +104,8 @@ class Order {
                 "SELECT stock FROM products WHERE id = ?",
                 [item.product_id],
                 (err, results) => {
-                  if (err) {
-                    reject(err);
-                    return;
-                  }
-
-                  if (results.length === 0) {
+                  if (err) reject(err);
+                  else if (results.length === 0) {
                     reject(
                       new Error(`Product with ID ${item.product_id} not found`)
                     );
@@ -333,14 +330,43 @@ class Order {
     });
   }
 
-  // Get orders by customer email
+  // Find orders by customer email
   static findByCustomerEmail(email, result) {
     db.query(
-      `SELECT * FROM orders WHERE customer_email = ? ORDER BY created_at DESC`,
+      `
+      SELECT o.*, 
+        (SELECT COUNT(*) FROM order_items WHERE order_id = o.id) as item_count 
+      FROM orders o
+      WHERE o.customer_email = ?
+      ORDER BY o.created_at DESC
+    `,
       email,
       (err, res) => {
         if (err) {
-          console.error("Error retrieving orders:", err);
+          console.error("Error retrieving orders by email:", err);
+          result(err, null);
+          return;
+        }
+
+        result(null, res);
+      }
+    );
+  }
+
+  // Find orders by customer ID
+  static findByCustomerId(customerId, result) {
+    db.query(
+      `
+      SELECT o.*, 
+        (SELECT COUNT(*) FROM order_items WHERE order_id = o.id) as item_count 
+      FROM orders o
+      WHERE o.customer_id = ?
+      ORDER BY o.created_at DESC
+    `,
+      customerId,
+      (err, res) => {
+        if (err) {
+          console.error("Error retrieving orders by customer ID:", err);
           result(err, null);
           return;
         }

@@ -10,6 +10,7 @@ import CheckoutPage from "./pages/CheckoutPage";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import ProfilePage from "./pages/ProfilePage";
+import CustomOrderPage from "./pages/CustomOrderPage";
 import ProtectedRoute from "./components/common/ProtectedRoute";
 
 function App() {
@@ -35,6 +36,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <ProfilePage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/custom-orders"
+            element={
+              <ProtectedRoute>
+                <CustomOrderPage />
               </ProtectedRoute>
             }
           />

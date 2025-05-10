@@ -8,7 +8,7 @@ const API_URL =
 
 const orderService = {
   // Create a new order
-  createOrder: async (orderData) => {
+  createOrder: async (orderData, token) => {
     try {
       // Create form data for payment slip upload
       const formData = new FormData();
@@ -25,16 +25,26 @@ const orderService = {
       formData.append("delivery_address", orderData.delivery_address);
       formData.append("total_amount", orderData.total_amount);
 
+      // Add customer_id if available
+      if (orderData.customer_id) {
+        formData.append("customer_id", orderData.customer_id);
+      }
+
       // Convert cart items to JSON and add to form data
       if (orderData.items) {
         formData.append("items", JSON.stringify(orderData.items));
       }
 
-      const response = await axios.post(API_URL, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
+      const headers = {
+        "Content-Type": "multipart/form-data",
+      };
+
+      // Add authentication token if provided
+      if (token) {
+        headers.Authorization = `Bearer ${token}`;
+      }
+
+      const response = await axios.post(API_URL, formData, { headers });
       return response.data;
     } catch (error) {
       console.error("Error creating order:", error);
@@ -54,12 +64,28 @@ const orderService = {
   },
 
   // Get order by ID
-  getOrderById: async (id) => {
+  getOrderById: async (id, token) => {
     try {
-      const response = await axios.get(`${API_URL}/${id}`);
+      const headers = token ? { Authorization: `Bearer ${token}` } : {};
+      const response = await axios.get(`${API_URL}/${id}`, { headers });
       return response.data;
     } catch (error) {
       console.error("Error fetching order details:", error);
+      throw error;
+    }
+  },
+
+  // Get all orders for the logged-in user
+  getUserOrders: async (token) => {
+    try {
+      const response = await axios.get(`${API_URL}/user`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching user orders:", error);
       throw error;
     }
   },

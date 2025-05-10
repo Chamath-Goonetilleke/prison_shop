@@ -142,6 +142,7 @@ function createTables() {
     CREATE TABLE IF NOT EXISTS orders (
       id INT PRIMARY KEY AUTO_INCREMENT,
       orderNumber VARCHAR(50) NOT NULL,
+      customer_id INT,
       customer_name VARCHAR(255) NOT NULL,
       customer_email VARCHAR(255) NOT NULL,
       customer_phone VARCHAR(50) NOT NULL,
@@ -151,7 +152,8 @@ function createTables() {
       payment_slip VARCHAR(255),
       admin_notes TEXT,
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-      updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+      updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+      FOREIGN KEY (customer_id) REFERENCES users(id) ON DELETE SET NULL
     )
   `;
 
@@ -167,6 +169,29 @@ function createTables() {
       subtotal DECIMAL(10, 2) NOT NULL,
       FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE,
       FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE RESTRICT
+    )
+  `;
+
+  // Custom orders table
+  const customOrdersTable = `
+    CREATE TABLE IF NOT EXISTS custom_orders (
+      id INT PRIMARY KEY AUTO_INCREMENT,
+      orderNumber VARCHAR(50) NOT NULL,
+      customer_id INT,
+      customer_name VARCHAR(255) NOT NULL,
+      customer_email VARCHAR(255) NOT NULL,
+      customer_phone VARCHAR(50) NOT NULL,
+      delivery_address TEXT NOT NULL,
+      category_id INT NOT NULL,
+      subcategory_id INT,
+      requirements TEXT NOT NULL,
+      status ENUM('pending', 'reviewed', 'approved', 'in_progress', 'completed', 'cancelled') DEFAULT 'pending',
+      admin_notes TEXT,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+      FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE RESTRICT,
+      FOREIGN KEY (subcategory_id) REFERENCES subcategories(id) ON DELETE SET NULL,
+      FOREIGN KEY (customer_id) REFERENCES users(id) ON DELETE SET NULL
     )
   `;
 
@@ -288,6 +313,20 @@ function createTables() {
                       return;
                     }
                     console.log("Order items table created or already exists");
+                  });
+
+                  // Create custom orders table
+                  connection.query(customOrdersTable, (err) => {
+                    if (err) {
+                      console.error(
+                        "Error creating custom_orders table: ",
+                        err
+                      );
+                      return;
+                    }
+                    console.log(
+                      "Custom orders table created or already exists"
+                    );
                   });
 
                   // Create bank details table

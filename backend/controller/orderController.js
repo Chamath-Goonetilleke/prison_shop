@@ -77,6 +77,7 @@ exports.create = async (req, res) => {
 
     // Prepare order object
     const order = {
+      customer_id: req.body.customer_id || null,
       customer_name: req.body.customer_name,
       customer_email: req.body.customer_email,
       customer_phone: req.body.customer_phone,
@@ -185,6 +186,46 @@ exports.updateStatus = (req, res) => {
 // Find Orders by customer email
 exports.findByCustomerEmail = (req, res) => {
   Order.findByCustomerEmail(req.params.email, (err, data) => {
+    if (err) {
+      res.status(500).send({
+        message: err.message || "An error occurred while retrieving orders.",
+      });
+    } else {
+      res.send(data);
+    }
+  });
+};
+
+// Find Orders by customer ID
+exports.findByCustomerId = (req, res) => {
+  // Check if user ID is provided
+  if (!req.params.customerId) {
+    return res.status(400).send({
+      message: "Customer ID is required",
+    });
+  }
+
+  Order.findByCustomerId(req.params.customerId, (err, data) => {
+    if (err) {
+      res.status(500).send({
+        message: err.message || "An error occurred while retrieving orders.",
+      });
+    } else {
+      res.send(data);
+    }
+  });
+};
+
+// Find Orders for authenticated user
+exports.findOrdersForUser = (req, res) => {
+  // The user ID comes from the authenticated user in the request object
+  if (!req.user || !req.user.id) {
+    return res.status(401).send({
+      message: "User not authenticated",
+    });
+  }
+
+  Order.findByCustomerId(req.user.id, (err, data) => {
     if (err) {
       res.status(500).send({
         message: err.message || "An error occurred while retrieving orders.",
