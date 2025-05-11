@@ -100,41 +100,44 @@ const CustomOrdersTable = ({ onView }) => {
                 <TableCell>Customer</TableCell>
                 <TableCell>Category</TableCell>
                 <TableCell>Subcategory</TableCell>
+                <TableCell>Prison</TableCell>
                 <TableCell>Date</TableCell>
                 <TableCell>Status</TableCell>
                 <TableCell align="right">Actions</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {customOrders
-                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((order) => (
-                  <TableRow hover key={order.id}>
-                    <TableCell>{order.orderNumber}</TableCell>
-                    <TableCell>{order.customer_name}</TableCell>
-                    <TableCell>{order.category_name}</TableCell>
-                    <TableCell>{order.subcategory_name || "-"}</TableCell>
-                    <TableCell>
-                      {format(new Date(order.created_at), "MMM dd, yyyy")}
-                    </TableCell>
-                    <TableCell>{getStatusChip(order.status)}</TableCell>
-                    <TableCell align="right">
-                      <Button
-                        size="small"
-                        startIcon={<VisibilityIcon />}
-                        onClick={() => onView(order)}
-                      >
-                        View
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              {customOrders.length === 0 && (
+              {customOrders.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={7} align="center">
+                  <TableCell colSpan={8} align="center">
                     No custom orders found
                   </TableCell>
                 </TableRow>
+              ) : (
+                customOrders
+                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                  .map((order) => (
+                    <TableRow hover key={order.id}>
+                      <TableCell>{order.orderNumber}</TableCell>
+                      <TableCell>{order.customer_name}</TableCell>
+                      <TableCell>{order.category_name}</TableCell>
+                      <TableCell>{order.subcategory_name || "-"}</TableCell>
+                      <TableCell>{order.prison_name || "-"}</TableCell>
+                      <TableCell>
+                        {format(new Date(order.created_at), "MMM dd, yyyy")}
+                      </TableCell>
+                      <TableCell>{getStatusChip(order.status)}</TableCell>
+                      <TableCell align="right">
+                        <Button
+                          size="small"
+                          startIcon={<VisibilityIcon />}
+                          onClick={() => onView(order)}
+                        >
+                          View
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))
               )}
             </TableBody>
           </Table>

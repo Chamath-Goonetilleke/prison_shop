@@ -195,9 +195,18 @@ class Order {
       if (res.length) {
         const order = res[0];
 
-        // Get order items
+        // Get order items with prison information
         db.query(
-          `SELECT * FROM order_items WHERE order_id = ?`,
+          `
+          SELECT oi.*, 
+                 p.prison_id,
+                 pr.nameEn as prison_name,
+                 pr.nameSi as prison_name_si
+          FROM order_items oi
+          LEFT JOIN products p ON oi.product_id = p.id
+          LEFT JOIN prisons pr ON p.prison_id = pr.id
+          WHERE oi.order_id = ?
+          `,
           orderId,
           (err, items) => {
             if (err) {

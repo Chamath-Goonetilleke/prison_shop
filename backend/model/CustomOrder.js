@@ -22,6 +22,7 @@ class CustomOrder {
     this.delivery_address = order.delivery_address;
     this.category_id = order.category_id;
     this.subcategory_id = order.subcategory_id || null;
+    this.prison_id = order.prison_id || null;
     this.requirements = order.requirements;
     this.status = order.status || CUSTOM_ORDER_STATUS.PENDING;
     this.admin_notes = order.admin_notes || null;
@@ -68,10 +69,13 @@ class CustomOrder {
       `
       SELECT co.*, 
         c.nameEn as category_name, 
-        sc.nameEn as subcategory_name
+        sc.nameEn as subcategory_name,
+        p.nameEn as prison_name,
+        p.nameSi as prison_name_si
       FROM custom_orders co
       LEFT JOIN categories c ON co.category_id = c.id
       LEFT JOIN subcategories sc ON co.subcategory_id = sc.id
+      LEFT JOIN prisons p ON co.prison_id = p.id
       ORDER BY co.created_at DESC
     `,
       (err, res) => {
@@ -92,10 +96,13 @@ class CustomOrder {
       `
       SELECT co.*, 
         c.nameEn as category_name, 
-        sc.nameEn as subcategory_name
+        sc.nameEn as subcategory_name,
+        p.nameEn as prison_name,
+        p.nameSi as prison_name_si
       FROM custom_orders co
       LEFT JOIN categories c ON co.category_id = c.id
       LEFT JOIN subcategories sc ON co.subcategory_id = sc.id
+      LEFT JOIN prisons p ON co.prison_id = p.id
       WHERE co.id = ?
     `,
       orderId,
@@ -151,10 +158,13 @@ class CustomOrder {
       `
       SELECT co.*, 
         c.nameEn as category_name, 
-        sc.nameEn as subcategory_name
+        sc.nameEn as subcategory_name,
+        p.nameEn as prison_name,
+        p.nameSi as prison_name_si
       FROM custom_orders co
       LEFT JOIN categories c ON co.category_id = c.id
       LEFT JOIN subcategories sc ON co.subcategory_id = sc.id
+      LEFT JOIN prisons p ON co.prison_id = p.id
       WHERE co.customer_email = ?
       ORDER BY co.created_at DESC
     `,
@@ -177,10 +187,13 @@ class CustomOrder {
       `
       SELECT co.*, 
         c.nameEn as category_name, 
-        sc.nameEn as subcategory_name
+        sc.nameEn as subcategory_name,
+        p.nameEn as prison_name,
+        p.nameSi as prison_name_si
       FROM custom_orders co
       LEFT JOIN categories c ON co.category_id = c.id
       LEFT JOIN subcategories sc ON co.subcategory_id = sc.id
+      LEFT JOIN prisons p ON co.prison_id = p.id
       WHERE co.customer_id = ?
       ORDER BY co.created_at DESC
     `,

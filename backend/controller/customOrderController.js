@@ -27,6 +27,7 @@ exports.create = async (req, res) => {
       delivery_address: req.body.delivery_address,
       category_id: req.body.category_id,
       subcategory_id: req.body.subcategory_id || null,
+      prison_id: req.body.prison_id || null,
       requirements: req.body.requirements,
       status: "pending", // Default status
     };

@@ -9,40 +9,40 @@ import {
 } from "@mui/material";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import categoryService from "../services/categoryService";
+import prisonService from "../services/prisonService";
 
-const CategorySlider = () => {
+const PrisonSlider = () => {
   const scrollRef = useRef(null);
   const [isHovered, setIsHovered] = useState(false);
   const [showLeftArrow, setShowLeftArrow] = useState(false);
   const [showRightArrow, setShowRightArrow] = useState(true);
-  const [categories, setCategories] = useState([]);
+  const [prisons, setPrisons] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const isTablet = useMediaQuery(theme.breakpoints.between("sm", "md"));
 
-  // Fetch categories from the database
+  // Fetch prisons from the database
   useEffect(() => {
-    const fetchCategories = async () => {
+    const fetchPrisons = async () => {
       try {
         setLoading(true);
-        const data = await categoryService.getAllCategories();
-        setCategories(data);
+        const data = await prisonService.getActivePrisons();
+        setPrisons(data);
         setLoading(false);
       } catch (error) {
-        console.error("Error fetching categories:", error);
+        console.error("Error fetching prisons:", error);
         setLoading(false);
       }
     };
 
-    fetchCategories();
+    fetchPrisons();
   }, []);
 
   // Auto scroll animation
   useEffect(() => {
-    if (loading || categories.length === 0) return;
+    if (loading || prisons.length === 0) return;
 
     const scrollContainer = scrollRef.current;
     let animationFrameId;
@@ -80,7 +80,7 @@ const CategorySlider = () => {
         cancelAnimationFrame(animationFrameId);
       }
     };
-  }, [isHovered, loading, categories]);
+  }, [isHovered, loading, prisons]);
 
   const handleScroll = () => {
     const container = scrollRef.current;
@@ -99,27 +99,27 @@ const CategorySlider = () => {
     });
   };
 
-  const handleCategoryClick = (categoryId) => {
-    navigate(`/category/${categoryId}`);
+  const handlePrisonClick = (prisonId) => {
+    navigate(`/prison/${prisonId}`);
   };
 
-  // Function to get image for a category
-  const getCategoryImage = (category) => {
-    // If the category has an image, use it
-    if (category.image) {
-      return category.image;
+  // Function to get image for a prison
+  const getPrisonImage = (prison) => {
+    // If the prison has an image, use it
+    if (prison.image) {
+      return prison.image;
     }
 
     // Otherwise use a placeholder
-    return "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2YwZjBmMCIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMjAiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIiBmaWxsPSIjNjY2Ij5ObyBJbWFnZTwvdGV4dD48L3N2Zz4=";
+    return "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2YwZjBmMCIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMjAiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIiBmaWxsPSIjNjY2Ij5Qcmlzb248L3RleHQ+PC9zdmc+";
   };
 
   // Function to get display name
-  const getDisplayName = (category) => {
-    if (category.nameSi) {
-      return `${category.nameSi} (${category.nameEn})`;
+  const getDisplayName = (prison) => {
+    if (prison.nameSi) {
+      return `${prison.nameSi} (${prison.nameEn})`;
     }
-    return category.nameEn;
+    return prison.nameEn;
   };
 
   if (loading) {
@@ -134,7 +134,7 @@ const CategorySlider = () => {
       >
         <CircularProgress />
         <Typography variant="h6" sx={{ ml: 2 }}>
-          Loading categories...
+          Loading prisons...
         </Typography>
       </Box>
     );
@@ -148,6 +148,18 @@ const CategorySlider = () => {
         padding: { xs: "10px", sm: "15px", md: "20px" },
       }}
     >
+      <Typography
+        variant="h5"
+        sx={{
+          textAlign: "center",
+          fontWeight: "bold",
+          mb: 2,
+          color: "#235661",
+        }}
+      >
+        Browse Products by Prison
+      </Typography>
+
       <Box
         ref={scrollRef}
         onScroll={handleScroll}
@@ -164,9 +176,9 @@ const CategorySlider = () => {
           padding: { xs: "0 40px", sm: "0 50px", md: "0 55px" },
         }}
       >
-        {categories.map((category) => (
+        {prisons.map((prison) => (
           <Box
-            key={category.id}
+            key={prison.id}
             sx={{
               display: "flex",
               flexDirection: "column",
@@ -179,13 +191,13 @@ const CategorySlider = () => {
                 transform: "scale(1.05)",
               },
             }}
-            onClick={() => handleCategoryClick(category.id)}
+            onClick={() => handlePrisonClick(prison.id)}
           >
             <Box
               sx={{
                 width: { xs: 100, sm: 120, md: 150 },
                 height: { xs: 100, sm: 120, md: 150 },
-                borderRadius: "50%",
+                borderRadius: "10px",
                 overflow: "hidden",
                 backgroundColor: "#f5f5f5",
                 marginBottom: 1,
@@ -193,8 +205,8 @@ const CategorySlider = () => {
               }}
             >
               <img
-                src={getCategoryImage(category)}
-                alt={category.nameEn}
+                src={getPrisonImage(prison)}
+                alt={prison.nameEn}
                 style={{
                   width: "100%",
                   height: "100%",
@@ -210,7 +222,7 @@ const CategorySlider = () => {
                 color: "#333",
               }}
             >
-              {getDisplayName(category)}
+              {getDisplayName(prison)}
             </Typography>
           </Box>
         ))}
@@ -258,4 +270,4 @@ const CategorySlider = () => {
   );
 };
 
-export default CategorySlider;
+export default PrisonSlider;

@@ -10,11 +10,13 @@ import {
   Button,
 } from "@mui/material";
 import ArrowForwardOutlinedIcon from "@mui/icons-material/ArrowForwardOutlined";
+import { useNavigate } from "react-router-dom";
 import productService from "../services/productService";
 
 export default function HomeProductSection({ category, color }) {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const isTablet = useMediaQuery(theme.breakpoints.between("sm", "md"));
@@ -44,6 +46,10 @@ export default function HomeProductSection({ category, color }) {
     return null;
   }
 
+  const handleViewAllClick = () => {
+    navigate(`/category/${category.id}`);
+  };
+
   return (
     <Box
       sx={{
@@ -63,7 +69,10 @@ export default function HomeProductSection({ category, color }) {
           >
             {category.nameSi} ({category.nameEn})
           </Typography>
-          <Button sx={{ display: { xs: "block", md: "none" } }}>
+          <Button
+            sx={{ display: { xs: "block", md: "none" } }}
+            onClick={handleViewAllClick}
+          >
             View All
           </Button>
         </Box>
@@ -106,7 +115,7 @@ export default function HomeProductSection({ category, color }) {
               width: { xs: "100%", md: "auto" },
               textAlign: { xs: "center", md: "left" },
             }}
-            onClick={() => (window.location = `/category/${category.id}`)}
+            onClick={handleViewAllClick}
           >
             <img
               src={

@@ -11,6 +11,8 @@ import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import ProfilePage from "./pages/ProfilePage";
 import CustomOrderPage from "./pages/CustomOrderPage";
+import CategoryProductsPage from "./pages/CategoryProductsPage";
+import PrisonProductsPage from "./pages/PrisonProductsPage";
 import ProtectedRoute from "./components/common/ProtectedRoute";
 
 function App() {
@@ -31,6 +33,11 @@ function App() {
             }
           />
           <Route path="/product/:productId" element={<SingleProductPage />} />
+          <Route
+            path="/category/:categoryId"
+            element={<CategoryProductsPage />}
+          />
+          <Route path="/prison/:prisonId" element={<PrisonProductsPage />} />
           <Route
             path="/profile"
             element={

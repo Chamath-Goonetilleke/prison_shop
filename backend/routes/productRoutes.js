@@ -20,6 +20,9 @@ router.get("/category/:categoryId", productController.findByCategory);
 // Retrieve Products by subcategory
 router.get("/subcategory/:subCategoryId", productController.findBySubCategory);
 
+// Retrieve Products by prison
+router.get("/prison/:prisonId", productController.findByPrison);
+
 // Search products
 router.get("/search", productController.search);
 

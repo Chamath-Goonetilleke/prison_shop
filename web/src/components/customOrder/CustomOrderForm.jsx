@@ -16,6 +16,7 @@ import {
 } from "@mui/material";
 import { useAuth } from "../../context/AuthContext";
 import customOrderService from "../../services/customOrderService";
+import prisonService from "../../services/prisonService";
 import axios from "axios";
 
 const CustomOrderForm = () => {
@@ -28,19 +29,22 @@ const CustomOrderForm = () => {
     delivery_address: user ? user.address || "" : "",
     category_id: "",
     subcategory_id: "",
+    prison_id: "",
     requirements: "",
   });
 
   const [categories, setCategories] = useState([]);
   const [subcategories, setSubcategories] = useState([]);
+  const [prisons, setPrisons] = useState([]);
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState(null);
   const [formErrors, setFormErrors] = useState({});
 
-  // Fetch categories on component mount
+  // Fetch categories and prisons on component mount
   useEffect(() => {
     fetchCategories();
+    fetchPrisons();
   }, []);
 
   // Fetch subcategories when a category is selected
@@ -59,6 +63,16 @@ const CustomOrderForm = () => {
     } catch (err) {
       console.error("Error fetching categories:", err);
       setError("Failed to load categories. Please try again later.");
+    }
+  };
+
+  const fetchPrisons = async () => {
+    try {
+      const activePrisons = await prisonService.getActivePrisons();
+      setPrisons(activePrisons);
+    } catch (err) {
+      console.error("Error fetching prisons:", err);
+      setError("Failed to load prisons. Please try again later.");
     }
   };
 
@@ -108,6 +122,10 @@ const CustomOrderForm = () => {
       errors.category_id = "Category is required";
     }
 
+    if (!formData.prison_id) {
+      errors.prison_id = "Prison is required";
+    }
+
     if (!formData.requirements.trim()) {
       errors.requirements = "Requirements are required";
     } else if (formData.requirements.trim().length < 10) {
@@ -150,6 +168,7 @@ const CustomOrderForm = () => {
         ...formData,
         category_id: "",
         subcategory_id: "",
+        prison_id: "",
         requirements: "",
       });
 
@@ -251,7 +270,7 @@ const CustomOrderForm = () => {
               >
                 {categories.map((category) => (
                   <MenuItem key={category.id} value={category.id}>
-                    {category.nameEn}
+                    {category.nameSi} ({category.nameEn})
                   </MenuItem>
                 ))}
               </Select>
@@ -280,6 +299,34 @@ const CustomOrderForm = () => {
                   </MenuItem>
                 ))}
               </Select>
+            </FormControl>
+          </Grid>
+
+          <Grid item xs={12} md={6}>
+            <FormControl
+              fullWidth
+              margin="normal"
+              error={!!formErrors.prison_id}
+            >
+              <InputLabel id="prison-label">Prison *</InputLabel>
+              <Select
+                labelId="prison-label"
+                name="prison_id"
+                value={formData.prison_id}
+                onChange={handleChange}
+                label="Prison *"
+              >
+                {prisons.map((prison) => (
+                  <MenuItem key={prison.id} value={prison.id}>
+                    {prison.nameSi
+                      ? `${prison.nameEn} (${prison.nameSi})`
+                      : prison.nameEn}
+                  </MenuItem>
+                ))}
+              </Select>
+              {formErrors.prison_id && (
+                <FormHelperText>{formErrors.prison_id}</FormHelperText>
+              )}
             </FormControl>
           </Grid>
 

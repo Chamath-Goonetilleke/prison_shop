@@ -15,6 +15,7 @@ import {
   KeyboardArrowRight,
   GridView,
 } from "@mui/icons-material";
+import { useNavigate } from "react-router-dom";
 import categoryService from "../services/categoryService";
 
 const CategoryMenu = () => {
@@ -24,6 +25,7 @@ const CategoryMenu = () => {
   const [categories, setCategories] = useState([]);
   const [subcategoriesMap, setSubcategoriesMap] = useState({});
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   // Fetch categories and subcategories on component mount
   useEffect(() => {
@@ -81,6 +83,16 @@ const CategoryMenu = () => {
     }
   };
 
+  const handleCategoryClick = (categoryId) => {
+    navigate(`/category/${categoryId}`);
+    handleClose();
+  };
+
+  const handleSubcategoryClick = (categoryId, subcategoryId) => {
+    navigate(`/category/${categoryId}?subcategory=${subcategoryId}`);
+    handleClose();
+  };
+
   const isMenuOpen = Boolean(anchorEl);
   const isSubMenuOpen = Boolean(subMenuAnchorEl) && activeCategory !== null;
 
@@ -119,6 +131,7 @@ const CategoryMenu = () => {
           categories.map((category) => (
             <MenuItem
               key={category.id}
+              onClick={() => handleCategoryClick(category.id)}
               onMouseEnter={(e) => handleCategoryHover(e, category)}
               onMouseLeave={() => {
                 if (!isSubMenuOpen) setActiveCategory(null);
@@ -155,7 +168,9 @@ const CategoryMenu = () => {
               subcategoriesMap[activeCategory.id].map((subcategory) => (
                 <MenuItem
                   key={subcategory.id}
-                  onClick={handleClose}
+                  onClick={() =>
+                    handleSubcategoryClick(activeCategory.id, subcategory.id)
+                  }
                   sx={{
                     color: "#235661",
                     "&:hover": { backgroundColor: "#f1f8e9" },

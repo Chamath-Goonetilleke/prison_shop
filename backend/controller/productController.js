@@ -172,6 +172,19 @@ exports.findBySubCategory = (req, res) => {
   });
 };
 
+// Find Products by prison
+exports.findByPrison = (req, res) => {
+  Product.findByPrison(req.params.prisonId, (err, data) => {
+    if (err) {
+      res.status(500).send({
+        message: err.message || "An error occurred while retrieving products.",
+      });
+    } else {
+      res.send(data);
+    }
+  });
+};
+
 // Update a Product identified by the productId in the request
 exports.update = async (req, res) => {
   // Validate Request

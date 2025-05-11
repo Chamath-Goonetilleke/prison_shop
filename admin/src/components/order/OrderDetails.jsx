@@ -287,6 +287,7 @@ const OrderDetails = ({ order, onClose, onOrderUpdated }) => {
                   <TableHead>
                     <TableRow>
                       <TableCell>Product</TableCell>
+                      <TableCell>Prison</TableCell>
                       <TableCell>Price</TableCell>
                       <TableCell>Quantity</TableCell>
                       <TableCell align="right">Subtotal</TableCell>
@@ -300,6 +301,13 @@ const OrderDetails = ({ order, onClose, onOrderUpdated }) => {
                             ? item.product_name
                             : `Product #${item.product_id}`}
                         </TableCell>
+                        <TableCell>
+                          {item.prison_name
+                            ? item.prison_name_si
+                              ? `${item.prison_name} (${item.prison_name_si})`
+                              : item.prison_name
+                            : "Not specified"}
+                        </TableCell>
                         <TableCell>{formatPrice(item.price)}</TableCell>
                         <TableCell>{item.quantity}</TableCell>
                         <TableCell align="right">
@@ -308,7 +316,7 @@ const OrderDetails = ({ order, onClose, onOrderUpdated }) => {
                       </TableRow>
                     ))}
                     <TableRow>
-                      <TableCell colSpan={2} />
+                      <TableCell colSpan={3} />
                       <TableCell>
                         <Typography variant="subtitle1">Total</Typography>
                       </TableCell>

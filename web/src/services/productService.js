@@ -59,6 +59,17 @@ const productService = {
     }
   },
 
+  // Get products by prison
+  getProductsByPrison: async (prisonId) => {
+    try {
+      const response = await axios.get(`${API_URL}/prison/${prisonId}`);
+      return response.data;
+    } catch (error) {
+      console.error(`Error fetching products for prison ${prisonId}:`, error);
+      throw error;
+    }
+  },
+
   // Search products
   searchProducts: async (searchTerm) => {
     try {

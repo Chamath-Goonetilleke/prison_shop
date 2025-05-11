@@ -16,6 +16,7 @@ import MailIcon from "@mui/icons-material/Mail";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import BuildIcon from "@mui/icons-material/Build";
 
 import {
   Button,
@@ -181,8 +182,38 @@ export default function NavBar() {
         <ListItem button>
           <ListItemText primary="Categories" />
         </ListItem>
-        <ListItem button component={Link} to="/custom-orders">
-          <ListItemText primary="Custom Orders" />
+        <ListItem
+          button
+          component={Link}
+          to="/custom-orders"
+          sx={{
+            borderRadius: "8px",
+            margin: "6px 16px",
+            background: "linear-gradient(145deg, #1e3a5f, #2c4d7d)",
+            boxShadow: "0 4px 8px rgba(0,0,0,0.2)",
+            transition: "all 0.3s ease",
+          }}
+        >
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              width: "100%",
+              justifyContent: "center",
+            }}
+          >
+            <BuildIcon sx={{ color: "white", mr: 1 }} />
+            <ListItemText
+              primary="Custom Orders"
+              sx={{
+                textAlign: "center",
+                "& .MuiTypography-root": {
+                  fontWeight: "bold",
+                  color: "white",
+                },
+              }}
+            />
+          </Box>
         </ListItem>
         <ListItem button>
           <ListItemText primary="About Us" />
@@ -345,13 +376,13 @@ export default function NavBar() {
               </div>
 
               {!isTablet && (
-                <Box>
+                <Box sx={{ ml: "-6%" }}>
                   <img
                     src="/logo.png"
                     alt="logo"
                     style={{
                       width: 80,
-                      height: 100,
+                      height: 90,
                       padding: "10px",
                       marginRight: "1rem",
                     }}
@@ -366,7 +397,7 @@ export default function NavBar() {
                   alignItems: "center",
                 }}
               >
-                <Typography variant="h6" fontWeight={"bold"}>
+                <Typography variant="h7" fontWeight={"bold"}>
                   Hotline Number
                 </Typography>
                 <Typography variant="h7" fontWeight={"bold"}>
@@ -379,10 +410,26 @@ export default function NavBar() {
               <Box sx={{ display: "flex", alignItems: "center", gap: "1rem" }}>
                 {user && (
                   <Button
-                    color="inherit"
+                    variant="contained"
                     component={Link}
                     to="/custom-orders"
-                    sx={{ textTransform: "none" }}
+                    startIcon={<BuildIcon />}
+                    sx={{
+                      textTransform: "none",
+                      borderRadius: "8px",
+                      padding: "8px 16px",
+                      color: "white",
+                      fontWeight: "bold",
+                      background: "linear-gradient(45deg, #1e3a5f, #2c4d7d)",
+                      boxShadow: "0 4px 8px rgba(0,0,0,0.2)",
+                      transition: "all 0.3s ease",
+                      "&:hover": {
+                        color: "white",
+                        background: "linear-gradient(45deg, #2c4d7d, #1e3a5f)",
+                        transform: "translateY(-2px)",
+                        boxShadow: "0 6px 12px rgba(0,0,0,0.3)",
+                      },
+                    }}
                   >
                     Custom Orders
                   </Button>

@@ -184,6 +184,7 @@ function createTables() {
       delivery_address TEXT NOT NULL,
       category_id INT NOT NULL,
       subcategory_id INT,
+      prison_id INT,
       requirements TEXT NOT NULL,
       status ENUM('pending', 'reviewed', 'approved', 'in_progress', 'completed', 'cancelled') DEFAULT 'pending',
       admin_notes TEXT,
@@ -191,7 +192,8 @@ function createTables() {
       updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
       FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE RESTRICT,
       FOREIGN KEY (subcategory_id) REFERENCES subcategories(id) ON DELETE SET NULL,
-      FOREIGN KEY (customer_id) REFERENCES users(id) ON DELETE SET NULL
+      FOREIGN KEY (customer_id) REFERENCES users(id) ON DELETE SET NULL,
+      FOREIGN KEY (prison_id) REFERENCES prisons(id) ON DELETE SET NULL
     )
   `;
 

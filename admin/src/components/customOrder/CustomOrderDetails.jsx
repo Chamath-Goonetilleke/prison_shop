@@ -156,6 +156,18 @@ const CustomOrderDetails = ({ order, onClose, onOrderUpdated }) => {
                   {order.subcategory_name || "None"}
                 </Typography>
               </Box>
+              <Box sx={{ mb: 2 }}>
+                <Typography variant="body2" color="text.secondary">
+                  Prison
+                </Typography>
+                <Typography variant="body1">
+                  {order.prison_name
+                    ? order.prison_name_si
+                      ? `${order.prison_name} (${order.prison_name_si})`
+                      : order.prison_name
+                    : "None"}
+                </Typography>
+              </Box>
             </CardContent>
           </Card>
         </Grid>

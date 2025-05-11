@@ -124,6 +124,7 @@ const OrderDetailsModal = ({ open, onClose, order }) => {
               <TableHead>
                 <TableRow>
                   <TableCell>Product</TableCell>
+                  <TableCell>Prison</TableCell>
                   <TableCell>Price</TableCell>
                   <TableCell>Quantity</TableCell>
                   <TableCell>Subtotal</TableCell>
@@ -134,6 +135,13 @@ const OrderDetailsModal = ({ open, onClose, order }) => {
                   <TableRow key={item.id}>
                     <TableCell>{item.product_name}</TableCell>
                     <TableCell>
+                      {item.prison_name
+                        ? item.prison_name_si
+                          ? `${item.prison_name} (${item.prison_name_si})`
+                          : item.prison_name
+                        : "Not specified"}
+                    </TableCell>
+                    <TableCell>
                       Rs. {parseFloat(item.price).toFixed(2)}
                     </TableCell>
                     <TableCell>{item.quantity}</TableCell>
@@ -143,7 +151,7 @@ const OrderDetailsModal = ({ open, onClose, order }) => {
                   </TableRow>
                 ))}
                 <TableRow>
-                  <TableCell colSpan={3} align="right">
+                  <TableCell colSpan={4} align="right">
                     <Typography variant="subtitle1">Total:</Typography>
                   </TableCell>
                   <TableCell>

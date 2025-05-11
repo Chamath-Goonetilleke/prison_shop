@@ -96,6 +96,18 @@ const CustomOrderDetailsModal = ({ open, onClose, order }) => {
                 </Typography>
               </Grid>
             )}
+            {order.prison_name && (
+              <Grid item xs={12} sm={6}>
+                <Typography variant="subtitle2" color="text.secondary">
+                  Prison
+                </Typography>
+                <Typography variant="body1" gutterBottom>
+                  {order.prison_name_si
+                    ? `${order.prison_name} (${order.prison_name_si})`
+                    : order.prison_name}
+                </Typography>
+              </Grid>
+            )}
             <Grid item xs={12} sm={6}>
               <Typography variant="subtitle2" color="text.secondary">
                 Status

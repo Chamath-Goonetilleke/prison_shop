@@ -14,6 +14,7 @@ import CategorySlider from "../components/CategorySlider";
 import HomeProductSection from "../components/HomeProductSection";
 import categoryService from "../services/categoryService";
 import prisonService from "../services/prisonService";
+import { useNavigate } from "react-router-dom";
 
 const BACKGROUND_COLORS = [
   "#fdf2e4", // Light orange
@@ -30,8 +31,11 @@ export default function HomePage() {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const isTablet = useMediaQuery(theme.breakpoints.between("sm", "md"));
-  const[prisons, setPrisons] = useState([])
-
+  const [prisons, setPrisons] = useState([]);
+  const navigate = useNavigate();
+const handlePrisonClick = (prisonId) => {
+      navigate(`/prison/${prisonId}`);
+    };
   useEffect(() => {
     const fetchCategories = async () => {
       try {
@@ -43,8 +47,8 @@ export default function HomePage() {
         setLoading(false);
       }
     };
-
-    const fetchPrisons=async()=>{
+    
+    const fetchPrisons = async () => {
       try {
         const data = await prisonService.getAllPrisons();
         setPrisons(data);
@@ -53,8 +57,8 @@ export default function HomePage() {
       } finally {
         setLoading(false);
       }
-    }
-fetchPrisons();
+    };
+    fetchPrisons();
     fetchCategories();
   }, []);
 
@@ -73,16 +77,15 @@ fetchPrisons();
         {isMobile && (
           <Box sx={{ display: "flex", gap: 2 }}>
             <CategoryMenu />
-           { prisons.map((prison, index)=>(
+            {prisons.map((prison, index) => (
               <Typography
-              sx={{ cursor: "pointer", px: 1 }}
-              fontWeight="bold"
-              fontSize="15px"
-            >
-              {prison.nameSi}
-            </Typography>
+                sx={{ cursor: "pointer", px: 1 }}
+                fontWeight="bold"
+                fontSize="15px"
+              >
+                {prison.nameSi}
+              </Typography>
             ))}
-            
           </Box>
         )}
 
@@ -92,20 +95,21 @@ fetchPrisons();
             sx={{
               display: "flex",
               alignItems: "center",
-              gap:"1rem"
+              gap: "1rem",
             }}
           >
             <CategoryMenu />
-            { prisons.map((prison, index)=>(
-              <Typography
-              sx={{ cursor: "pointer" }}
-              fontWeight="bold"
-              fontSize={isTablet ? "15px" : "17px"}
-            >
-              {prison.nameSi}
-            </Typography>
+            {prisons.map((prison, index) => (
+              <div onClick={() =>handlePrisonClick(prison.id) }>
+                <Typography
+                  sx={{ cursor: "pointer" }}
+                  fontWeight="bold"
+                  fontSize={isTablet ? "15px" : "17px"}
+                >
+                  {prison.nameSi}
+                </Typography>
+              </div>
             ))}
-           
           </Box>
         )}
       </Box>
