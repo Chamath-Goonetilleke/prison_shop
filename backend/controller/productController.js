@@ -363,12 +363,18 @@ exports.search = (req, res) => {
     });
   }
 
+  console.log(`[Search] Searching products with term: "${searchTerm}"`);
+
   Product.search(searchTerm, (err, data) => {
     if (err) {
+      console.error(`[Search] Error searching for "${searchTerm}":`, err);
       res.status(500).send({
         message: err.message || "An error occurred while searching products.",
       });
     } else {
+      console.log(
+        `[Search] Found ${data.length} products matching "${searchTerm}"`
+      );
       res.send(data);
     }
   });

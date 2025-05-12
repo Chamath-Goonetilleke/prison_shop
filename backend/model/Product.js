@@ -826,16 +826,34 @@ class Product {
       SELECT p.*, 
              c.nameEn as categoryName, c.code as categoryCode,
              s.nameEn as subCategoryName,
+             pr.nameEn as prisonName, pr.nameSi as prisonNameSi,
              GROUP_CONCAT(DISTINCT pi.image_path) AS additional_images
       FROM products p
       LEFT JOIN categories c ON p.category_id = c.id
       LEFT JOIN subcategories s ON p.subCategory_id = s.id
+      LEFT JOIN prisons pr ON p.prison_id = pr.id
       LEFT JOIN product_images pi ON p.id = pi.product_id
-      WHERE p.nameEn LIKE ? OR p.nameSi LIKE ? OR p.description LIKE ? OR p.productCode LIKE ?
+      WHERE p.nameEn LIKE ? 
+         OR p.nameSi LIKE ? 
+         OR p.description LIKE ? 
+         OR p.productCode LIKE ?
+         OR c.nameEn LIKE ?
+         OR c.nameSi LIKE ?
+         OR s.nameEn LIKE ?
+         OR s.nameSi LIKE ?
       GROUP BY p.id
       ORDER BY p.created_at DESC
     `,
-      [searchPattern, searchPattern, searchPattern, searchPattern],
+      [
+        searchPattern,
+        searchPattern,
+        searchPattern,
+        searchPattern,
+        searchPattern,
+        searchPattern,
+        searchPattern,
+        searchPattern,
+      ],
       (err, res) => {
         if (err) {
           console.error("Error searching products:", err);
@@ -855,7 +873,48 @@ class Product {
           return product;
         });
 
-        result(null, productsWithDetails);
+        // Fetch attributes for these products
+        const productIds = res.map((p) => p.id);
+        if (productIds.length > 0) {
+          db.query(
+            "SELECT product_id, attribute_key, attribute_value FROM product_attributes WHERE product_id IN (?)",
+            [productIds],
+            (attrErr, attrRes) => {
+              if (attrErr) {
+                console.error("Error retrieving product attributes:", attrErr);
+                // Return products without attributes
+                result(null, productsWithDetails);
+                return;
+              }
+
+              // Group attributes by product_id
+              const attributesByProduct = {};
+              attrRes.forEach((attr) => {
+                if (!attributesByProduct[attr.product_id]) {
+                  attributesByProduct[attr.product_id] = {};
+                }
+
+                // Try to parse JSON for array/object values
+                try {
+                  attributesByProduct[attr.product_id][attr.attribute_key] =
+                    JSON.parse(attr.attribute_value);
+                } catch (e) {
+                  attributesByProduct[attr.product_id][attr.attribute_key] =
+                    attr.attribute_value;
+                }
+              });
+
+              // Add attributes to each product
+              productsWithDetails.forEach((product) => {
+                product.attributes = attributesByProduct[product.id] || {};
+              });
+
+              result(null, productsWithDetails);
+            }
+          );
+        } else {
+          result(null, productsWithDetails);
+        }
       }
     );
   }

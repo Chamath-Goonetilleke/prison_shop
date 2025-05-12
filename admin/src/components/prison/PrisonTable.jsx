@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Table,
@@ -67,9 +67,9 @@ const PrisonTable = ({
   });
 
   // Update filtered prisons when prisons prop changes
-  React.useEffect(() => {
-    setFilteredPrisons(prisons);
-  }, [prisons]);
+  useEffect(() => {
+    handleSearch();
+  }, [prisons, searchTerm]);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -148,28 +148,24 @@ const PrisonTable = ({
     });
   };
 
-  if (loading) {
+  const getStatusChip = (status) => {
     return (
-      <Box sx={{ display: "flex", justifyContent: "center", p: 4 }}>
-        <CircularProgress />
-      </Box>
+      <Chip
+        label={status}
+        color={status === "Active" ? "success" : "error"}
+        size="small"
+      />
     );
-  }
-
-  if (error) {
-    return <Alert severity={getSafeSeverity("error")}>{error}</Alert>;
-  }
+  };
 
   return (
-    <Paper sx={{ width: "100%", overflow: "hidden" }}>
+    <Box>
       {/* Search bar */}
-      <Box sx={{ p: 2, display: "flex", alignItems: "center" }}>
+      <Box sx={{ display: "flex", alignItems: "center", mb: 2, mt: 2 }}>
         <TextField
-          label="Search Prisons"
           variant="outlined"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          onKeyPress={handleSearchKeyPress}
           sx={{ flexGrow: 1, mr: 1 }}
           InputProps={{
             endAdornment: (
@@ -182,117 +178,85 @@ const PrisonTable = ({
           }}
           placeholder="Search by number, name or location..."
         />
-        <Button
-          variant="contained"
-          onClick={handleSearch}
-          startIcon={<SearchIcon />}
-        >
-          Search
-        </Button>
       </Box>
 
-      <TableContainer sx={{ maxHeight: "65vh" }}>
-        <Table stickyHeader aria-label="sticky table">
-          <TableHead>
-            <TableRow>
-              {columns.map((column) => (
-                <TableCell
-                  key={column.id}
-                  style={{ minWidth: column.minWidth }}
-                >
-                  {column.label}
-                </TableCell>
-              ))}
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {filteredPrisons.length === 0 ? (
+      <Paper sx={{ width: "100%", mb: 2 }}>
+        <TableContainer sx={{ minHeight: "50vh" }}>
+          <Table stickyHeader aria-label="sticky table">
+            <TableHead>
               <TableRow>
-                <TableCell colSpan={columns.length} align="center">
-                  No prisons found
-                </TableCell>
+                {columns.map((column) => (
+                  <TableCell
+                    key={column.id}
+                    style={{ minWidth: column.minWidth, fontWeight: "bold" }}
+                  >
+                    {column.label}
+                  </TableCell>
+                ))}
               </TableRow>
-            ) : (
-              filteredPrisons
-                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((prison) => {
-                  return (
-                    <TableRow
-                      hover
-                      role="checkbox"
-                      tabIndex={-1}
-                      key={prison.id}
-                    >
-                      {columns.map((column) => {
-                        if (column.id === "actions") {
-                          return (
-                            <TableCell key={column.id}>
-                              <Box sx={{ display: "flex" }}>
-                                <Tooltip title="View Prison">
-                                  <IconButton
-                                    color="primary"
-                                    onClick={() => onView(prison)}
-                                  >
-                                    <VisibilityIcon />
-                                  </IconButton>
-                                </Tooltip>
-                                <Tooltip title="Edit Prison">
-                                  <IconButton
-                                    color="info"
-                                    onClick={() => onEdit(prison)}
-                                  >
-                                    <EditIcon />
-                                  </IconButton>
-                                </Tooltip>
-                                <Tooltip title="Delete Prison">
-                                  <IconButton
-                                    color="error"
-                                    onClick={() => handleDeleteClick(prison)}
-                                  >
-                                    <DeleteIcon />
-                                  </IconButton>
-                                </Tooltip>
-                              </Box>
-                            </TableCell>
-                          );
-                        }
-
-                        if (column.id === "status") {
-                          return (
-                            <TableCell key={column.id}>
-                              <Chip
-                                label={prison.status}
-                                color={
-                                  prison.status === "Active"
-                                    ? "success"
-                                    : "default"
-                                }
-                                size="small"
-                              />
-                            </TableCell>
-                          );
-                        }
-
-                        const value = prison[column.id] || "";
-                        return <TableCell key={column.id}>{value}</TableCell>;
-                      })}
-                    </TableRow>
-                  );
-                })
-            )}
-          </TableBody>
-        </Table>
-      </TableContainer>
-
-      <TablePagination
-        rowsPerPageOptions={[10, 25, 100]}
-        component="div"
-        count={filteredPrisons.length}
-        rowsPerPage={rowsPerPage}
-        page={page}
-        onPageChange={handleChangePage}
-        onRowsPerPageChange={handleChangeRowsPerPage}
-      />
+            </TableHead>
+            <TableBody>
+              {filteredPrisons.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={columns.length} align="center">
+                    No prisons found
+                  </TableCell>
+                </TableRow>
+              ) : (
+                filteredPrisons
+                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                  .map((prison) => {
+                    return (
+                      <TableRow
+                        hover
+                        role="checkbox"
+                        tabIndex={-1}
+                        key={prison.id}
+                      >
+                        <TableCell>{prison.prison_no}</TableCell>
+                        <TableCell>{prison.nameEn}</TableCell>
+                        <TableCell>{prison.nameSi || "-"}</TableCell>
+                        <TableCell>{prison.location || "-"}</TableCell>
+                        <TableCell>{prison.contact || "-"}</TableCell>
+                        <TableCell>{getStatusChip(prison.status)}</TableCell>
+                        <TableCell>
+                          <Box sx={{ display: "flex" }}>
+                            
+                            <Tooltip title="Edit Prison">
+                              <IconButton
+                                color="info"
+                                onClick={() => onEdit(prison)}
+                              >
+                                <EditIcon />
+                              </IconButton>
+                            </Tooltip>
+                            <Tooltip title="Delete Prison">
+                              <IconButton
+                                color="error"
+                                onClick={() => handleDeleteClick(prison)}
+                              >
+                                <DeleteIcon />
+                              </IconButton>
+                            </Tooltip>
+                          </Box>
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })
+              )}
+            </TableBody>
+          </Table>
+        </TableContainer>
+        <TablePagination
+          rowsPerPageOptions={[5, 10, 25]}
+          component="div"
+          count={filteredPrisons.length}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          onPageChange={handleChangePage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
+        />
+      </Paper>
 
       {/* Delete Confirmation Dialog */}
       <Dialog
@@ -333,7 +297,7 @@ const PrisonTable = ({
           {notification.message}
         </Alert>
       </Snackbar>
-    </Paper>
+    </Box>
   );
 };
 

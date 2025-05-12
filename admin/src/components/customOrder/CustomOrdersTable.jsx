@@ -12,15 +12,22 @@ import {
   Typography,
   Button,
   Chip,
+  TextField,
+  CircularProgress,
+  InputAdornment,
+  IconButton,
 } from "@mui/material";
 import VisibilityIcon from "@mui/icons-material/Visibility";
+import SearchIcon from "@mui/icons-material/Search";
 import customOrderService from "../../services/customOrderService";
 import { format } from "date-fns";
 
 const CustomOrdersTable = ({ onView }) => {
   const [customOrders, setCustomOrders] = useState([]);
+  const [filteredOrders, setFilteredOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
 
   // Pagination state
   const [page, setPage] = useState(0);
@@ -30,11 +37,40 @@ const CustomOrdersTable = ({ onView }) => {
     fetchCustomOrders();
   }, []);
 
+  useEffect(() => {
+    // Filter orders based on search term
+    if (searchTerm.trim() === "") {
+      setFilteredOrders(customOrders);
+    } else {
+      const lowercasedSearch = searchTerm.toLowerCase();
+      const filtered = customOrders.filter(
+        (order) =>
+          order.orderNumber.toLowerCase().includes(lowercasedSearch) ||
+          order.customer_name.toLowerCase().includes(lowercasedSearch) ||
+          (order.customer_email &&
+            order.customer_email.toLowerCase().includes(lowercasedSearch)) ||
+          (order.customer_phone &&
+            order.customer_phone.toLowerCase().includes(lowercasedSearch)) ||
+          (order.category_name &&
+            order.category_name.toLowerCase().includes(lowercasedSearch)) ||
+          (order.subcategory_name &&
+            order.subcategory_name.toLowerCase().includes(lowercasedSearch)) ||
+          (order.prison_name &&
+            order.prison_name.toLowerCase().includes(lowercasedSearch)) ||
+          (order.status &&
+            order.status.toLowerCase().includes(lowercasedSearch))
+      );
+      setFilteredOrders(filtered);
+    }
+    setPage(0); // Reset to first page when search changes
+  }, [searchTerm, customOrders]);
+
   const fetchCustomOrders = async () => {
     try {
       setLoading(true);
       const data = await customOrderService.getAllCustomOrders();
       setCustomOrders(data);
+      setFilteredOrders(data);
       setError(null);
     } catch (err) {
       console.error("Error fetching custom orders:", err);
@@ -53,36 +89,43 @@ const CustomOrdersTable = ({ onView }) => {
     setPage(0);
   };
 
-  const getStatusChip = (status) => {
-    let color;
-    switch (status) {
-      case "pending":
-        color = "default";
-        break;
-      case "reviewed":
-        color = "info";
-        break;
-      case "approved":
-        color = "primary";
-        break;
-      case "in_progress":
-        color = "warning";
-        break;
-      case "completed":
-        color = "success";
-        break;
-      case "cancelled":
-        color = "error";
-        break;
-      default:
-        color = "default";
-    }
+  const handleSearch = (event) => {
+    setSearchTerm(event.target.value);
+  };
 
-    return <Chip label={status.replace("_", " ")} color={color} />;
+  const handleSearchKeyPress = (e) => {
+    if (e.key === "Enter") {
+      // Trigger search on Enter key
+      // This is already handled by the useEffect
+    }
+  };
+
+  const getStatusChip = (status) => {
+    // Use the same status colors as OrdersTable
+    const statusColors = {
+      pending: "warning",
+      approved: "success",
+      reviewed: "info",
+      in_progress: "warning",
+      completed: "success",
+      cancelled: "error",
+    };
+
+    return (
+      <Chip
+        label={status.toUpperCase()}
+        color={statusColors[status] || "default"}
+        size="small"
+      />
+    );
   };
 
   if (loading) {
-    return <Typography>Loading custom orders...</Typography>;
+    return (
+      <Box sx={{ display: "flex", justifyContent: "center", my: 4 }}>
+        <CircularProgress />
+      </Box>
+    );
   }
 
   if (error) {
@@ -91,6 +134,27 @@ const CustomOrdersTable = ({ onView }) => {
 
   return (
     <Box sx={{ width: "100%" }}>
+      {/* Search bar */}
+      <Box sx={{ mb: 2, display: "flex", alignItems: "center" }}>
+        <TextField
+          variant="outlined"
+          value={searchTerm}
+          onChange={handleSearch}
+          onKeyPress={handleSearchKeyPress}
+          sx={{ flexGrow: 1, mr: 1 }}
+          InputProps={{
+            endAdornment: (
+              <InputAdornment position="end">
+                <IconButton>
+                  <SearchIcon />
+                </IconButton>
+              </InputAdornment>
+            ),
+          }}
+          placeholder="Search by order #, customer, category, status..."
+        />
+      </Box>
+
       <Paper sx={{ width: "100%", mb: 2 }}>
         <TableContainer>
           <Table sx={{ minWidth: 750 }} aria-labelledby="tableTitle">
@@ -107,14 +171,14 @@ const CustomOrdersTable = ({ onView }) => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {customOrders.length === 0 ? (
+              {filteredOrders.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={8} align="center">
                     No custom orders found
                   </TableCell>
                 </TableRow>
               ) : (
-                customOrders
+                filteredOrders
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((order) => (
                     <TableRow hover key={order.id}>
@@ -145,7 +209,7 @@ const CustomOrdersTable = ({ onView }) => {
         <TablePagination
           rowsPerPageOptions={[5, 10, 25]}
           component="div"
-          count={customOrders.length}
+          count={filteredOrders.length}
           rowsPerPage={rowsPerPage}
           page={page}
           onPageChange={handleChangePage}

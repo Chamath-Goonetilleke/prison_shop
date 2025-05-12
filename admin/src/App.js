@@ -3,7 +3,8 @@ import "./App.css";
 import AdminDashboard from "./page/AdminDashboard";
 import LoginPage from "./page/LoginPage";
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import { Box, CircularProgress } from "@mui/material";
+import authService from "./services/authService";
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -14,29 +15,31 @@ function App() {
   }, []);
 
   const checkAuth = async () => {
-    const token = localStorage.getItem("adminToken");
-    if (!token) {
-      setIsAuthenticated(false);
-      setLoading(false);
-      return;
-    }
-
     try {
-      await axios.get("http://localhost:8080/api/auth/admin/me", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      await authService.checkAuth();
       setIsAuthenticated(true);
     } catch (error) {
-      localStorage.removeItem("adminToken");
+      authService.logout();
       setIsAuthenticated(false);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   if (loading) {
-    return <div>Loading...</div>;
+    return (
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          my: 4,
+          height: "90vh",
+        }}
+      >
+        <CircularProgress />
+      </Box>
+    );
   }
 
   return (

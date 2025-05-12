@@ -10,8 +10,8 @@ import {
   Link,
 } from "@mui/material";
 import { useNavigate, Link as RouterLink } from "react-router-dom";
-import axios from "axios";
 import { useAuth } from "../context/AuthContext";
+import authService from "../services/authService";
 
 const LoginPage = () => {
   const [email, setEmail] = useState("");
@@ -25,15 +25,8 @@ const LoginPage = () => {
     setError("");
 
     try {
-      const response = await axios.post(
-        "http://localhost:8080/api/auth/login",
-        {
-          email,
-          password,
-        }
-      );
-
-      login(response.data.token, response.data.user);
+      const data = await authService.login(email, password);
+      login(data.token, data.user);
       navigate("/profile");
     } catch (error) {
       setError(
@@ -62,12 +55,7 @@ const LoginPage = () => {
             width: "100%",
           }}
         >
-          <img
-            src="/Prison_Craft_logo.png"
-            alt="logo"
-            style={{ width: 100, marginBottom: 20 }}
-          />
-          <Typography component="h1" variant="h5">
+          <Typography component="h1" variant="h5" fontWeight={"bold"}>
             Sign In
           </Typography>
           {error && (

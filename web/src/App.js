@@ -13,6 +13,7 @@ import ProfilePage from "./pages/ProfilePage";
 import CustomOrderPage from "./pages/CustomOrderPage";
 import CategoryProductsPage from "./pages/CategoryProductsPage";
 import PrisonProductsPage from "./pages/PrisonProductsPage";
+import SearchResultsPage from "./pages/SearchResultsPage";
 import ProtectedRoute from "./components/common/ProtectedRoute";
 
 function App() {
@@ -38,6 +39,7 @@ function App() {
             element={<CategoryProductsPage />}
           />
           <Route path="/prison/:prisonId" element={<PrisonProductsPage />} />
+          <Route path="/search" element={<SearchResultsPage />} />
           <Route
             path="/profile"
             element={

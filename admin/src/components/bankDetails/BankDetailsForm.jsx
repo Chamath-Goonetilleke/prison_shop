@@ -2,21 +2,20 @@ import React, { useState, useEffect } from "react";
 import {
   Box,
   Button,
-  FormControl,
   FormControlLabel,
-  Grid,
-  Paper,
   Switch,
   TextField,
   Typography,
   CircularProgress,
   Snackbar,
   Alert,
+  IconButton,
 } from "@mui/material";
 import SaveIcon from "@mui/icons-material/Save";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import bankDetailsService from "../../services/bankDetailsService";
 
-const BankDetailsForm = ({ bankDetails, onSave, onCancel }) => {
+const BankDetailsForm = ({ bankDetails, mode, onSave, onCancel }) => {
   const [formData, setFormData] = useState({
     bank_name: "",
     account_name: "",
@@ -32,6 +31,8 @@ const BankDetailsForm = ({ bankDetails, onSave, onCancel }) => {
     message: "",
     severity: "success",
   });
+
+  const isEditMode = mode === "edit";
 
   // Populate form with existing data if editing
   useEffect(() => {
@@ -100,7 +101,7 @@ const BankDetailsForm = ({ bankDetails, onSave, onCancel }) => {
     setLoading(true);
     try {
       // If editing existing bank details
-      if (bankDetails && bankDetails.id) {
+      if (isEditMode && bankDetails && bankDetails.id) {
         await bankDetailsService.updateBankDetails(bankDetails.id, formData);
         setNotification({
           open: true,
@@ -120,7 +121,9 @@ const BankDetailsForm = ({ bankDetails, onSave, onCancel }) => {
 
       // Call onSave callback
       if (onSave) {
-        onSave();
+        setTimeout(() => {
+          onSave();
+        }, 1500); // Give time for user to see success message
       }
     } catch (error) {
       console.error("Error saving bank details:", error);
@@ -142,110 +145,102 @@ const BankDetailsForm = ({ bankDetails, onSave, onCancel }) => {
   };
 
   return (
-    <Paper elevation={3} sx={{ p: 3 }}>
-      <Typography variant="h6" gutterBottom>
-        {bankDetails && bankDetails.id
-          ? "Edit Bank Details"
-          : "Add New Bank Details"}
-      </Typography>
+    <Box>
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          mb: 3,
+        }}
+      >
+        <IconButton onClick={onCancel} variant="outlined" sx={{ mr: 2 }}>
+          <ArrowBackIcon sx={{ fontWeight: "bold" }} />
+        </IconButton>
+        <Typography variant="h5" component="h2" fontWeight={"bold"}>
+          {isEditMode ? "Edit Bank Details" : "Add New Bank Details"}
+        </Typography>
+      </Box>
 
       <form onSubmit={handleSubmit}>
-        <Grid container spacing={3}>
-          <Grid item xs={12} sm={6}>
-            <TextField
-              fullWidth
-              required
-              label="Bank Name"
-              name="bank_name"
-              value={formData.bank_name}
-              onChange={handleInputChange}
-              error={!!errors.bank_name}
-              helperText={errors.bank_name}
-            />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <TextField
-              fullWidth
-              required
-              label="Account Name"
-              name="account_name"
-              value={formData.account_name}
-              onChange={handleInputChange}
-              error={!!errors.account_name}
-              helperText={errors.account_name}
-            />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <TextField
-              fullWidth
-              required
-              label="Account Number"
-              name="account_number"
-              value={formData.account_number}
-              onChange={handleInputChange}
-              error={!!errors.account_number}
-              helperText={errors.account_number}
-            />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <TextField
-              fullWidth
-              required
-              label="Branch"
-              name="branch"
-              value={formData.branch}
-              onChange={handleInputChange}
-              error={!!errors.branch}
-              helperText={errors.branch}
-            />
-          </Grid>
-          <Grid item xs={12}>
-            <TextField
-              fullWidth
-              label="Instructions (Optional)"
-              name="instructions"
-              multiline
-              rows={3}
-              value={formData.instructions}
-              onChange={handleInputChange}
-              placeholder="Add any special instructions for payment..."
-            />
-          </Grid>
-          <Grid item xs={12}>
-            <FormControlLabel
-              control={
-                <Switch
-                  name="active"
-                  checked={formData.active}
-                  onChange={handleSwitchChange}
-                  color="primary"
-                />
-              }
-              label="Active (Show this account on checkout page)"
-            />
-          </Grid>
-          <Grid
-            item
-            xs={12}
-            sx={{ display: "flex", justifyContent: "flex-end", gap: 2 }}
+        <Box sx={{ display: "flex", gap: 2, flexDirection: "column" }}>
+          <TextField
+            fullWidth
+            required
+            label="Bank Name"
+            name="bank_name"
+            value={formData.bank_name}
+            onChange={handleInputChange}
+            error={!!errors.bank_name}
+            helperText={errors.bank_name}
+          />
+          <TextField
+            fullWidth
+            required
+            label="Account Name"
+            name="account_name"
+            value={formData.account_name}
+            onChange={handleInputChange}
+            error={!!errors.account_name}
+            helperText={errors.account_name}
+          />
+          <TextField
+            fullWidth
+            required
+            label="Account Number"
+            name="account_number"
+            value={formData.account_number}
+            onChange={handleInputChange}
+            error={!!errors.account_number}
+            helperText={errors.account_number}
+          />
+          <TextField
+            fullWidth
+            required
+            label="Branch"
+            name="branch"
+            value={formData.branch}
+            onChange={handleInputChange}
+            error={!!errors.branch}
+            helperText={errors.branch}
+          />
+          <TextField
+            fullWidth
+            label="Instructions (Optional)"
+            name="instructions"
+            multiline
+            rows={3}
+            value={formData.instructions}
+            onChange={handleInputChange}
+            placeholder="Add any special instructions for payment..."
+          />
+          <FormControlLabel
+            control={
+              <Switch
+                name="active"
+                checked={formData.active}
+                onChange={handleSwitchChange}
+                color="primary"
+              />
+            }
+            label="Active (Show this account on checkout page)"
+          />
+        </Box>
+        <Box sx={{ display: "flex", gap: 1, flexDirection: "column", mt: 4 }}>
+          <Button
+            type="submit"
+            variant="contained"
+            startIcon={loading ? <CircularProgress size={20} /> : <SaveIcon />}
+            disabled={loading}
+            size="large"
           >
-            {onCancel && (
-              <Button variant="outlined" onClick={onCancel}>
-                Cancel
-              </Button>
-            )}
-            <Button
-              type="submit"
-              variant="contained"
-              startIcon={
-                loading ? <CircularProgress size={20} /> : <SaveIcon />
-              }
-              disabled={loading}
-            >
-              {loading ? "Saving..." : "Save"}
+            {loading ? "Saving..." : "Save"}
+          </Button>
+          {onCancel && (
+            <Button variant="outlined" size="large" onClick={onCancel}>
+              Cancel
             </Button>
-          </Grid>
-        </Grid>
+          )}
+        </Box>
       </form>
 
       <Snackbar
@@ -262,7 +257,7 @@ const BankDetailsForm = ({ bankDetails, onSave, onCancel }) => {
           {notification.message}
         </Alert>
       </Snackbar>
-    </Paper>
+    </Box>
   );
 };
 

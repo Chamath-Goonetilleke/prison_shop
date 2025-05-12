@@ -23,8 +23,9 @@ import SubCategoryManagement from "./category/SubCategoryManagement";
 import SettingsManagement from "./settings/SettingsManagement";
 import UserManagement from "./settings/UserManagement";
 import GroupIcon from "@mui/icons-material/Group";
-import axios from "axios";
 import { useEffect } from "react";
+import authService from "../services/authService";
+
 const NAVIGATION = [
   {
     segment: "categories",
@@ -125,22 +126,14 @@ function AdminDashboard(props) {
 
   const checkAdminRole = async () => {
     try {
-      const token = localStorage.getItem("adminToken");
-      const response = await axios.get(
-        "http://localhost:8080/api/auth/admin/me",
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const adminData = await authService.checkAuth();
       setSession({
         user: {
-          name: response.data.firstName + " " + response.data.lastName,
-          email: response.data.email,
+          name: adminData.firstName + " " + adminData.lastName,
+          email: adminData.email,
         },
       });
-      setIsSuperAdmin(response.data.role === "super_admin");
+      setIsSuperAdmin(adminData.role === "super_admin");
     } catch (error) {
       console.error("Error checking admin role:", error);
     }
@@ -153,18 +146,19 @@ function AdminDashboard(props) {
   const authentication = React.useMemo(() => {
     return {
       signOut: () => {
-        localStorage.clear();
+        authService.logout();
         window.location.reload();
         setSession(null);
       },
     };
   }, []);
+
   return (
     <AppProvider
       session={session}
       branding={{
         logo: <img src="/main-only-logo.png" alt="main-only-logo" />,
-        title: "CELLMADE",
+        title: "PRISON CRAFT",
       }}
       authentication={authentication}
       navigation={NAVIGATION}

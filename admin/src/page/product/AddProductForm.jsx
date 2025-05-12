@@ -1096,7 +1096,13 @@ export default function AddProductForm({ onBack, editProduct, mode = "add" }) {
               loading && <CircularProgress size={20} color="inherit" />
             }
           >
-            {loading ? "Creating Product..." : "Add Product"}
+            {mode === "edit" && loading
+              ? "Updating Product..."
+              : mode === "add" && loading
+                ? "Creating Product..."
+                : mode === "edit" && !loading
+                  ? "Update Product"
+                  :"Add Product"}
           </Button>
         </Box>
       </div>

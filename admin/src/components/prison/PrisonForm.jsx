@@ -151,8 +151,8 @@ const PrisonForm = ({ prison, mode = "add", onBack }) => {
   };
 
   return (
-    <div >
-      <Box sx={{ display: "flex", alignItems: "center", mb: 3 }}>
+    <div>
+      <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
         <IconButton onClick={onBack} sx={{ mr: 2 }}>
           <ArrowBackIcon />
         </IconButton>
@@ -162,95 +162,77 @@ const PrisonForm = ({ prison, mode = "add", onBack }) => {
       </Box>
 
       <form onSubmit={handleSubmit}>
-        <Grid container spacing={3}>
-          <Grid item xs={12} sm={6}>
-            <TextField
-              fullWidth
-              required
-              label="Prison No"
-              name="prison_no"
-              value={formData.prison_no}
+        <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+          <TextField
+            fullWidth
+            required
+            label="Prison No"
+            name="prison_no"
+            value={formData.prison_no}
+            onChange={handleInputChange}
+            error={!!errors.prison_no}
+            helperText={errors.prison_no}
+          />
+          <TextField
+            fullWidth
+            required
+            label="Name (English)"
+            name="nameEn"
+            value={formData.nameEn}
+            onChange={handleInputChange}
+            error={!!errors.nameEn}
+            helperText={errors.nameEn}
+          />
+          <TextField
+            fullWidth
+            label="Name (Sinhala)"
+            name="nameSi"
+            value={formData.nameSi}
+            onChange={handleInputChange}
+          />
+          <TextField
+            fullWidth
+            label="Contact Number"
+            name="contact"
+            value={formData.contact}
+            onChange={handleInputChange}
+          />
+          <TextField
+            fullWidth
+            label="Location"
+            name="location"
+            multiline
+            rows={2}
+            value={formData.location}
+            onChange={handleInputChange}
+          />
+          <FormControl fullWidth>
+            <InputLabel id="status-label">Status</InputLabel>
+            <Select
+              labelId="status-label"
+              name="status"
+              value={formData.status}
+              label="Status"
               onChange={handleInputChange}
-              error={!!errors.prison_no}
-              helperText={errors.prison_no}
-            />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <TextField
-              fullWidth
-              required
-              label="Name (English)"
-              name="nameEn"
-              value={formData.nameEn}
-              onChange={handleInputChange}
-              error={!!errors.nameEn}
-              helperText={errors.nameEn}
-            />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <TextField
-              fullWidth
-              label="Name (Sinhala)"
-              name="nameSi"
-              value={formData.nameSi}
-              onChange={handleInputChange}
-            />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <TextField
-              fullWidth
-              label="Contact Number"
-              name="contact"
-              value={formData.contact}
-              onChange={handleInputChange}
-            />
-          </Grid>
-          <Grid item xs={12}>
-            <TextField
-              fullWidth
-              label="Location"
-              name="location"
-              multiline
-              rows={2}
-              value={formData.location}
-              onChange={handleInputChange}
-            />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <FormControl fullWidth>
-              <InputLabel id="status-label">Status</InputLabel>
-              <Select
-                labelId="status-label"
-                name="status"
-                value={formData.status}
-                label="Status"
-                onChange={handleInputChange}
-              >
-                <MenuItem value="Active">Active</MenuItem>
-                <MenuItem value="Inactive">Inactive</MenuItem>
-              </Select>
-            </FormControl>
-          </Grid>
-          <Grid
-            item
-            xs={12}
-            sx={{ display: "flex", justifyContent: "flex-end", gap: 2, mt: 2 }}
-          >
-            <Button variant="outlined" onClick={onBack}>
-              Cancel
-            </Button>
-            <Button
-              type="submit"
-              variant="contained"
-              startIcon={
-                loading ? <CircularProgress size={20} /> : <SaveIcon />
-              }
-              disabled={loading}
             >
-              {loading ? "Saving..." : "Save"}
-            </Button>
-          </Grid>
-        </Grid>
+              <MenuItem value="Active">Active</MenuItem>
+              <MenuItem value="Inactive">Inactive</MenuItem>
+            </Select>
+          </FormControl>
+          <Button
+            type="submit"
+            variant="contained"
+            startIcon={loading ? <CircularProgress size={20} /> : <SaveIcon />}
+            disabled={loading}
+            size="large"
+            sx={{mt:2}}
+          >
+            {loading ? "Saving..." : "Save"}
+          </Button>
+          <Button variant="outlined" size="large" onClick={onBack}>
+            Cancel
+          </Button>
+        </Box>
       </form>
 
       <Snackbar

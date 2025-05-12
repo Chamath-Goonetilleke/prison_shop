@@ -221,11 +221,9 @@ export default function ProductTable({ onEdit, onView }) {
   }
 
   return (
-    <Paper sx={{ width: "100%", overflow: "hidden" }}>
-      {/* Search bar */}
-      <Box sx={{ p: 2, display: "flex", alignItems: "center" }}>
+    <Box>
+      <Box sx={{ display: "flex", alignItems: "center", margin: "1rem" }}>
         <TextField
-          label="Search Products"
           variant="outlined"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
@@ -242,178 +240,174 @@ export default function ProductTable({ onEdit, onView }) {
           }}
           placeholder="Search by name, code or description..."
         />
-        <Button
-          variant="contained"
-          onClick={handleSearch}
-          startIcon={<SearchIcon />}
-        >
-          Search
-        </Button>
       </Box>
+      <Paper elevation={2}  sx={{ width: "100%", overflow: "hidden",}}>
+        {/* Search bar */}
 
-      <TableContainer sx={{ maxHeight: "75vh" }}>
-        <Table stickyHeader aria-label="sticky table">
-          <TableHead>
-            <TableRow>
-              {columns.map((column) => (
-                <TableCell
-                  key={column.id}
-                  style={{ minWidth: column.minWidth }}
-                >
-                  {column.label}
-                </TableCell>
-              ))}
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {filteredProducts.length === 0 ? (
+        <TableContainer sx={{ minHeight: "55vh", mt: 2 }}>
+          <Table stickyHeader aria-label="sticky table">
+            <TableHead>
               <TableRow>
-                <TableCell colSpan={columns.length} align="center">
-                  No products found
-                </TableCell>
+                {columns.map((column) => (
+                  <TableCell
+                    key={column.id}
+                    style={{ minWidth: column.minWidth , fontWeight:"bold"}}
+                  >
+                    {column.label}
+                  </TableCell>
+                ))}
               </TableRow>
-            ) : (
-              filteredProducts
-                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((product) => {
-                  return (
-                    <TableRow
-                      hover
-                      role="checkbox"
-                      tabIndex={-1}
-                      key={product.id}
-                    >
-                      {columns.map((column) => {
-                        if (column.id === "actions") {
+            </TableHead>
+            <TableBody>
+              {filteredProducts.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={columns.length} align="center">
+                    No products found
+                  </TableCell>
+                </TableRow>
+              ) : (
+                filteredProducts
+                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                  .map((product) => {
+                    return (
+                      <TableRow
+                        hover
+                        role="checkbox"
+                        tabIndex={-1}
+                        key={product.id}
+                      >
+                        {columns.map((column) => {
+                          if (column.id === "actions") {
+                            return (
+                              <TableCell key={column.id}>
+                                <Box sx={{ display: "flex" }}>
+                                  <Tooltip title="View Product">
+                                    <IconButton
+                                      color="primary"
+                                      onClick={() => handleView(product)}
+                                    >
+                                      <VisibilityIcon />
+                                    </IconButton>
+                                  </Tooltip>
+                                  <Tooltip title="Edit Product">
+                                    <IconButton
+                                      color="info"
+                                      onClick={() => handleEdit(product)}
+                                    >
+                                      <EditIcon />
+                                    </IconButton>
+                                  </Tooltip>
+                                  <Tooltip title="Delete Product">
+                                    <IconButton
+                                      color="error"
+                                      onClick={() => handleDeleteClick(product)}
+                                    >
+                                      <DeleteIcon />
+                                    </IconButton>
+                                  </Tooltip>
+                                </Box>
+                              </TableCell>
+                            );
+                          }
+
+                          let value = product[column.id];
+
+                          // Handle special cases
+                          if (column.id === "subCategory") {
+                            value = getSubCategory(product);
+                          } else if (column.id === "price") {
+                            value = formatPrice(value);
+                          } else if (column.id === "type") {
+                            // Display the category name instead of type code
+                            value = product.categoryName || product.type;
+                          }
+
                           return (
                             <TableCell key={column.id}>
-                              <Box sx={{ display: "flex" }}>
-                                <Tooltip title="View Product">
-                                  <IconButton
-                                    color="primary"
-                                    onClick={() => handleView(product)}
-                                  >
-                                    <VisibilityIcon />
-                                  </IconButton>
-                                </Tooltip>
-                                <Tooltip title="Edit Product">
-                                  <IconButton
-                                    color="info"
-                                    onClick={() => handleEdit(product)}
-                                  >
-                                    <EditIcon />
-                                  </IconButton>
-                                </Tooltip>
-                                <Tooltip title="Delete Product">
-                                  <IconButton
-                                    color="error"
-                                    onClick={() => handleDeleteClick(product)}
-                                  >
-                                    <DeleteIcon />
-                                  </IconButton>
-                                </Tooltip>
-                              </Box>
+                              {column.id === "image" ? (
+                                <img
+                                  src={
+                                    product.mainImage
+                                      ? product.mainImage
+                                      : "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2YwZjBmMCIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMjAiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIiBmaWxsPSIjNjY2Ij5ObyBJbWFnZTwvdGV4dD48L3N2Zz4="
+                                  }
+                                  alt={product.nameEn}
+                                  style={{
+                                    width: "50px",
+                                    height: "50px",
+                                    objectFit: "cover",
+                                    border: "1px solid #ddd",
+                                  }}
+                                  onError={(e) => {
+                                    e.target.onerror = null;
+                                    e.target.src =
+                                      "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2YwZjBmMCIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMjAiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIiBmaWxsPSIjNjY2Ij5ObyBJbWFnZTwvdGV4dD48L3N2Zz4=";
+                                  }}
+                                />
+                              ) : (
+                                value
+                              )}
                             </TableCell>
                           );
-                        }
+                        })}
+                      </TableRow>
+                    );
+                  })
+              )}
+            </TableBody>
+          </Table>
+        </TableContainer>
 
-                        let value = product[column.id];
+        <TablePagination
+          rowsPerPageOptions={[10, 25, 100]}
+          component="div"
+          count={filteredProducts.length}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          onPageChange={handleChangePage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
+        />
 
-                        // Handle special cases
-                        if (column.id === "subCategory") {
-                          value = getSubCategory(product);
-                        } else if (column.id === "price") {
-                          value = formatPrice(value);
-                        } else if (column.id === "type") {
-                          // Display the category name instead of type code
-                          value = product.categoryName || product.type;
-                        }
-
-                        return (
-                          <TableCell key={column.id}>
-                            {column.id === "image" ? (
-                              <img
-                                src={
-                                  product.mainImage
-                                    ? product.mainImage
-                                    : "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2YwZjBmMCIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMjAiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIiBmaWxsPSIjNjY2Ij5ObyBJbWFnZTwvdGV4dD48L3N2Zz4="
-                                }
-                                alt={product.nameEn}
-                                style={{
-                                  width: "50px",
-                                  height: "50px",
-                                  objectFit: "cover",
-                                  border: "1px solid #ddd",
-                                }}
-                                onError={(e) => {
-                                  e.target.onerror = null;
-                                  e.target.src =
-                                    "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2YwZjBmMCIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMjAiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIiBmaWxsPSIjNjY2Ij5ObyBJbWFnZTwvdGV4dD48L3N2Zz4=";
-                                }}
-                              />
-                            ) : (
-                              value
-                            )}
-                          </TableCell>
-                        );
-                      })}
-                    </TableRow>
-                  );
-                })
-            )}
-          </TableBody>
-        </Table>
-      </TableContainer>
-
-      <TablePagination
-        rowsPerPageOptions={[10, 25, 100]}
-        component="div"
-        count={filteredProducts.length}
-        rowsPerPage={rowsPerPage}
-        page={page}
-        onPageChange={handleChangePage}
-        onRowsPerPageChange={handleChangeRowsPerPage}
-      />
-
-      {/* Delete Confirmation Dialog */}
-      <Dialog
-        open={deleteDialogOpen}
-        onClose={() => setDeleteDialogOpen(false)}
-      >
-        <DialogTitle>Delete Product</DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            Are you sure you want to delete the product "
-            {productToDelete?.nameEn}"? This action cannot be undone.
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setDeleteDialogOpen(false)}>Cancel</Button>
-          <Button
-            onClick={handleDeleteConfirm}
-            color="error"
-            variant="contained"
-          >
-            Delete
-          </Button>
-        </DialogActions>
-      </Dialog>
-
-      {/* Notifications */}
-      <Snackbar
-        open={notification.open}
-        autoHideDuration={6000}
-        onClose={handleCloseNotification}
-        anchorOrigin={{ vertical: "top", horizontal: "center" }}
-      >
-        <Alert
-          onClose={handleCloseNotification}
-          severity={notification.severity}
-          sx={{ width: "100%" }}
+        {/* Delete Confirmation Dialog */}
+        <Dialog
+          open={deleteDialogOpen}
+          onClose={() => setDeleteDialogOpen(false)}
         >
-          {notification.message}
-        </Alert>
-      </Snackbar>
-    </Paper>
+          <DialogTitle>Delete Product</DialogTitle>
+          <DialogContent>
+            <DialogContentText>
+              Are you sure you want to delete the product "
+              {productToDelete?.nameEn}"? This action cannot be undone.
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => setDeleteDialogOpen(false)}>Cancel</Button>
+            <Button
+              onClick={handleDeleteConfirm}
+              color="error"
+              variant="contained"
+            >
+              Delete
+            </Button>
+          </DialogActions>
+        </Dialog>
+
+        {/* Notifications */}
+        <Snackbar
+          open={notification.open}
+          autoHideDuration={6000}
+          onClose={handleCloseNotification}
+          anchorOrigin={{ vertical: "top", horizontal: "center" }}
+        >
+          <Alert
+            onClose={handleCloseNotification}
+            severity={notification.severity}
+            sx={{ width: "100%" }}
+          >
+            {notification.message}
+          </Alert>
+        </Snackbar>
+      </Paper>
+    </Box>
   );
 }

@@ -9,7 +9,7 @@ import {
   Alert,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import authService from "../services/authService";
 
 const LoginPage = () => {
   const [email, setEmail] = useState("");
@@ -22,15 +22,8 @@ const LoginPage = () => {
     setError("");
 
     try {
-      const response = await axios.post(
-        "http://localhost:8080/api/auth/admin/login",
-        {
-          email,
-          password,
-        }
-      );
-
-      localStorage.setItem("adminToken", response.data.token);
+      const data = await authService.login(email, password);
+      authService.setToken(data.token);
       setTimeout(() => {
         window.location.reload();
       }, 1000);

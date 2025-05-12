@@ -421,58 +421,49 @@ export default function CategoryForm({ onBack, editCategory = null }) {
         >
           Category Information
         </Typography>
-
-        <Grid container spacing={2}>
-          <Grid item xs={12} md={6}>
-            <TextField
-              required
-              fullWidth
-              label="Category Code"
-              name="code"
-              value={category.code}
-              onChange={handleInputChange}
-              variant="outlined"
-              margin="normal"
-              helperText="Unique code to identify this category (e.g., WORKSHOP, BAKERY)"
-            />
-          </Grid>
-          <Grid item xs={12} md={6}>
-            <TextField
-              required
-              fullWidth
-              label="Name (English)"
-              name="nameEn"
-              value={category.nameEn}
-              onChange={handleInputChange}
-              variant="outlined"
-              margin="normal"
-            />
-          </Grid>
-          <Grid item xs={12} md={6}>
-            <TextField
-              fullWidth
-              label="Name (Sinhala)"
-              name="nameSi"
-              value={category.nameSi}
-              onChange={handleInputChange}
-              variant="outlined"
-              margin="normal"
-            />
-          </Grid>
-          <Grid item xs={12} md={6}>
-            <TextField
-              fullWidth
-              label="Description"
-              name="description"
-              value={category.description}
-              onChange={handleInputChange}
-              variant="outlined"
-              margin="normal"
-              multiline
-              rows={2}
-            />
-          </Grid>
-        </Grid>
+        <div>
+          <TextField
+            required
+            fullWidth
+            label="Category Code"
+            name="code"
+            value={category.code}
+            onChange={handleInputChange}
+            variant="outlined"
+            margin="normal"
+            helperText="Unique code to identify this category (e.g., WORKSHOP, BAKERY)"
+          />
+          <TextField
+            required
+            fullWidth
+            label="Name (English)"
+            name="nameEn"
+            value={category.nameEn}
+            onChange={handleInputChange}
+            variant="outlined"
+            margin="normal"
+          />
+          <TextField
+            fullWidth
+            label="Name (Sinhala)"
+            name="nameSi"
+            value={category.nameSi}
+            onChange={handleInputChange}
+            variant="outlined"
+            margin="normal"
+          />
+          <TextField
+            fullWidth
+            label="Description"
+            name="description"
+            value={category.description}
+            onChange={handleInputChange}
+            variant="outlined"
+            margin="normal"
+            multiline
+            rows={3}
+          />
+        </div>
 
         <Box sx={{ mt: 3 }}>
           <Typography variant="subtitle1" sx={{ mb: 1, fontWeight: "bold" }}>
@@ -759,20 +750,20 @@ export default function CategoryForm({ onBack, editCategory = null }) {
         </Box>
       )}
 
-      <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 3 }}>
-        <Button
-          variant="outlined"
-          onClick={onBack}
-          sx={{ mr: 2 }}
-          disabled={loading}
-        >
-          Cancel
-        </Button>
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          gap: "1rem",
+          mt: 3,
+        }}
+      >
         <Button
           variant="contained"
           color="primary"
           onClick={handleSubmit}
           disabled={loading}
+          size="large"
           startIcon={loading && <CircularProgress size={20} color="inherit" />}
         >
           {loading
@@ -780,6 +771,14 @@ export default function CategoryForm({ onBack, editCategory = null }) {
             : isEditMode
               ? "Update Category"
               : "Create Category"}
+        </Button>
+        <Button
+          size="large"
+          variant="outlined"
+          onClick={onBack}
+          disabled={loading}
+        >
+          Cancel
         </Button>
       </Box>
 

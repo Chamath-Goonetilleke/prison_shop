@@ -11,8 +11,8 @@ router.post("/", upload, productController.create);
 // Retrieve all Products
 router.get("/", productController.findAll);
 
-// Retrieve a single Product with productId
-router.get("/:productId", productController.findOne);
+// Search products
+router.get("/search", productController.search);
 
 // Retrieve Products by category
 router.get("/category/:categoryId", productController.findByCategory);
@@ -23,8 +23,8 @@ router.get("/subcategory/:subCategoryId", productController.findBySubCategory);
 // Retrieve Products by prison
 router.get("/prison/:prisonId", productController.findByPrison);
 
-// Search products
-router.get("/search", productController.search);
+// Retrieve a single Product with productId
+router.get("/:productId", productController.findOne);
 
 // Check stock availability
 router.post("/check-stock", productController.checkStockAvailability);

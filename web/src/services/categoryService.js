@@ -20,6 +20,7 @@ const categoryService = {
       throw error;
     }
   },
+
   // Get all categories with products
   getAllProductCategories: async () => {
     try {
@@ -33,7 +34,7 @@ const categoryService = {
     }
   },
 
-  // Get subcategories for a specific category
+  // Get subcategories by category ID
   getSubcategoriesByCategory: async (categoryId) => {
     try {
       const response = await axios.get(

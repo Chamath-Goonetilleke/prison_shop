@@ -1,7 +1,9 @@
 import axios from "axios";
 
-const API_URL = "http://localhost:8080/api/custom-orders";
-
+const API_URL =
+  process.env.NODE_ENV === "production"
+    ? "https://prison-shop.vercel.app/api/custom-orders"
+    : "http://localhost:8080/api/custom-orders";
 // Get all custom orders
 const getAllCustomOrders = async () => {
   try {

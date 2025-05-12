@@ -148,11 +148,10 @@ export default function OrdersTable({ onView }) {
   }
 
   return (
-    <Paper sx={{ width: "100%", overflow: "hidden" }}>
+    <Box>
       {/* Search bar */}
-      <Box sx={{ p: 2, display: "flex", alignItems: "center" }}>
+      <Box sx={{  display: "flex", alignItems: "center", mb: 4 }}>
         <TextField
-          label="Search Orders"
           variant="outlined"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
@@ -169,140 +168,140 @@ export default function OrdersTable({ onView }) {
           }}
           placeholder="Search by order number, customer name, email or phone..."
         />
-        <Button
-          variant="contained"
-          onClick={handleSearch}
-          startIcon={<SearchIcon />}
-        >
-          Search
-        </Button>
       </Box>
 
-      <TableContainer sx={{ maxHeight: "75vh" }}>
-        <Table stickyHeader aria-label="sticky table">
-          <TableHead>
-            <TableRow>
-              {columns.map((column) => (
-                <TableCell
-                  key={column.id}
-                  style={{ minWidth: column.minWidth }}
-                >
-                  {column.label}
-                </TableCell>
-              ))}
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {filteredOrders.length === 0 ? (
+      <Paper sx={{ width: "100%", overflow: "hidden" }}>
+        <TableContainer sx={{ minHeight: "60vh" }}>
+          <Table stickyHeader aria-label="sticky table">
+            <TableHead>
               <TableRow>
-                <TableCell colSpan={columns.length} align="center">
-                  No orders found
-                </TableCell>
+                {columns.map((column) => (
+                  <TableCell
+                    key={column.id}
+                    style={{ minWidth: column.minWidth }}
+                  >
+                    {column.label}
+                  </TableCell>
+                ))}
               </TableRow>
-            ) : (
-              filteredOrders
-                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((order) => {
-                  return (
-                    <TableRow
-                      hover
-                      role="checkbox"
-                      tabIndex={-1}
-                      key={order.id}
-                    >
-                      {columns.map((column) => {
-                        if (column.id === "actions") {
-                          return (
-                            <TableCell key={column.id}>
-                              <Box sx={{ display: "flex" }}>
-                                <Tooltip title="View Order Details">
-                                  <IconButton
-                                    color="primary"
-                                    onClick={() => handleViewClick(order)}
+            </TableHead>
+            <TableBody>
+              {filteredOrders.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={columns.length} align="center">
+                    No orders found
+                  </TableCell>
+                </TableRow>
+              ) : (
+                filteredOrders
+                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                  .map((order) => {
+                    return (
+                      <TableRow
+                        hover
+                        role="checkbox"
+                        tabIndex={-1}
+                        key={order.id}
+                      >
+                        {columns.map((column) => {
+                          if (column.id === "actions") {
+                            return (
+                              <TableCell key={column.id}>
+                                <Box sx={{ display: "flex" }}>
+                                  <Tooltip title="View Order Details">
+                                    <IconButton
+                                      color="primary"
+                                      onClick={() => handleViewClick(order)}
+                                    >
+                                      <VisibilityIcon />
+                                    </IconButton>
+                                  </Tooltip>
+                                </Box>
+                              </TableCell>
+                            );
+                          }
+
+                          if (column.id === "status") {
+                            return (
+                              <TableCell key={column.id}>
+                                <Chip
+                                  label={order.status.toUpperCase()}
+                                  color={
+                                    statusColors[order.status] || "default"
+                                  }
+                                  size="small"
+                                />
+                              </TableCell>
+                            );
+                          }
+
+                          if (column.id === "payment_slip") {
+                            return (
+                              <TableCell key={column.id}>
+                                {order.payment_slip ? (
+                                  <Tooltip title="View Payment Slip">
+                                    <Button
+                                      variant="text"
+                                      size="small"
+                                      onClick={() =>
+                                        window.open(
+                                          order.payment_slip,
+                                          "_blank"
+                                        )
+                                      }
+                                    >
+                                      View Receipt
+                                    </Button>
+                                  </Tooltip>
+                                ) : (
+                                  <Typography
+                                    variant="body2"
+                                    color="text.secondary"
                                   >
-                                    <VisibilityIcon />
-                                  </IconButton>
-                                </Tooltip>
-                              </Box>
-                            </TableCell>
-                          );
-                        }
+                                    Not uploaded
+                                  </Typography>
+                                )}
+                              </TableCell>
+                            );
+                          }
 
-                        if (column.id === "status") {
-                          return (
-                            <TableCell key={column.id}>
-                              <Chip
-                                label={order.status.toUpperCase()}
-                                color={statusColors[order.status] || "default"}
-                                size="small"
-                              />
-                            </TableCell>
-                          );
-                        }
+                          if (column.id === "created_at") {
+                            return (
+                              <TableCell key={column.id}>
+                                {formatDate(order.created_at)}
+                              </TableCell>
+                            );
+                          }
 
-                        if (column.id === "payment_slip") {
-                          return (
-                            <TableCell key={column.id}>
-                              {order.payment_slip ? (
-                                <Tooltip title="View Payment Slip">
-                                  <Button
-                                    variant="text"
-                                    size="small"
-                                    onClick={() =>
-                                      window.open(order.payment_slip, "_blank")
-                                    }
-                                  >
-                                    View Receipt
-                                  </Button>
-                                </Tooltip>
-                              ) : (
-                                <Typography
-                                  variant="body2"
-                                  color="text.secondary"
-                                >
-                                  Not uploaded
-                                </Typography>
-                              )}
-                            </TableCell>
-                          );
-                        }
+                          if (column.id === "total_amount") {
+                            return (
+                              <TableCell key={column.id}>
+                                {formatPrice(order.total_amount)}
+                              </TableCell>
+                            );
+                          }
 
-                        if (column.id === "created_at") {
-                          return (
-                            <TableCell key={column.id}>
-                              {formatDate(order.created_at)}
-                            </TableCell>
-                          );
-                        }
+                          let value = order[column.id];
+                          return <TableCell key={column.id}>{value}</TableCell>;
+                        })}
+                      </TableRow>
+                    );
+                  })
+              )}
+            </TableBody>
+          </Table>
+        </TableContainer>
 
-                        if (column.id === "total_amount") {
-                          return (
-                            <TableCell key={column.id}>
-                              {formatPrice(order.total_amount)}
-                            </TableCell>
-                          );
-                        }
-
-                        let value = order[column.id];
-                        return <TableCell key={column.id}>{value}</TableCell>;
-                      })}
-                    </TableRow>
-                  );
-                })
-            )}
-          </TableBody>
-        </Table>
-      </TableContainer>
-
-      <TablePagination
-        rowsPerPageOptions={[10, 25, 100]}
-        component="div"
-        count={filteredOrders.length}
-        rowsPerPage={rowsPerPage}
-        page={page}
-        onPageChange={handleChangePage}
-        onRowsPerPageChange={handleChangeRowsPerPage}
-      />
+        <TablePagination
+          rowsPerPageOptions={[10, 25, 100]}
+          component="div"
+          count={filteredOrders.length}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          onPageChange={handleChangePage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
+        />
+      </Paper>
 
       {/* Notifications */}
       <Snackbar
@@ -319,6 +318,6 @@ export default function OrdersTable({ onView }) {
           {notification.message}
         </Alert>
       </Snackbar>
-    </Paper>
+    </Box>
   );
 }

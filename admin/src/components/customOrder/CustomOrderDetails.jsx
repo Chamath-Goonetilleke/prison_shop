@@ -4,25 +4,34 @@ import {
   Paper,
   Typography,
   Grid,
-  Divider,
   FormControl,
   InputLabel,
   Select,
   MenuItem,
   TextField,
   Button,
-  Card,
-  CardContent,
   Chip,
   IconButton,
   Alert,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  CircularProgress,
+  Snackbar,
 } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import EmailIcon from "@mui/icons-material/Email";
 import PhoneIcon from "@mui/icons-material/Phone";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
-import { format } from "date-fns";
+import CategoryIcon from "@mui/icons-material/Category";
+import StoreIcon from "@mui/icons-material/Store";
 import customOrderService from "../../services/customOrderService";
+import PersonIcon from "@mui/icons-material/Person";
+import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
+import SubdirectoryArrowRightIcon from "@mui/icons-material/SubdirectoryArrowRight";
+import LayersIcon from "@mui/icons-material/Layers";
 
 const statusOptions = [
   { value: "pending", label: "Pending" },
@@ -33,12 +42,26 @@ const statusOptions = [
   { value: "cancelled", label: "Cancelled" },
 ];
 
+const statusColors = {
+  pending: "warning",
+  reviewed: "info",
+  approved: "success",
+  in_progress: "warning",
+  completed: "success",
+  cancelled: "error",
+};
+
 const CustomOrderDetails = ({ order, onClose, onOrderUpdated }) => {
   const [status, setStatus] = useState(order.status);
   const [adminNotes, setAdminNotes] = useState(order.admin_notes || "");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [success, setSuccess] = useState(false);
+  const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
+  const [notification, setNotification] = useState({
+    open: false,
+    message: "",
+    severity: "success",
+  });
 
   const handleStatusChange = (event) => {
     setStatus(event.target.value);
@@ -52,7 +75,6 @@ const CustomOrderDetails = ({ order, onClose, onOrderUpdated }) => {
     try {
       setLoading(true);
       setError(null);
-      setSuccess(false);
 
       const updatedOrder = await customOrderService.updateCustomOrderStatus(
         order.id,
@@ -62,50 +84,69 @@ const CustomOrderDetails = ({ order, onClose, onOrderUpdated }) => {
         }
       );
 
-      setSuccess(true);
+      setConfirmDialogOpen(false);
+      setNotification({
+        open: true,
+        message: "Custom order status updated successfully!",
+        severity: "success",
+      });
       onOrderUpdated(updatedOrder);
     } catch (err) {
       console.error("Error updating order status:", err);
       setError("Failed to update order status. Please try again.");
+      setNotification({
+        open: true,
+        message: "Failed to update order status. Please try again.",
+        severity: "error",
+      });
     } finally {
       setLoading(false);
     }
   };
 
-  const getStatusColor = (status) => {
-    switch (status) {
-      case "pending":
-        return "#9e9e9e";
-      case "reviewed":
-        return "#2196f3";
-      case "approved":
-        return "#3f51b5";
-      case "in_progress":
-        return "#ff9800";
-      case "completed":
-        return "#4caf50";
-      case "cancelled":
-        return "#f44336";
-      default:
-        return "#9e9e9e";
-    }
+  const handleCloseNotification = () => {
+    setNotification({
+      ...notification,
+      open: false,
+    });
+  };
+
+  // Format date
+  const formatDate = (dateString) => {
+    const options = {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    };
+    return new Date(dateString).toLocaleDateString(undefined, options);
   };
 
   return (
-    <Paper sx={{ p: 3 }}>
-      <Box sx={{ display: "flex", alignItems: "center", mb: 3 }}>
-        <IconButton onClick={onClose} sx={{ mr: 2 }}>
-          <ArrowBackIcon />
+    <Box sx={{ p: 2 }}>
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          mb: 3,
+        }}
+      >
+        <IconButton onClick={onClose} variant="outlined" sx={{ mr: 2 }}>
+          <ArrowBackIcon sx={{ fontWeight: "bold" }} />
         </IconButton>
-        <Typography variant="h6">Custom Order Details</Typography>
+        <Typography
+          variant="h5"
+          component="h2"
+          fontWeight={"bold"}
+          sx={{ mr: 2 }}
+        >
+          Custom Order Details - {order.orderNumber}
+        </Typography>
         <Chip
-          label={status.replace("_", " ")}
-          sx={{
-            ml: 2,
-            textTransform: "capitalize",
-            bgcolor: getStatusColor(status),
-            color: "white",
-          }}
+          label={status.toUpperCase()}
+          color={statusColors[status] || "default"}
+          size="small"
         />
       </Box>
 
@@ -115,165 +156,245 @@ const CustomOrderDetails = ({ order, onClose, onOrderUpdated }) => {
         </Alert>
       )}
 
-      {success && (
-        <Alert severity="success" sx={{ mb: 3 }}>
-          Order status updated successfully!
-        </Alert>
-      )}
-
-      <Grid container spacing={3}>
-        <Grid item xs={12} md={6}>
-          <Card variant="outlined">
-            <CardContent>
-              <Typography variant="h6" gutterBottom>
-                Order Information
-              </Typography>
-              <Box sx={{ mb: 2 }}>
-                <Typography variant="body2" color="text.secondary">
-                  Order Number
-                </Typography>
-                <Typography variant="body1">{order.orderNumber}</Typography>
-              </Box>
-              <Box sx={{ mb: 2 }}>
-                <Typography variant="body2" color="text.secondary">
-                  Date Placed
-                </Typography>
-                <Typography variant="body1">
-                  {format(new Date(order.created_at), "PPP p")}
-                </Typography>
-              </Box>
-              <Box sx={{ mb: 2 }}>
-                <Typography variant="body2" color="text.secondary">
-                  Category
-                </Typography>
-                <Typography variant="body1">{order.category_name}</Typography>
-              </Box>
-              <Box sx={{ mb: 2 }}>
-                <Typography variant="body2" color="text.secondary">
-                  Subcategory
-                </Typography>
-                <Typography variant="body1">
-                  {order.subcategory_name || "None"}
-                </Typography>
-              </Box>
-              <Box sx={{ mb: 2 }}>
-                <Typography variant="body2" color="text.secondary">
-                  Prison
-                </Typography>
-                <Typography variant="body1">
-                  {order.prison_name
-                    ? order.prison_name_si
-                      ? `${order.prison_name} (${order.prison_name_si})`
-                      : order.prison_name
-                    : "None"}
-                </Typography>
-              </Box>
-            </CardContent>
-          </Card>
-        </Grid>
-
-        <Grid item xs={12} md={6}>
-          <Card variant="outlined">
-            <CardContent>
-              <Typography variant="h6" gutterBottom>
-                Customer Information
-              </Typography>
-              <Box sx={{ mb: 2 }}>
-                <Typography variant="body2" color="text.secondary">
-                  Name
-                </Typography>
-                <Typography variant="body1">{order.customer_name}</Typography>
-              </Box>
-              <Box sx={{ mb: 2, display: "flex", alignItems: "center" }}>
-                <EmailIcon
-                  fontSize="small"
-                  sx={{ mr: 1, color: "text.secondary" }}
-                />
-                <Typography variant="body1">{order.customer_email}</Typography>
-              </Box>
-              <Box sx={{ mb: 2, display: "flex", alignItems: "center" }}>
-                <PhoneIcon
-                  fontSize="small"
-                  sx={{ mr: 1, color: "text.secondary" }}
-                />
-                <Typography variant="body1">{order.customer_phone}</Typography>
-              </Box>
-              <Box sx={{ display: "flex", alignItems: "flex-start" }}>
-                <LocationOnIcon
-                  fontSize="small"
-                  sx={{ mr: 1, mt: 0.5, color: "text.secondary" }}
-                />
-                <Typography variant="body1">
+      <Box sx={{ display: "flex", gap: 2 }}>
+        <Paper elevation={2} sx={{ flex: 1 }}>
+          <Typography
+            variant="subtitle1"
+            sx={{
+              mb: 2,
+              fontWeight: "bold",
+              p: 1,
+              color: "#24364d",
+              backgroundColor: "#e5f6fd",
+            }}
+          >
+            Customer Information
+          </Typography>
+          <Box sx={{ display: "flex", flexDirection: "column", p: 2, gap: 2 }}>
+            <Typography
+              variant="body1"
+              sx={{ display: "flex", alignItems: "center" }}
+            >
+              <PersonIcon
+                fontSize="small"
+                sx={{ mr: 1, color: "text.secondary" }}
+              />
+              <strong>Name:</strong> {order.customer_name}
+            </Typography>
+            <Typography
+              variant="body1"
+              sx={{ display: "flex", alignItems: "center" }}
+            >
+              <EmailIcon
+                fontSize="small"
+                sx={{ mr: 1, color: "text.secondary" }}
+              />
+              <strong>Email:</strong> {order.customer_email}
+            </Typography>
+            <Typography
+              variant="body1"
+              sx={{ display: "flex", alignItems: "center" }}
+            >
+              <PhoneIcon
+                fontSize="small"
+                sx={{ mr: 1, color: "text.secondary" }}
+              />
+              <strong>Phone:</strong> {order.customer_phone}
+            </Typography>
+            <Typography
+              variant="body1"
+              sx={{ display: "flex", alignItems: "flex-start" }}
+            >
+              <LocationOnIcon
+                fontSize="small"
+                sx={{ mr: 1, mt: 0.5, color: "text.secondary" }}
+              />
+              <Box>
+                <strong>Delivery Address</strong>
+                <Typography variant="body2">
                   {order.delivery_address}
                 </Typography>
               </Box>
-            </CardContent>
-          </Card>
-        </Grid>
+            </Typography>
+          </Box>
+        </Paper>
 
-        <Grid item xs={12}>
-          <Card variant="outlined">
-            <CardContent>
-              <Typography variant="h6" gutterBottom>
-                Custom Requirements
-              </Typography>
-              <Typography variant="body1" sx={{ whiteSpace: "pre-line" }}>
-                {order.requirements}
-              </Typography>
-            </CardContent>
-          </Card>
-        </Grid>
-
-        <Grid item xs={12}>
-          <Divider sx={{ my: 2 }} />
-          <Typography variant="h6" gutterBottom>
-            Order Management
+        <Paper elevation={2} sx={{ flex: 1 }}>
+          <Typography
+            variant="subtitle1"
+            sx={{
+              mb: 2,
+              fontWeight: "bold",
+              p: 1,
+              color: "#24364d",
+              backgroundColor: "#e5f6fd",
+            }}
+          >
+            Order Information
           </Typography>
-          <Grid container spacing={2}>
-            <Grid item xs={12} md={6}>
-              <FormControl fullWidth>
-                <InputLabel id="status-select-label">Status</InputLabel>
-                <Select
-                  labelId="status-select-label"
-                  id="status-select"
-                  value={status}
-                  label="Status"
-                  onChange={handleStatusChange}
-                >
-                  {statusOptions.map((option) => (
-                    <MenuItem key={option.value} value={option.value}>
-                      {option.label}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                fullWidth
-                id="admin-notes"
-                label="Admin Notes"
-                multiline
-                rows={4}
-                value={adminNotes}
-                onChange={handleNotesChange}
-                placeholder="Add notes about this custom order"
+          <Box sx={{ display: "flex", flexDirection: "column", p: 2, gap: 2 }}>
+            <Typography variant="body1">
+              <CalendarMonthIcon
+                fontSize="small"
+                sx={{ mr: 1, color: "text.secondary" }}
               />
-            </Grid>
-            <Grid item xs={12}>
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={handleUpdateStatus}
-                disabled={loading}
+              <strong>Order Date:</strong> {formatDate(order.created_at)}
+            </Typography>
+            <Typography
+              variant="body1"
+              sx={{ display: "flex", alignItems: "center" }}
+            >
+              <LayersIcon
+                fontSize="small"
+                sx={{ mr: 1, color: "text.secondary" }}
+              />
+              <strong>Category:</strong> {order.category_name}
+            </Typography>
+            {order.subcategory_name && (
+              <Typography variant="body1" sx={{ ml: 3 }}>
+                <SubdirectoryArrowRightIcon
+                  fontSize="small"
+                  sx={{ mr: 1, color: "text.secondary" }}
+                />
+                <strong>Subcategory:</strong> {order.subcategory_name}
+              </Typography>
+            )}
+            {order.prison_name && (
+              <Typography
+                variant="body1"
+                sx={{ display: "flex", alignItems: "center" }}
               >
-                {loading ? "Updating..." : "Update Status"}
-              </Button>
-            </Grid>
-          </Grid>
-        </Grid>
-      </Grid>
-    </Paper>
+                <StoreIcon
+                  fontSize="small"
+                  sx={{ mr: 1, color: "text.secondary" }}
+                />
+                <strong>Prison:</strong>{" "}
+                {order.prison_name_si
+                  ? `${order.prison_name} (${order.prison_name_si})`
+                  : order.prison_name}
+              </Typography>
+            )}
+          </Box>
+        </Paper>
+      </Box>
+
+      <Paper elevation={2} sx={{ mt: 2 }}>
+        <Typography
+          variant="subtitle1"
+          sx={{
+            mb: 2,
+            fontWeight: "bold",
+            p: 1,
+            color: "#24364d",
+            backgroundColor: "#e5f6fd",
+          }}
+        >
+          Custom Requirements
+        </Typography>
+        <Box sx={{ p: 2 }}>
+          <Typography variant="body1" sx={{ whiteSpace: "pre-line" }}>
+            {order.requirements}
+          </Typography>
+        </Box>
+      </Paper>
+
+      <Paper elevation={2} sx={{ mt: 2 }}>
+        <Typography
+          variant="subtitle1"
+          sx={{
+            mb: 2,
+            fontWeight: "bold",
+            p: 1,
+            color: "#24364d",
+            backgroundColor: "#e5f6fd",
+          }}
+        >
+          Order Management
+        </Typography>
+        <Box sx={{ p: 2, display: "flex", gap: 2, flexDirection: "column" }}>
+          <FormControl fullWidth>
+            <InputLabel id="status-select-label">Status</InputLabel>
+            <Select
+              labelId="status-select-label"
+              id="status-select"
+              value={status}
+              label="Status"
+              onChange={handleStatusChange}
+            >
+              {statusOptions.map((option) => (
+                <MenuItem key={option.value} value={option.value}>
+                  {option.label}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+          <TextField
+            fullWidth
+            id="admin-notes"
+            label="Admin Notes"
+            multiline
+            rows={4}
+            value={adminNotes}
+            onChange={handleNotesChange}
+            placeholder="Add notes about this custom order"
+          />
+          <Button
+            variant="contained"
+            color="primary"
+            size="large"
+            sx={{ mt: "1rem" }}
+            onClick={() => setConfirmDialogOpen(true)}
+            disabled={
+              loading ||
+              (status === order.status && adminNotes === order.admin_notes)
+            }
+          >
+            {loading ? <CircularProgress size={24} /> : "Update Status"}
+          </Button>
+        </Box>
+      </Paper>
+
+      {/* Confirmation Dialog */}
+      <Dialog
+        open={confirmDialogOpen}
+        onClose={() => setConfirmDialogOpen(false)}
+      >
+        <DialogTitle>Update Custom Order Status</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Are you sure you want to update the custom order status to{" "}
+            {status.toUpperCase()}?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setConfirmDialogOpen(false)}>Cancel</Button>
+          <Button
+            onClick={handleUpdateStatus}
+            color="primary"
+            autoFocus
+            disabled={loading}
+          >
+            {loading ? <CircularProgress size={24} /> : "Update"}
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Notifications */}
+      <Snackbar
+        open={notification.open}
+        autoHideDuration={6000}
+        onClose={handleCloseNotification}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+      >
+        <Alert
+          onClose={handleCloseNotification}
+          severity={notification.severity}
+          sx={{ width: "100%" }}
+        >
+          {notification.message}
+        </Alert>
+      </Snackbar>
+    </Box>
   );
 };
 

@@ -1,12 +1,12 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
-import axios from "axios";
 import userService from "../services/userService";
+import authService from "../services/authService";
 
 const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const [token, setToken] = useState(localStorage.getItem("userToken"));
+  const [token, setToken] = useState(authService.getToken());
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -19,12 +19,8 @@ export const AuthProvider = ({ children }) => {
 
   const fetchUser = async () => {
     try {
-      const response = await axios.get("http://localhost:8080/api/auth/me", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      setUser(response.data);
+      const userData = await authService.getCurrentUser(token);
+      setUser(userData);
     } catch (error) {
       console.error("Error fetching user:", error);
       logout();
@@ -34,13 +30,13 @@ export const AuthProvider = ({ children }) => {
   };
 
   const login = (newToken, userData) => {
-    localStorage.setItem("userToken", newToken);
+    authService.setToken(newToken);
     setToken(newToken);
     setUser(userData);
   };
 
   const logout = () => {
-    localStorage.removeItem("userToken");
+    authService.removeToken();
     setToken(null);
     setUser(null);
   };

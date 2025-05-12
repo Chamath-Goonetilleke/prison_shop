@@ -29,13 +29,18 @@ import {
   TextField,
   Typography,
   Alert,
+  IconButton,
 } from "@mui/material";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import CancelIcon from "@mui/icons-material/Cancel";
 import LocalShippingIcon from "@mui/icons-material/LocalShipping";
 import DeliveryDiningIcon from "@mui/icons-material/DeliveryDining";
 import orderService from "../../services/orderService";
-
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import PersonIcon from "@mui/icons-material/Person";
+import EmailIcon from "@mui/icons-material/Email";
+import PhoneIcon from "@mui/icons-material/Phone";
+import LocationOnIcon from "@mui/icons-material/LocationOn";
 // Order status options for the dropdown
 const ORDER_STATUS_OPTIONS = [
   { value: "pending", label: "Pending" },
@@ -148,80 +153,106 @@ const OrderDetails = ({ order, onClose, onOrderUpdated }) => {
       <Box
         sx={{
           display: "flex",
-          justifyContent: "space-between",
           alignItems: "center",
           mb: 3,
         }}
       >
-        <Typography variant="h6" component="h2">
+        <IconButton onClick={onClose} variant="outlined" sx={{ mr: 2 }}>
+          <ArrowBackIcon sx={{ fontWeight: "bold" }} />
+        </IconButton>
+        <Typography
+          variant="h5"
+          component="h2"
+          fontWeight={"bold"}
+          sx={{ mr: 2 }}
+        >
           Order Details - {order.orderNumber}
         </Typography>
-        <Box sx={{ display: "flex", gap: 1 }}>
-          <Chip
-            icon={statusIcons[order.status]}
-            label={order.status.toUpperCase()}
-            color={statusColors[order.status] || "default"}
-          />
-          <Button variant="outlined" onClick={onClose}>
-            Back to List
-          </Button>
-        </Box>
+        <Chip
+          icon={statusIcons[order.status]}
+          label={order.status.toUpperCase()}
+          color={statusColors[order.status] || "default"}
+        />
       </Box>
 
-      <Grid container spacing={3}>
-        {/* Customer Information */}
-        <Grid item xs={12} md={6}>
-          <Paper elevation={2} sx={{ p: 2, height: "100%" }}>
-            <Typography variant="subtitle1" sx={{ mb: 2, fontWeight: "bold" }}>
+      <Box sx={{ display: "flex", gap: 2 }}>
+        <Paper elevation={2} sx={{ flex: 1 }}>
+          <Box>
+            <Typography
+              variant="subtitle1"
+              sx={{
+                mb: 2,
+                fontWeight: "bold",
+                p: 1,
+                color: "#24364d",
+                backgroundColor: "#e5f6fd",
+              }}
+            >
               Customer Information
             </Typography>
-            <Grid container spacing={2}>
-              <Grid item xs={12}>
-                <Typography variant="body1">
-                  <strong>Name:</strong> {order.customer_name}
-                </Typography>
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <Typography variant="body1">
-                  <strong>Email:</strong> {order.customer_email}
-                </Typography>
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <Typography variant="body1">
-                  <strong>Phone:</strong> {order.customer_phone}
-                </Typography>
-              </Grid>
-              <Grid item xs={12}>
-                <Typography variant="body1">
-                  <strong>Delivery Address:</strong>
-                </Typography>
-                <Typography variant="body2">
-                  {order.delivery_address}
-                </Typography>
-              </Grid>
-            </Grid>
-          </Paper>
-        </Grid>
-
-        {/* Order Information */}
-        <Grid item xs={12} md={6}>
-          <Paper elevation={2} sx={{ p: 2, height: "100%" }}>
-            <Typography variant="subtitle1" sx={{ mb: 2, fontWeight: "bold" }}>
-              Order Information
-            </Typography>
-            <Grid container spacing={2}>
-              <Grid item xs={12} sm={6}>
+            <Box
+              sx={{ display: "flex", flexDirection: "column", p: 2, gap: 2 }}
+            >
+              <Typography variant="body1"sx={{ display: "flex", alignItems: "center" }}>
+                <PersonIcon
+                  fontSize="small"
+                  sx={{ mr: 1, color: "text.secondary" }}
+                />
+                <strong>Name:</strong> {order.customer_name}
+              </Typography>
+              <Typography variant="body1"sx={{ display: "flex", alignItems: "center" }}>
+                <EmailIcon
+                  fontSize="small"
+                  sx={{ mr: 1, color: "text.secondary" }}
+                />
+                <strong>Email:</strong> {order.customer_email}
+              </Typography>
+              <Typography variant="body1"sx={{ display: "flex", alignItems: "center" }}>
+                <PhoneIcon
+                  fontSize="small"
+                  sx={{ mr: 1, color: "text.secondary" }}
+                />
+                <strong>Phone:</strong> {order.customer_phone}
+              </Typography>
+              <Typography
+                variant="body1"
+                sx={{ display: "flex", alignItems: "flex-start" }}
+              >
+                <LocationOnIcon
+                  fontSize="small"
+                  sx={{ mr: 1, mt: 0.5, color: "text.secondary" }}
+                />
+                <Box>
+                  <strong>Delivery Address</strong>
+                  <Typography variant="body2">
+                    {order.delivery_address}
+                  </Typography>
+                </Box>
+              </Typography>
+            </Box>
+            <Box>
+              <Typography
+                variant="subtitle1"
+                sx={{
+                  mb: 2,
+                  fontWeight: "bold",
+                  p: 1,
+                  color: "#24364d",
+                  backgroundColor: "#e5f6fd",
+                }}
+              >
+                Order Information
+              </Typography>
+              <Box
+                sx={{ display: "flex", flexDirection: "column", p: 2, gap: 1 }}
+              >
                 <Typography variant="body1">
                   <strong>Order Date:</strong> {formatDate(order.created_at)}
                 </Typography>
-              </Grid>
-              <Grid item xs={12} sm={6}>
                 <Typography variant="body1">
                   <strong>Total Amount:</strong>{" "}
                   {formatPrice(order.total_amount)}
                 </Typography>
-              </Grid>
-              <Grid item xs={12}>
                 <Typography variant="body1">
                   <strong>Status:</strong>
                 </Typography>
@@ -241,8 +272,6 @@ const OrderDetails = ({ order, onClose, onOrderUpdated }) => {
                     ))}
                   </Select>
                 </FormControl>
-              </Grid>
-              <Grid item xs={12}>
                 <TextField
                   fullWidth
                   label="Admin Notes"
@@ -252,13 +281,8 @@ const OrderDetails = ({ order, onClose, onOrderUpdated }) => {
                   onChange={handleNotesChange}
                   variant="outlined"
                 />
-              </Grid>
-              <Grid
-                item
-                xs={12}
-                sx={{ display: "flex", justifyContent: "flex-end" }}
-              >
                 <Button
+                  sx={{ mt: "1rem" }}
                   variant="contained"
                   color="primary"
                   onClick={() => setConfirmDialogOpen(true)}
@@ -270,114 +294,133 @@ const OrderDetails = ({ order, onClose, onOrderUpdated }) => {
                 >
                   {loading ? <CircularProgress size={24} /> : "Update Order"}
                 </Button>
-              </Grid>
-            </Grid>
-          </Paper>
-        </Grid>
+              </Box>
+            </Box>
+          </Box>
+        </Paper>
+        <Paper elevation={2} sx={{ flex: 0.7 }}>
+          <Typography
+            variant="subtitle1"
+            sx={{
+              mb: 2,
+              fontWeight: "bold",
+              p: 1,
+              color: "#24364d",
+              backgroundColor: "#e5f6fd",
+            }}
+          >
+            Payment Slip
+          </Typography>
+          {order.payment_slip ? (
+            <Box sx={{ display: "flex", p: 2, justifyContent: "center" }}>
+              <Card sx={{ minWidth: "100%", minHeight: "100%" }}>
+                <CardMedia
+                  component="img"
+                  height="85%"
+                  image={order.payment_slip}
+                  alt="Payment Slip"
+                  sx={{ objectFit: "fill" }}
+                />
+                <CardContent>
+                  <Box sx={{ display: "flex", justifyContent: "center" }}>
+                    <Button
+                      variant="outlined"
+                      size="small"
+                      onClick={() => window.open(order.payment_slip, "_blank")}
+                    >
+                      View Full Size
+                    </Button>
+                  </Box>
+                </CardContent>
+              </Card>
+            </Box>
+          ) : (
+            <Typography variant="body2" color="text.secondary">
+              No payment slip uploaded
+            </Typography>
+          )}
+        </Paper>
+      </Box>
+
+      <Paper elevation={2} sx={{ mt: 2 }}>
+        <Typography
+          variant="subtitle1"
+          sx={{
+            mb: 2,
+            fontWeight: "bold",
+            p: 1,
+            color: "#24364d",
+            backgroundColor: "#e5f6fd",
+          }}
+        >
+          Order Items
+        </Typography>
+        {order.items && order.items.length > 0 ? (
+          <TableContainer>
+            <Table aria-label="order items table">
+              <TableHead>
+                <TableRow>
+                  <TableCell>Product</TableCell>
+                  <TableCell>Prison</TableCell>
+                  <TableCell>Price</TableCell>
+                  <TableCell>Quantity</TableCell>
+                  <TableCell align="right">Subtotal</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {order.items.map((item) => (
+                  <TableRow key={item.id}>
+                    <TableCell>
+                      {item.product_name
+                        ? item.product_name
+                        : `Product #${item.product_id}`}
+                    </TableCell>
+                    <TableCell>
+                      {item.prison_name
+                        ? item.prison_name_si
+                          ? `${item.prison_name} (${item.prison_name_si})`
+                          : item.prison_name
+                        : "Not specified"}
+                    </TableCell>
+                    <TableCell>{formatPrice(item.price)}</TableCell>
+                    <TableCell>{item.quantity}</TableCell>
+                    <TableCell align="right">
+                      {formatPrice(item.subtotal)}
+                    </TableCell>
+                  </TableRow>
+                ))}
+                <TableRow>
+                  <TableCell colSpan={3} />
+                  <TableCell>
+                    <Typography variant="subtitle1">Total</Typography>
+                  </TableCell>
+                  <TableCell align="right">
+                    <Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>
+                      {formatPrice(order.total_amount)}
+                    </Typography>
+                  </TableCell>
+                </TableRow>
+              </TableBody>
+            </Table>
+          </TableContainer>
+        ) : (
+          <Typography variant="body2" color="text.secondary">
+            No items in this order
+          </Typography>
+        )}
+      </Paper>
+
+      <Grid container spacing={3}>
+        {/* Customer Information */}
+
+        {/* Order Information */}
+        <Grid item xs={12} md={6}></Grid>
 
         {/* Order Items */}
-        <Grid item xs={12}>
-          <Paper elevation={2} sx={{ p: 2 }}>
-            <Typography variant="subtitle1" sx={{ mb: 2, fontWeight: "bold" }}>
-              Order Items
-            </Typography>
-            {order.items && order.items.length > 0 ? (
-              <TableContainer>
-                <Table aria-label="order items table">
-                  <TableHead>
-                    <TableRow>
-                      <TableCell>Product</TableCell>
-                      <TableCell>Prison</TableCell>
-                      <TableCell>Price</TableCell>
-                      <TableCell>Quantity</TableCell>
-                      <TableCell align="right">Subtotal</TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {order.items.map((item) => (
-                      <TableRow key={item.id}>
-                        <TableCell>
-                          {item.product_name
-                            ? item.product_name
-                            : `Product #${item.product_id}`}
-                        </TableCell>
-                        <TableCell>
-                          {item.prison_name
-                            ? item.prison_name_si
-                              ? `${item.prison_name} (${item.prison_name_si})`
-                              : item.prison_name
-                            : "Not specified"}
-                        </TableCell>
-                        <TableCell>{formatPrice(item.price)}</TableCell>
-                        <TableCell>{item.quantity}</TableCell>
-                        <TableCell align="right">
-                          {formatPrice(item.subtotal)}
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                    <TableRow>
-                      <TableCell colSpan={3} />
-                      <TableCell>
-                        <Typography variant="subtitle1">Total</Typography>
-                      </TableCell>
-                      <TableCell align="right">
-                        <Typography
-                          variant="subtitle1"
-                          sx={{ fontWeight: "bold" }}
-                        >
-                          {formatPrice(order.total_amount)}
-                        </Typography>
-                      </TableCell>
-                    </TableRow>
-                  </TableBody>
-                </Table>
-              </TableContainer>
-            ) : (
-              <Typography variant="body2" color="text.secondary">
-                No items in this order
-              </Typography>
-            )}
-          </Paper>
-        </Grid>
+        <Grid item xs={12}></Grid>
 
         {/* Payment Slip */}
-        <Grid item xs={12}>
-          <Paper elevation={2} sx={{ p: 2 }}>
-            <Typography variant="subtitle1" sx={{ mb: 2, fontWeight: "bold" }}>
-              Payment Slip
-            </Typography>
-            {order.payment_slip ? (
-              <Box sx={{ display: "flex", justifyContent: "center" }}>
-                <Card sx={{ maxWidth: 400 }}>
-                  <CardMedia
-                    component="img"
-                    height="300"
-                    image={order.payment_slip}
-                    alt="Payment Slip"
-                    sx={{ objectFit: "contain" }}
-                  />
-                  <CardContent>
-                    <Box sx={{ display: "flex", justifyContent: "center" }}>
-                      <Button
-                        variant="outlined"
-                        size="small"
-                        onClick={() =>
-                          window.open(order.payment_slip, "_blank")
-                        }
-                      >
-                        View Full Size
-                      </Button>
-                    </Box>
-                  </CardContent>
-                </Card>
-              </Box>
-            ) : (
-              <Typography variant="body2" color="text.secondary">
-                No payment slip uploaded
-              </Typography>
-            )}
-          </Paper>
-        </Grid>
+        <Grid item xs={12}></Grid>
       </Grid>
 
       {/* Confirmation Dialog */}

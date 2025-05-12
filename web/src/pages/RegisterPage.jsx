@@ -10,8 +10,8 @@ import {
   Link,
 } from "@mui/material";
 import { useNavigate, Link as RouterLink } from "react-router-dom";
-import axios from "axios";
 import { useAuth } from "../context/AuthContext";
+import authService from "../services/authService";
 
 const RegisterPage = () => {
   const [formData, setFormData] = useState({
@@ -45,19 +45,17 @@ const RegisterPage = () => {
     }
 
     try {
-      const response = await axios.post(
-        "http://localhost:8080/api/auth/register",
-        {
-          email: formData.email,
-          password: formData.password,
-          firstName: formData.firstName,
-          lastName: formData.lastName,
-          phone: formData.phone,
-          address: formData.address,
-        }
-      );
+      const userData = {
+        email: formData.email,
+        password: formData.password,
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        phone: formData.phone,
+        address: formData.address,
+      };
 
-      login(response.data.token, response.data.user);
+      const data = await authService.register(userData);
+      login(data.token, data.user);
       navigate("/profile");
     } catch (error) {
       setError(
@@ -67,7 +65,7 @@ const RegisterPage = () => {
   };
 
   return (
-    <Container component="main" maxWidth="xs">
+    <Container component="main">
       <Box
         sx={{
           marginTop: 8,
@@ -86,13 +84,8 @@ const RegisterPage = () => {
             width: "100%",
           }}
         >
-          <img
-            src="/Prison_Craft_logo.png"
-            alt="logo"
-            style={{ width: 100, marginBottom: 20 }}
-          />
-          <Typography component="h1" variant="h5">
-            Sign Up
+          <Typography component="h1" variant="h5" fontWeight={"bold"}>
+            Register Account
           </Typography>
           {error && (
             <Alert severity="error" sx={{ width: "100%", mt: 2 }}>
@@ -185,6 +178,7 @@ const RegisterPage = () => {
               fullWidth
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
+              size="large"
             >
               Sign Up
             </Button>

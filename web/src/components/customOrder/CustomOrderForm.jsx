@@ -17,7 +17,7 @@ import {
 import { useAuth } from "../../context/AuthContext";
 import customOrderService from "../../services/customOrderService";
 import prisonService from "../../services/prisonService";
-import axios from "axios";
+import categoryService from "../../services/categoryService";
 
 const CustomOrderForm = () => {
   const { user, token } = useAuth();
@@ -58,8 +58,8 @@ const CustomOrderForm = () => {
 
   const fetchCategories = async () => {
     try {
-      const response = await axios.get("http://localhost:8080/api/categories");
-      setCategories(response.data);
+      const categoriesData = await categoryService.getAllCategories();
+      setCategories(categoriesData);
     } catch (err) {
       console.error("Error fetching categories:", err);
       setError("Failed to load categories. Please try again later.");
@@ -78,10 +78,9 @@ const CustomOrderForm = () => {
 
   const fetchSubcategories = async (categoryId) => {
     try {
-      const response = await axios.get(
-        `http://localhost:8080/api/subcategories/category/${categoryId}`
-      );
-      setSubcategories(response.data);
+      const subcategoriesData =
+        await categoryService.getSubcategoriesByCategory(categoryId);
+      setSubcategories(subcategoriesData);
     } catch (err) {
       console.error("Error fetching subcategories:", err);
     }
@@ -187,7 +186,7 @@ const CustomOrderForm = () => {
 
   return (
     <Paper elevation={3} sx={{ p: 3, mb: 3 }}>
-      <Typography variant="h5" gutterBottom>
+      <Typography variant="h5" fontWeight={"bold"} gutterBottom>
         Request Custom Order
       </Typography>
 
@@ -295,7 +294,7 @@ const CustomOrderForm = () => {
               >
                 {subcategories.map((subcategory) => (
                   <MenuItem key={subcategory.id} value={subcategory.id}>
-                    {subcategory.nameEn}
+                    {subcategory.nameSi} ({subcategory.nameEn})
                   </MenuItem>
                 ))}
               </Select>

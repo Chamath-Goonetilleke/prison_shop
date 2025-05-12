@@ -1,20 +1,15 @@
 import * as React from "react";
-import { styled, alpha } from "@mui/material/styles";
+import { styled } from "@mui/material/styles";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
 import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
-import InputBase from "@mui/material/InputBase";
-import Badge from "@mui/material/Badge";
 import MenuItem from "@mui/material/MenuItem";
 import Menu from "@mui/material/Menu";
 import MenuIcon from "@mui/icons-material/Menu";
 import SearchIcon from "@mui/icons-material/Search";
 import AccountCircle from "@mui/icons-material/AccountCircle";
-import MailIcon from "@mui/icons-material/Mail";
-import NotificationsIcon from "@mui/icons-material/Notifications";
-import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import BuildIcon from "@mui/icons-material/Build";
 
@@ -48,6 +43,7 @@ export default function NavBar() {
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const [searchExpanded, setSearchExpanded] = React.useState(true);
+  const [searchTerm, setSearchTerm] = React.useState("");
   const { itemCount } = useCart();
   const { user, logout } = useAuth();
   const navigate = useNavigate();
@@ -297,22 +293,35 @@ export default function NavBar() {
           {isMobile && searchExpanded && (
             <Box sx={{ width: "100%", mt: 1 }}>
               <Search>
-                <TextField
-                  sx={{
-                    width: "100%",
-                    backgroundColor: "white",
-                    borderRadius: "5px",
+                <form
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    if (searchTerm.trim()) {
+                      navigate(
+                        `/search?q=${encodeURIComponent(searchTerm.trim())}`
+                      );
+                    }
                   }}
-                  size="small"
-                  placeholder="Search..."
-                  InputProps={{
-                    endAdornment: (
-                      <IconButton size="small">
-                        <SearchIcon />
-                      </IconButton>
-                    ),
-                  }}
-                />
+                >
+                  <TextField
+                    sx={{
+                      width: "100%",
+                      backgroundColor: "white",
+                      borderRadius: "5px",
+                    }}
+                    size="small"
+                    placeholder="Search..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    InputProps={{
+                      endAdornment: (
+                        <IconButton type="submit" size="small">
+                          <SearchIcon />
+                        </IconButton>
+                      ),
+                    }}
+                  />
+                </form>
               </Search>
             </Box>
           )}
@@ -350,29 +359,44 @@ export default function NavBar() {
               </Box>
 
               <div style={{ display: "flex", width: isTablet ? "40%" : "60%" }}>
-                <TextField
-                  sx={{
-                    margin: isTablet ? "1rem" : "1.5rem",
-                    width: "60%",
-                    marginLeft: isTablet ? "1rem" : "5rem",
-                    marginRight: "0rem",
-                    border: "1px solid white",
-                    backgroundColor: "white",
-                    borderRadius: "5px 0px 0px 5px",
+                <form
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    if (searchTerm.trim()) {
+                      navigate(
+                        `/search?q=${encodeURIComponent(searchTerm.trim())}`
+                      );
+                    }
                   }}
-                  size="small"
-                  placeholder="Search..."
-                />
-                <Button
-                  variant="contained"
-                  sx={{
-                    margin: isTablet ? "1rem" : "1.5rem",
-                    border: "1px solid white",
-                    marginLeft: "0rem",
-                  }}
+                  style={{ display: "flex", width: "100%" }}
                 >
-                  <SearchIcon sx={{ mx: isTablet ? "0.5rem" : "1rem" }} />
-                </Button>
+                  <TextField
+                    sx={{
+                      margin: isTablet ? "1rem" : "1.5rem",
+                      width: "60%",
+                      marginLeft: isTablet ? "1rem" : "5rem",
+                      marginRight: "0rem",
+                      border: "1px solid white",
+                      backgroundColor: "white",
+                      borderRadius: "5px 0px 0px 5px",
+                    }}
+                    size="small"
+                    placeholder="Search..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                  />
+                  <Button
+                    type="submit"
+                    variant="contained"
+                    sx={{
+                      margin: isTablet ? "1rem" : "1.5rem",
+                      border: "1px solid white",
+                      marginLeft: "0rem",
+                    }}
+                  >
+                    <SearchIcon sx={{ mx: isTablet ? "0.5rem" : "1rem" }} />
+                  </Button>
+                </form>
               </div>
 
               {!isTablet && (
