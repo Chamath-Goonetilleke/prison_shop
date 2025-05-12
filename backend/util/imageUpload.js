@@ -5,9 +5,9 @@ dotenv.config();
 
 // Configure Cloudinary with credentials
 cloudinary.config({
-  cloud_name: process.env.CLOUD_NAME || "dcffu0fme",
-  api_key: process.env.API_KEY || "443921133759663",
-  api_secret: process.env.API_SECRET || "PpmqvB59Q7oUonp0TvMJgEEmzV8",
+  cloud_name: process.env.CLOUD_NAME,
+  api_key: process.env.API_KEY,
+  api_secret: process.env.API_SECRET,
 });
 
 // Configure multer to use memory storage (buffer) instead of disk storage

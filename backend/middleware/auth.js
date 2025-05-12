@@ -11,7 +11,7 @@ const auth = async (req, res, next) => {
 
     const decoded = jwt.verify(
       token,
-      process.env.JWT_SECRET || "your-secret-key"
+      process.env.JWT_SECRET
     );
 
     // Check if user exists and is not blocked
@@ -43,7 +43,7 @@ const adminAuth = async (req, res, next) => {
 
     const decoded = jwt.verify(
       token,
-      process.env.JWT_SECRET || "your-secret-key"
+      process.env.JWT_SECRET
     );
 
     // Check if admin exists and is active
@@ -75,7 +75,7 @@ const superAdminAuth = async (req, res, next) => {
 
     const decoded = jwt.verify(
       token,
-      process.env.JWT_SECRET || "your-secret-key"
+      process.env.JWT_SECRET
     );
 
     // Check if admin exists, is active and is super admin

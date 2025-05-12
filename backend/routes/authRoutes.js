@@ -33,7 +33,7 @@ router.post("/register", async (req, res) => {
     // Generate token
     const token = jwt.sign(
       { id: result.insertId },
-      process.env.JWT_SECRET || "your-secret-key",
+      process.env.JWT_SECRET,
       { expiresIn: "7d" }
     );
 
@@ -85,7 +85,7 @@ router.post("/login", async (req, res) => {
     // Generate token
     const token = jwt.sign(
       { id: user.id },
-      process.env.JWT_SECRET || "your-secret-key",
+      process.env.JWT_SECRET,
       { expiresIn: "7d" }
     );
 
@@ -136,7 +136,7 @@ router.post("/admin/login", async (req, res) => {
     // Generate token
     const token = jwt.sign(
       { id: admin.id },
-      process.env.JWT_SECRET || "your-secret-key",
+      process.env.JWT_SECRET,
       { expiresIn: "7d" }
     );
 
