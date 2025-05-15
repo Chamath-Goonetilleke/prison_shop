@@ -7,14 +7,38 @@ import {
   Divider,
   Container,
 } from "@mui/material";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
+import prisonService from "../../services/prisonService";
+import categoryService from "../../services/categoryService";
 
 export default function Footer() {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const isTablet = useMediaQuery(theme.breakpoints.between("sm", "md"));
+  const [prisons, setPrisons] = useState([]);
+  const [categories, setCategories] = useState([]);
 
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const data = await categoryService.getAllProductCategories();
+        setCategories(data);
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+      } 
+    };
+    const fetchPrisons = async () => {
+      try {
+        const data = await prisonService.getActivePrisons();
+        setPrisons(data);
+      } catch (error) {
+        console.error("Error fetching prisons:", error);
+      }
+    };
+    fetchCategories();
+    fetchPrisons();
+  }, []);
   return (
     <Box
       sx={{
@@ -120,46 +144,22 @@ export default function Footer() {
                     gap: "0.8rem",
                   }}
                 >
-                  <NavLink
-                    to={"/"}
-                    style={{
-                      textDecoration: "underline",
-                      color: "white",
-                      fontSize: isMobile ? "14px" : "18px",
-                    }}
-                  >
-                    වැලිකඩ
-                  </NavLink>
-                  <NavLink
-                    to={"/"}
-                    style={{
-                      textDecoration: "underline",
-                      color: "white",
-                      fontSize: isMobile ? "14px" : "18px",
-                    }}
-                  >
-                    බෝගම්බර
-                  </NavLink>
-                  <NavLink
-                    to={"/"}
-                    style={{
-                      textDecoration: "underline",
-                      color: "white",
-                      fontSize: isMobile ? "14px" : "18px",
-                    }}
-                  >
-                    මහර
-                  </NavLink>
-                  <NavLink
-                    to={"/"}
-                    style={{
-                      textDecoration: "underline",
-                      color: "white",
-                      fontSize: isMobile ? "14px" : "18px",
-                    }}
-                  >
-                    අනුරාධපුර
-                  </NavLink>
+                  {prisons.map((prison, index) => {
+                    if (index % 2 === 0) {
+                      return (
+                        <NavLink
+                          to={`/prison/${prison.id}`}
+                          style={{
+                            textDecoration: "underline",
+                            color: "white",
+                            fontSize: isMobile ? "14px" : "18px",
+                          }}
+                        >
+                          {prison.nameSi}
+                        </NavLink>
+                      );
+                    }
+                  })}
                 </Box>
               </Grid>
               <Grid item xs={6}>
@@ -170,46 +170,22 @@ export default function Footer() {
                     gap: "0.8rem",
                   }}
                 >
-                  <NavLink
-                    to={"/"}
-                    style={{
-                      textDecoration: "underline",
-                      color: "white",
-                      fontSize: isMobile ? "14px" : "18px",
-                    }}
-                  >
-                    පල්ලේකැලේ
-                  </NavLink>
-                  <NavLink
-                    to={"/"}
-                    style={{
-                      textDecoration: "underline",
-                      color: "white",
-                      fontSize: isMobile ? "14px" : "18px",
-                    }}
-                  >
-                    පල්ලන්සේන
-                  </NavLink>
-                  <NavLink
-                    to={"/"}
-                    style={{
-                      textDecoration: "underline",
-                      color: "white",
-                      fontSize: isMobile ? "14px" : "18px",
-                    }}
-                  >
-                    තල්දෙන
-                  </NavLink>
-                  <NavLink
-                    to={"/"}
-                    style={{
-                      textDecoration: "underline",
-                      color: "white",
-                      fontSize: isMobile ? "14px" : "18px",
-                    }}
-                  >
-                    අගුණ කොළ
-                  </NavLink>
+                  {prisons.map((prison, index) => {
+                    if (index % 2 !== 0) {
+                      return (
+                        <NavLink
+                          to={`/prison/${prison.id}`}
+                          style={{
+                            textDecoration: "underline",
+                            color: "white",
+                            fontSize: isMobile ? "14px" : "18px",
+                          }}
+                        >
+                          {prison.nameSi}
+                        </NavLink>
+                      );
+                    }
+                  })}
                 </Box>
               </Grid>
             </Grid>
@@ -231,36 +207,22 @@ export default function Footer() {
             <Box
               sx={{ display: "flex", flexDirection: "column", gap: "0.8rem" }}
             >
-              <NavLink
-                to={"/"}
-                style={{
-                  textDecoration: "underline",
-                  color: "white",
-                  fontSize: isMobile ? "14px" : "18px",
-                }}
-              >
-                කම්හල් (Workshops/Factories)
-              </NavLink>
-              <NavLink
-                to={"/"}
-                style={{
-                  textDecoration: "underline",
-                  color: "white",
-                  fontSize: isMobile ? "14px" : "18px",
-                }}
-              >
-                වඩු (Carpentry)
-              </NavLink>
-              <NavLink
-                to={"/"}
-                style={{
-                  textDecoration: "underline",
-                  color: "white",
-                  fontSize: isMobile ? "14px" : "18px",
-                }}
-              >
-                පේෂ කර්ම (Textiles)
-              </NavLink>
+              {categories.map((category, index)=>{
+                if(index<5){
+                  return (
+                    <NavLink
+                      to={`/category/${category.id}`}
+                      style={{
+                        textDecoration: "underline",
+                        color: "white",
+                        fontSize: isMobile ? "14px" : "18px",
+                      }}
+                    >
+                      {category.nameSi} ({category.nameEn})
+                    </NavLink>
+                  );
+                }
+              })}
             </Box>
           </Grid>
 

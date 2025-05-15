@@ -33,7 +33,7 @@ export default function Carousel() {
         <div class="carousel-inner">
           <div class="carousel-item active">
             <img
-              src="/slide1.jpg"
+              src="/slide1.png"
               class="d-block w-100"
               style={{ maxHeight: "50vh" }}
               alt="..."
@@ -41,7 +41,7 @@ export default function Carousel() {
           </div>
           <div class="carousel-item">
             <img
-              src="/slide2.jpg"
+              src="/slide2.png"
               class="d-block w-100"
               style={{ maxHeight: "50vh" }}
               alt="..."
@@ -49,7 +49,7 @@ export default function Carousel() {
           </div>
           <div class="carousel-item">
             <img
-              src="/slide1.jpg"
+              src="/slide3.png"
               class="d-block w-100"
               style={{ maxHeight: "50vh" }}
               alt="..."

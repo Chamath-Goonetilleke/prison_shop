@@ -100,7 +100,7 @@ const handlePrisonClick = (prisonId) => {
           >
             <CategoryMenu />
             {prisons.map((prison, index) => (
-              <div onClick={() =>handlePrisonClick(prison.id) }>
+              <div onClick={() => handlePrisonClick(prison.id)}>
                 <Typography
                   sx={{ cursor: "pointer" }}
                   fontWeight="bold"
@@ -120,30 +120,28 @@ const handlePrisonClick = (prisonId) => {
         <CategorySlider />
       </Box>
 
-      <Container maxWidth="xl">
-        <Box
-          sx={{
-            mx: { xs: "0.5rem", sm: "1rem", md: "2rem" },
-            display: "flex",
-            flexDirection: "column",
-            gap: "1rem",
-          }}
-        >
-          {loading ? (
-            <Box sx={{ display: "flex", justifyContent: "center", p: 3 }}>
-              <CircularProgress />
-            </Box>
-          ) : (
-            categories.map((category, index) => (
-              <HomeProductSection
-                key={category.id}
-                category={category}
-                color={BACKGROUND_COLORS[index % BACKGROUND_COLORS.length]}
-              />
-            ))
-          )}
-        </Box>
-      </Container>
+      <Box
+        sx={{
+          mx: { xs: "0.5rem", sm: "1rem", md: "2rem" },
+          display: "flex",
+          flexDirection: "column",
+          gap: "1rem",
+        }}
+      >
+        {loading ? (
+          <Box sx={{ display: "flex", justifyContent: "center", p: 3 }}>
+            <CircularProgress />
+          </Box>
+        ) : (
+          categories.map((category, index) => (
+            <HomeProductSection
+              key={category.id}
+              category={category}
+              color={BACKGROUND_COLORS[index % BACKGROUND_COLORS.length]}
+            />
+          ))
+        )}
+      </Box>
     </div>
   );
 }
